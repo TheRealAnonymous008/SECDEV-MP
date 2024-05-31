@@ -5,6 +5,8 @@ import { Customer } from '../models/customer';
 import { ALL_ROLES, Roles } from '../models/enum';
 import { makeCustomerArrayView, makeCustomerView } from '../projections/customer';
 
+// No SQL
+/*
 const all = async (req: express.Request, res: express.Response) => {
     const count = await Customer.countDocuments({});
 
@@ -15,6 +17,32 @@ const all = async (req: express.Request, res: express.Response) => {
     .then ((data) => {
         res.json({data: makeCustomerArrayView(data), count: count ? count : 0});
     })
+}
+*/
+
+// SQL
+const all = async (req: express.Request, res: express.Response) => {
+
+    const query = `
+        SELECT * FROM "Customer"
+        LIMIT $1 OFFSET $2;
+    `;
+
+    const values = [
+        req.query.limit,
+        req.query.skip
+    ];
+
+    try {
+        executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
+            .then((result) => {
+                res.json({data: makeCustomerArrayView(result), count: count ? count : 0});
+            })
+    }
+    catch (err) {
+        console.log(err);
+        res.status(200)
+    }
 }
 
 // No SQL
