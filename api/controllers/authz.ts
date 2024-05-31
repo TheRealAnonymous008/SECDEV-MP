@@ -5,7 +5,7 @@ import { randomUUID } from 'crypto';
 import { buildTransactionStatement, executeTransaction } from '../txn/transaction';
 import { Roles } from '../models/enum';
 
-const register = (req : express.Request, res : express.Response) => {
+const register = async (req : express.Request, res : express.Response) => {
     const user = {
         firstName : req.body.firstName,
         lastName : req.body.lastName,
@@ -35,16 +35,15 @@ const register = (req : express.Request, res : express.Response) => {
     try {
         executeTransaction([
             buildTransactionStatement(query, values)], () => {
-            res.status(200).end()
+            res.status(200).end();
         })
             .then((result) => {
                 console.log(result);
-                res.end();
             })
     }
     catch (err) {
         console.log(err);
-        res.status(500)
+        res.status(500).end();
     }
 
 }

@@ -6,7 +6,11 @@ import validateToken from '../middleware/authValidation';
 const router = express.Router();
 
 router.get('/all', controller.all);
-router.post('/create', controller.create)
+router.get('/id', controller.id);
+router.post('/create', controller.create);
+router.post('/update', controller.update);
+router.delete('/deltee', controller.remove)
+
 // router.get('/all', validateToken, validateRole(ALL_ROLES), controller.all);
 // router.get('/id', validateToken, validateRole(ALL_ROLES), controller.id);
 // router.post('/create', validateToken, validateRole([Roles.ADMIN, Roles.VIEW_EDIT]), controller.create);

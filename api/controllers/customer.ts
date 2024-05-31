@@ -37,30 +37,29 @@ const all = async (req: express.Request, res: express.Response) => {
 }
 
 
-// const id = async (req: express.Request, res: express.Response) => {
+const id = async (req: express.Request, res: express.Response) => {
+    const query = `
+        SELECT * FROM "Customer" WHERE "Id" = $1
+    `;
 
-//     const query = `
-//         SELECT * FROM "Customer" WHERE "Id" = $1
-//     `;
+    const values = [
+        req.query.id
+    ];
 
-//     const values = [
-//         req.query.id
-//     ];
-
-//     try {
-//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-//             .then((result) => {
-//                 const rows = result[0].rows
-//                 res.json(makeCustomerView(rows[0]))
-//                      .status(500)
-//                      .end();
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(200)
-//     }
-// }
+    try {
+        executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
+            .then((result) => {
+                const rows = result[0].rows;
+                res.json(makeCustomerView(rows[0]))
+                     .status(200)
+                     .end();
+            })
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
+}
 
 const create = async (req: express.Request, res: express.Response) => {
     const id = randomInt(MAX_INTEGER)
@@ -95,37 +94,37 @@ const create = async (req: express.Request, res: express.Response) => {
     }
 }
 
-// // SQL
-// const update = (req: express.Request, res: express.Response) => {
-//     const query = `
-//         UPDATE "Customer" SET "FirstName" = $1, "LastName" = $2, "MobileNumber" = $3, "Email" = $4, "Company" = $5, "Insurance" = $6, "Remarks" = $7
-//         WHERE "Id" = $8
-//         RETURNING "Id";
-//     `;
+const update = async (req: express.Request, res: express.Response) => {
+    const query = `
+        UPDATE "Customer" SET "FirstName" = $1, "LastName" = $2, "MobileNumber" = $3, "Email" = $4, "Company" = $5, "Insurance" = $6, "Remarks" = $7
+        WHERE "Id" = $8
+        RETURNING "Id";
+    `;
 
-//     const values = [
-//         req.body.firstName,
-//         req.body.lastName,
-//         req.body.mobileNumber,
-//         req.body.email,
-//         req.body.company,
-//         req.body.insurance,
-//         req.body.remarks,
-//         req.query.id
-//     ];
+    const values = [
+        req.body.firstName,
+        req.body.lastName,
+        req.body.mobileNumber,
+        req.body.email,
+        req.body.company,
+        req.body.insurance,
+        req.body.remarks,
+        req.query.id
+    ];
 
-//     try {
-//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-//             .then((result) => {
-//                 res.json(req.body);
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(200)
-//     }
+    try {
+        executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
+            .then((result) => {
+                res.json(req.body);
+                res.status(200).end();
+            })
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
 
-// }
+}
 
 // // No SQL
 // /*
@@ -141,30 +140,30 @@ const create = async (req: express.Request, res: express.Response) => {
 // }
 // */
 
-// // SQL
-// const remove = (req : express.Request, res : express.Response) => {
+// SQL
+const remove = async (req : express.Request, res : express.Response) => {
 
-//     const query = `
-//         DELETE FROM "Customer" WHERE "Id" = $1
-//         RETURNING "Id";
-//     `;
+    const query = `
+        DELETE FROM "Customer" WHERE "Id" = $1
+        RETURNING "Id";
+    `;
 
-//     const values = [
-//         req.query.id
-//     ];
+    const values = [
+        req.query.id
+    ];
 
-//     try {
-//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-//             .then((result) => {
-//                 res.end();
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(200)
-//     }
+    try {
+        executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
+            .then((result) => {
+                res.status(200).end();
+            })
+    }
+    catch (err) {
+        console.log(err);
+        res.status(200)
+    }
 
-// }
+}
 
 // // No SQL
 // /*
@@ -336,4 +335,4 @@ const create = async (req: express.Request, res: express.Response) => {
 //     }
 // }
 
-export default {all, create};
+export default {all, id, create, update, remove};

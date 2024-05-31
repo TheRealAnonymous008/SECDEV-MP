@@ -39,27 +39,27 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).end();
     }
 });
-// const id = async (req: express.Request, res: express.Response) => {
-//     const query = `
-//         SELECT * FROM "Customer" WHERE "Id" = $1
-//     `;
-//     const values = [
-//         req.query.id
-//     ];
-//     try {
-//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-//             .then((result) => {
-//                 const rows = result[0].rows
-//                 res.json(makeCustomerView(rows[0]))
-//                      .status(500)
-//                      .end();
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(200)
-//     }
-// }
+const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const query = `
+        SELECT * FROM "Customer" WHERE "Id" = $1
+    `;
+    const values = [
+        req.query.id
+    ];
+    try {
+        (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
+            .then((result) => {
+            const rows = result[0].rows;
+            res.json((0, customer_1.makeCustomerView)(rows[0]))
+                .status(200)
+                .end();
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
+});
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = (0, crypto_1.randomInt)(constants_1.MAX_INTEGER);
     const query = `
@@ -80,7 +80,7 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
             .then((result) => {
-            console.log(result);
+            res.json(Object.assign(Object.assign({}, req.body), { id: id }));
             res.status(200).end();
         });
     }
@@ -89,34 +89,34 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).end();
     }
 });
-// // SQL
-// const update = (req: express.Request, res: express.Response) => {
-//     const query = `
-//         UPDATE "Customer" SET "FirstName" = $1, "LastName" = $2, "MobileNumber" = $3, "Email" = $4, "Company" = $5, "Insurance" = $6, "Remarks" = $7
-//         WHERE "Id" = $8
-//         RETURNING "Id";
-//     `;
-//     const values = [
-//         req.body.firstName,
-//         req.body.lastName,
-//         req.body.mobileNumber,
-//         req.body.email,
-//         req.body.company,
-//         req.body.insurance,
-//         req.body.remarks,
-//         req.query.id
-//     ];
-//     try {
-//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-//             .then((result) => {
-//                 res.json(req.body);
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(200)
-//     }
-// }
+const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const query = `
+        UPDATE "Customer" SET "FirstName" = $1, "LastName" = $2, "MobileNumber" = $3, "Email" = $4, "Company" = $5, "Insurance" = $6, "Remarks" = $7
+        WHERE "Id" = $8
+        RETURNING "Id";
+    `;
+    const values = [
+        req.body.firstName,
+        req.body.lastName,
+        req.body.mobileNumber,
+        req.body.email,
+        req.body.company,
+        req.body.insurance,
+        req.body.remarks,
+        req.query.id
+    ];
+    try {
+        (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
+            .then((result) => {
+            res.json(req.body);
+            res.status(200).end();
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
+});
 // // No SQL
 // /*
 // const remove = (req : express.Request, res : express.Response) => {
@@ -304,4 +304,4 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 //         remarks: (req.query.remarks) ? (req.query.remarks as string) : ""
 //     }
 // }
-exports.default = { all, create };
+exports.default = { all, id, create, update };
