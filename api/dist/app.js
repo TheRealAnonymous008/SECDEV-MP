@@ -51,11 +51,14 @@ var corsOptions = {
     methods: ['GET', 'POST', 'DELETE']
 };
 app.use(cors(corsOptions));
-const user_1 = __importDefault(require("./routes/user"));
+const init_1 = __importDefault(require("./routes/init"));
 // TOOD: Put all routes here
 // route calls
+// Initializer is restricted to dev environment for security.
+if (app.get('env') === 'development') {
+    app.use('/api/init', init_1.default);
+}
 // app.use('/api/authz', authzRoutes);
-app.use('/api/user', user_1.default);
 // app.use('/api/vehicle', vehicleRoutes);
 // app.use('/api/order', orderRoutes);
 // app.use('/api/customer', customerRoutes);

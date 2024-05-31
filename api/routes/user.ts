@@ -1,11 +1,9 @@
 import express = require('express');
-import controller from '../controllers/user'
+import controller from '../controllers/initialize'
 import validateRole from '../middleware/roleValidation';
 import validateToken from '../middleware/authValidation';
 
 const router = express.Router();
-router.get('/all', controller.all)
-
 // router.get('/all', validateToken, validateRole(ALL_ROLES), controller.all);
 // router.get('/id', validateToken, validateRole(ALL_ROLES), controller.id);
 // router.post('/create', validateToken, validateRole([Roles.ADMIN, Roles.VIEW_EDIT]), controller.create);

@@ -37,12 +37,16 @@ app.use(cors(corsOptions));
 // route imports
 
 import indexRoute from './routes/index';
-import userRoutes from './routes/user';
+import initRoute from './routes/init';
 
 // TOOD: Put all routes here
 // route calls
+
+// Initializer is restricted to dev environment for security.
+if (app.get('env') === 'development') {
+    app.use('/api/init', initRoute);
+}
 // app.use('/api/authz', authzRoutes);
-app.use('/api/user', userRoutes);
 // app.use('/api/vehicle', vehicleRoutes);
 // app.use('/api/order', orderRoutes);
 // app.use('/api/customer', customerRoutes);

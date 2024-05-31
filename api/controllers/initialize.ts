@@ -2,7 +2,7 @@ import { db, sql } from '@vercel/postgres'
 import express = require('express')
 
 
-const all = async(req : express.Request, res : express.Response) => {
+const initialize = async(req : express.Request, res : express.Response) => {
     try {        
         await sql`
         DROP TABLE IF EXISTS "Users";
@@ -48,4 +48,4 @@ const all = async(req : express.Request, res : express.Response) => {
     }
 }
 
-export default {all};
+export default {initialize};
