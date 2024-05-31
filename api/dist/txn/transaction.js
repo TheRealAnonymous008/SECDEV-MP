@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.executeTransaction = exports.buildTransactionStatement = void 0;
+exports.TransactionFailedException = exports.executeTransaction = exports.buildTransactionStatement = void 0;
 const postgres_1 = require("@vercel/postgres");
 const buildTransactionStatement = (statement, values = []) => {
     return {
@@ -18,17 +18,39 @@ const buildTransactionStatement = (statement, values = []) => {
     };
 };
 exports.buildTransactionStatement = buildTransactionStatement;
-const executeTransaction = (body) => __awaiter(void 0, void 0, void 0, function* () {
-    const client = yield postgres_1.db.connect();
-    yield (0, postgres_1.sql) `BEGIN;`;
-    body.forEach((txn) => __awaiter(void 0, void 0, void 0, function* () {
-        if (txn.values) {
-            client.query(txn.statement, txn.values);
-        }
-        else {
-            client.query(txn.statement);
-        }
-    }));
-    yield (0, postgres_1.sql) `END;`;
+const executeTransaction = (body, errhandler) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const client = yield postgres_1.db.connect();
+        yield (0, postgres_1.sql) `BEGIN;`;
+        body.forEach((txn) => __awaiter(void 0, void 0, void 0, function* () {
+            if (txn.values) {
+                yield client.query(txn.statement, txn.values)
+                    .catch(error => {
+                    if (errhandler)
+                        errhandler();
+                });
+            }
+            else {
+                yield client.query(txn.statement)
+                    .catch(error => {
+                    if (errhandler)
+                        errhandler();
+                });
+            }
+        }));
+        yield (0, postgres_1.sql) `END;`;
+    }
+    catch (error) {
+        if (errhandler)
+            errhandler();
+    }
 });
 exports.executeTransaction = executeTransaction;
+class TransactionFailedException extends Error {
+    constructor(msg) {
+        super(msg);
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, TransactionFailedException.prototype);
+    }
+}
+exports.TransactionFailedException = TransactionFailedException;

@@ -13,7 +13,7 @@ const register = (req : express.Request, res : express.Response) => {
         mobileNumber : req.body.mobileNumber,
         email : req.body.email,
         password : Bcrypt.hashSync(req.body.password, 10),
-        role : Roles.ADMIN
+        role : "ADMIN"
     }
 
     const query = `
@@ -32,13 +32,16 @@ const register = (req : express.Request, res : express.Response) => {
       user.email,
     ];
 
-    executeTransaction([buildTransactionStatement(query, values)])
-        .then((result) => {
-            res.end();
-        }).catch((err) => {
-            console.log(err);
-            res.end();
-        })
+    try {
+        executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
+            .then((result) => {
+                res.end();
+            })
+    }
+    catch (err) {
+        console.log(err);
+        res.status(200)
+    }
 
 }
 

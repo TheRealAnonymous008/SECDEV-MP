@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Bcrypt = require("bcryptjs");
 const transaction_1 = require("../txn/transaction");
-const enum_1 = require("../models/enum");
 const register = (req, res) => {
     const user = {
         firstName: req.body.firstName,
@@ -11,7 +10,7 @@ const register = (req, res) => {
         mobileNumber: req.body.mobileNumber,
         email: req.body.email,
         password: Bcrypt.hashSync(req.body.password, 10),
-        role: enum_1.Roles.ADMIN
+        role: "ADMIN"
     };
     const query = `
       INSERT INTO "Users" ("FirstName", "LastName", "Username", "Password", "Role", "MobileNumber", "Email")
@@ -27,12 +26,15 @@ const register = (req, res) => {
         user.mobileNumber,
         user.email,
     ];
-    (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)])
-        .then((result) => {
-        res.end();
-    }).catch((err) => {
+    try {
+        (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
+            .then((result) => {
+            res.end();
+        });
+    }
+    catch (err) {
         console.log(err);
-        res.end();
-    });
+        res.status(200);
+    }
 };
 exports.default = { register };

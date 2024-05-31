@@ -12,17 +12,40 @@ export const buildTransactionStatement = (statement : string, values : any[] = [
     };
 }
 
-export const executeTransaction = async (body : TransactionStatement[]) => {
-    const client = await db.connect();
-    await sql`BEGIN;`
+export const executeTransaction = async (body : TransactionStatement[], errhandler? : () => void ) => {
+    try {
+        const client = await db.connect();
+        await sql`BEGIN;`
 
-    body.forEach(async (txn : TransactionStatement) => {
-        if(txn.values){
-            client.query(txn.statement, txn.values);
-        } else {
-            client.query(txn.statement)
-        }
-    })
+        body.forEach(async (txn : TransactionStatement) => {
+            if(txn.values){
+                await client.query(txn.statement, txn.values)
+                    .catch(error => {
+                        if(errhandler) 
+                            errhandler()
+                    });
+            } else {
+                await client.query(txn.statement)
+                    .catch(error => {
+                        if (errhandler)
+                        errhandler()
+                    })
+            }
+        })
 
-    await sql`END;`
+        await sql`END;`
+    }
+    catch (error) {
+        if(errhandler)
+            errhandler();
+    }
+}
+
+export class TransactionFailedException extends Error {
+    constructor(msg: string) {
+        super(msg);
+
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, TransactionFailedException.prototype);
+    }
 }
