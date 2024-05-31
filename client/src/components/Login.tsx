@@ -22,25 +22,31 @@ const Login = (props: {setIsLoggedIn : Function}) => {
     const navigation = useNavigate();
 
 
+    // TODO: Actually implement this later. Just uncomment the code and create an admin account.
     const onSubmit = (event: React.SyntheticEvent<HTMLInputElement>) => {
-        createAPIEndpoint(ENDPOINTS.login).post(state)
-            .then((response) => {
-                navigation(ROUTES.orders);
-                if(response.data.auth) {
-                    props.setIsLoggedIn(true);
-                    sessionStorage.setItem("isLoggedIn", "true");
-                    setRole(response.data.token);
-                }
-                else {
-                    props.setIsLoggedIn(false);
-                    sessionStorage.setItem("isLoggedIn", "false");
-                    removeRole();
-                }
+        props.setIsLoggedIn(true);
+        sessionStorage.setItem("isLoggedIn", "true");
+        navigation(ROUTES.orders);
+
+        // createAPIEndpoint(ENDPOINTS.login).post(state)
+        //     .then((response) => {
+        //         navigation(ROUTES.orders);
                 
-            })
-            .catch((err: any) => {
-                console.log(err);
-            });
+        //         if(response.data.auth) {
+        //             props.setIsLoggedIn(true);
+        //             sessionStorage.setItem("isLoggedIn", "true");
+        //             setRole(response.data.token);
+        //         }
+        //         else {
+        //             props.setIsLoggedIn(false);
+        //             sessionStorage.setItem("isLoggedIn", "false");
+        //             removeRole();
+        //         }
+                
+        //     })
+        //     .catch((err: any) => {
+        //         console.log(err);
+        //     });
         event.preventDefault();
     };
 

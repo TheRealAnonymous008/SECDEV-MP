@@ -8,7 +8,7 @@ import ViewVehicles from "./components/vehicles/ViewVehicles";
 import "./style/temporary.css";
 import { ROUTES } from "./api/routes";
 import UsersView from "./components/users/ViewUsers";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {Logout} from "./utils/Logout";  
 import { WithNav } from "./WithNav";
 
@@ -23,7 +23,7 @@ const ProtectedRoute = (props : { isLoggedIn : boolean}) => {
 
 export const Main = () => {
     const [isLoggedIn ,setIsLoggedIn] = useState<boolean>(sessionStorage.getItem("isLoggedIn") === "true")
-
+    
     return (    
         <Routes>
                 <>
