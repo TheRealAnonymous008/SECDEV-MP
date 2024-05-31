@@ -22,6 +22,7 @@ const Navbar = () => {
                     <Button buttonName={"Customers"} to={ROUTES.customers}/>
                     <Button buttonName={"Vehicles"} to={ROUTES.vehicles}/>
                     <Button buttonName={"Users"} to={ROUTES.users}/>
+                    <Button buttonName={"Profile"} to={ROUTES.profile}/>
                     <Button buttonName={"Logout"} to={ROUTES.logout}/>
                 </NavButtons>
             </nav>
