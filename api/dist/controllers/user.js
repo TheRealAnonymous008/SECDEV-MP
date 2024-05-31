@@ -11,10 +11,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const postgres_1 = require("@vercel/postgres");
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("Hello World");
-    console.log(process.env);
     try {
-        const result = yield (0, postgres_1.sql) `
+        yield (0, postgres_1.sql) `
+        DROP TABLE IF EXISTS "RoleEnum";
+        `;
+        yield (0, postgres_1.sql) `
+        CREATE TABLE IF NOT EXISTS "RoleEnum" (
+            "Id" SERIAL NOT NULL,
+            "Name" VARCHAR(45) NOT NULL,
+            PRIMARY KEY ("Id", "Name"),
+            UNIQUE ("Id")
+        );
+        `;
+        console.log("Ran 2");
+        yield (0, postgres_1.sql) `
+        DROP TABLE IF EXISTS "Users";
+        `;
+        console.log("Ran 1");
+        yield (0, postgres_1.sql) `
         CREATE TABLE IF NOT EXISTS "Users" (
             "Id" SERIAL PRIMARY KEY,
             "FirstName" VARCHAR(45) NOT NULL,
@@ -32,8 +46,7 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
               ON UPDATE NO ACTION
         );
         `;
-        res = res.status(200);
-        return res.json(result);
+        return res.status(200);
     }
     catch (error) {
         console.log(error);

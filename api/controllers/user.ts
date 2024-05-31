@@ -1,11 +1,27 @@
-import { sql } from '@vercel/postgres'
+import { db, sql } from '@vercel/postgres'
 import express = require('express')
 
+
 const all = async(req : express.Request, res : express.Response) => {
-    console.log("Hello World")
-    console.log(process.env)
     try {
-        const result = 
+        await sql`
+        DROP TABLE IF EXISTS "RoleEnum";
+        `
+
+        await sql`
+        CREATE TABLE IF NOT EXISTS "RoleEnum" (
+            "Id" SERIAL NOT NULL,
+            "Name" VARCHAR(45) NOT NULL,
+            PRIMARY KEY ("Id", "Name"),
+            UNIQUE ("Id")
+        );
+        `;
+
+        
+        await sql`
+        DROP TABLE IF EXISTS "Users";
+        `
+        
         await sql`
         CREATE TABLE IF NOT EXISTS "Users" (
             "Id" SERIAL PRIMARY KEY,
@@ -25,8 +41,7 @@ const all = async(req : express.Request, res : express.Response) => {
         );
         `
 
-        res = res.status(200);
-        return res.json(result);
+        return res.status(200);
     }
     catch (error) {
         console.log(error);
