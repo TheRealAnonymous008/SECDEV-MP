@@ -36,7 +36,7 @@ const initialize = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         `;
         yield (0, postgres_1.sql) `
         CREATE TABLE IF NOT EXISTS "Users" (
-            "Id" SERIAL PRIMARY KEY,
+            "Id" INT PRIMARY KEY,
             "FirstName" VARCHAR(45) NOT NULL,
             "LastName" VARCHAR(45) NOT NULL,
             "Username" VARCHAR(45) NOT NULL,
@@ -100,7 +100,7 @@ const initialize = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             "Id" SERIAL PRIMARY KEY,
             "FirstName" VARCHAR(45),
             "LastName" VARCHAR(45),
-            "MobileNumber" VARCHAR(10),
+            "MobileNumber" VARCHAR(11),
             "Email" VARCHAR(45),
             "Company" VARCHAR(45),
             "Insurance" VARCHAR(45),

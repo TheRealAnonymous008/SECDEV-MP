@@ -9,8 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = require("crypto");
 const customer_1 = require("../projections/customer");
 const transaction_1 = require("../txn/transaction");
+const constants_1 = require("../utils/constants");
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const query = `
         SELECT * FROM "Customer"
@@ -29,27 +31,17 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 data: (0, customer_1.makeCustomerArrayView)(rows),
                 count: count
             });
+            res.status(200).end();
         });
     }
     catch (err) {
         console.log(err);
-        res.status(200);
+        res.status(500).end();
     }
 });
-// // No SQL
-// /*
-// const id = async (req: express.Request, res: express.Response) => {
-//     Customer.findOne({_id: req.query.id})
-//     .then((data) => {
-//         res.json(makeCustomerView(data));
-//     })
-// }
-// */
-// // SQL
 // const id = async (req: express.Request, res: express.Response) => {
 //     const query = `
 //         SELECT * FROM "Customer" WHERE "Id" = $1
-//         RETURNING "Id";
 //     `;
 //     const values = [
 //         req.query.id
@@ -57,7 +49,10 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 //     try {
 //         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
 //             .then((result) => {
-//                 res.json(makeCustomerView(result));
+//                 const rows = result[0].rows
+//                 res.json(makeCustomerView(rows[0]))
+//                      .status(500)
+//                      .end();
 //             })
 //     }
 //     catch (err) {
@@ -65,34 +60,35 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 //         res.status(200)
 //     }
 // }
-// const create = (req: express.Request, res: express.Response) => {
-//     const id = randomUUID()
-//     const query = `
-//         INSERT INTO "Customer" ("Id", "FirstName", "LastName", "MobileNumber", "Email", "Company", "Insurance", "Remarks")
-//         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-//         RETURNING "Id";
-//     `;
-//     const values = [
-//         id,
-//         req.body.firstName,
-//         req.body.lastName,
-//         req.body.mobileNumber,
-//         req.body.email,
-//         req.body.company,
-//         req.body.insurance,
-//         req.body.remarks
-//     ];
-//     try {
-//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-//             .then((result) => {
-//                 res.json({...req.body, id: id});
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(200)
-//     }
-// }
+const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = (0, crypto_1.randomInt)(constants_1.MAX_INTEGER);
+    const query = `
+        INSERT INTO "Customer" ("Id", "FirstName", "LastName", "MobileNumber", "Email", "Company", "Insurance", "Remarks")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        RETURNING "Id";
+    `;
+    const values = [
+        id,
+        req.body.firstName,
+        req.body.lastName,
+        req.body.mobileNumber,
+        req.body.email,
+        req.body.company,
+        req.body.insurance,
+        req.body.remarks
+    ];
+    try {
+        (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
+            .then((result) => {
+            console.log(result);
+            res.status(200).end();
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
+});
 // // SQL
 // const update = (req: express.Request, res: express.Response) => {
 //     const query = `
@@ -308,4 +304,4 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 //         remarks: (req.query.remarks) ? (req.query.remarks as string) : ""
 //     }
 // }
-exports.default = { all };
+exports.default = { all, create };

@@ -30,7 +30,7 @@ const register = (req, res) => {
         (0, transaction_1.executeTransaction)([
             (0, transaction_1.buildTransactionStatement)(query, values)
         ], () => {
-            res.status(500).end();
+            res.status(200).end();
         })
             .then((result) => {
             console.log(result);
@@ -39,7 +39,7 @@ const register = (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(200);
+        res.status(500);
     }
 };
 exports.default = { register };

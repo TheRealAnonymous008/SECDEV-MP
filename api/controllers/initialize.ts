@@ -33,7 +33,7 @@ const initialize = async(req : express.Request, res : express.Response) => {
 
         await sql`
         CREATE TABLE IF NOT EXISTS "Users" (
-            "Id" SERIAL PRIMARY KEY,
+            "Id" INT PRIMARY KEY,
             "FirstName" VARCHAR(45) NOT NULL,
             "LastName" VARCHAR(45) NOT NULL,
             "Username" VARCHAR(45) NOT NULL,
@@ -107,7 +107,7 @@ const initialize = async(req : express.Request, res : express.Response) => {
             "Id" SERIAL PRIMARY KEY,
             "FirstName" VARCHAR(45),
             "LastName" VARCHAR(45),
-            "MobileNumber" VARCHAR(10),
+            "MobileNumber" VARCHAR(11),
             "Email" VARCHAR(45),
             "Company" VARCHAR(45),
             "Insurance" VARCHAR(45),

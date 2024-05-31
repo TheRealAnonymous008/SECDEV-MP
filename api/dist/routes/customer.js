@@ -7,6 +7,7 @@ const express = require("express");
 const customer_1 = __importDefault(require("../controllers/customer"));
 const router = express.Router();
 router.get('/all', customer_1.default.all);
+router.post('/create', customer_1.default.create);
 // router.get('/all', validateToken, validateRole(ALL_ROLES), controller.all);
 // router.get('/id', validateToken, validateRole(ALL_ROLES), controller.id);
 // router.post('/create', validateToken, validateRole([Roles.ADMIN, Roles.VIEW_EDIT]), controller.create);

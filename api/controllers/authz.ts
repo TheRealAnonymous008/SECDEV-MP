@@ -35,7 +35,7 @@ const register = (req : express.Request, res : express.Response) => {
     try {
         executeTransaction([
             buildTransactionStatement(query, values)], () => {
-            res.status(500).end()
+            res.status(200).end()
         })
             .then((result) => {
                 console.log(result);
@@ -44,7 +44,7 @@ const register = (req : express.Request, res : express.Response) => {
     }
     catch (err) {
         console.log(err);
-        res.status(200)
+        res.status(500)
     }
 
 }
