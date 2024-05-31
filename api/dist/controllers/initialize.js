@@ -108,6 +108,16 @@ const initialize = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             UNIQUE ("Id")
         );
         `;
+        yield (0, transaction_1.executeTransaction)([
+            (0, transaction_1.buildTransactionStatement)(`
+                INSERT INTO "Customer" ("FirstName", "LastName", "MobileNumber", "Email", "Company", "Insurance", "Remarks")
+                VALUES
+                ('John', 'Doe', '1234567890', 'john.doe@example.com', 'Example Corp', 'ABC Insurance', 'No remarks'),
+                ('Jane', 'Smith', '0987654321', 'jane.smith@example.com', 'Tech Solutions', 'XYZ Insurance', 'Important client'),
+                ('Alice', 'Johnson', '1112223333', 'alice.johnson@example.com', 'Innovate Inc', 'LMN Insurance', 'Frequent customer'),
+                ('Bob', 'Williams', '4445556666', 'bob.williams@example.com', 'BuildWorks', 'OPQ Insurance', 'Pending review');                
+                `)
+        ]);
         // Vehicle
         yield (0, postgres_1.sql) `
         DROP TABLE IF EXISTS "Vehicle" CASCADE;
