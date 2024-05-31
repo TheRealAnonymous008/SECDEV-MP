@@ -1,99 +1,32 @@
-import express = require('express');
-import { User } from '../models/user';
-import { Roles } from '../models/enum';
-import { makeUserArrayView, makeUserView } from '../projections/user';
-import { randomUUID } from 'crypto';
+import { sql } from '@vercel/postgres'
+import express = require('express')
 
-const all = async (req: express.Request, res: express.Response) => {
-    const count = await User.countDocuments({});
+const all = async(req : express.Request, res : express.Response) => {
+    try {
+        const result = 
+        await sql`
+        CREATE TABLE IF NOT EXISTS "Users" (
+            "Id" SERIAL PRIMARY KEY,
+            "FirstName" VARCHAR(45) NOT NULL,
+            "LastName" VARCHAR(45) NOT NULL,
+            "Username" VARCHAR(45) NOT NULL,
+            "Password" VARCHAR(45) NOT NULL,
+            "Role" INT NOT NULL,
+            "MobileNumber" VARCHAR(45) NOT NULL,
+            "Email" VARCHAR(45) NOT NULL,
+            UNIQUE ("Id"),
+            CONSTRAINT "fk_Users_RoleEnum"
+              FOREIGN KEY ("Role")
+              REFERENCES "RoleEnum" ("Id")
+              ON DELETE NO ACTION
+              ON UPDATE NO ACTION
+        );
+        `
 
-    User.find({})
-    .skip(parseInt(req.query.skip as string))
-    .limit(parseInt(req.query.limit as string))
-    .sort({$natural:-1})
-    .then ((data) => {
-        res.json({data: makeUserArrayView(data), count: count ? count : 0});
-    })
-};
-
-const id = async (req: express.Request, res: express.Response) => {
-    User.findOne({_id: req.query.id})
-    .then((data) => {
-        res.json(makeUserView(data));
-    })
-}
-
-const create = (req: express.Request, res: express.Response) => {
-    const id = randomUUID();
-    User.create({_id: id, ...req.body })
-    .then((result) => {
-        console.log(result);
-    })
-    .catch((err) => {
-        console.log(err);
-    })
-    .finally(() => {
-        res.json({id: id, ...req.body});
-        res.end();
-    });
-}
-
-const update = (req: express.Request, res: express.Response) => {
-    User.updateOne({_id : req.query.id}, req.body, (error) => {
-        if(error) {
-            console.log(error);
-            res.json(null);
-        }
-        else {
-            res.json(req.body);
-        }
-    })
-}
-
-const remove = (req : express.Request, res : express.Response) => {
-    User.deleteOne({_id: req.query.id})
-    .then ((result) => {
-        res.end();
-    })
-    .catch((error) => {
-        console.log(error);
-        res.end();
-    })
-}
-
-const filter = async (req: express.Request, res: express.Response) => {
-    const query : UserQuery = makeQuery(req);
-    const count = await User.find(makeMongooseQuery(query)).countDocuments();
-    
-    User.find(makeMongooseQuery(query))
-    .skip(parseInt(req.query.skip as string))
-    .limit(parseInt(req.query.limit as string))
-    .then((result) => {
-        res.json({data : makeUserArrayView(result), count: count ? count : 0});
-        res.end();
-    }).catch((err) => {
-        console.log(err);
-        res.end();
-    })
-}
-
-
-interface UserQuery {
-    username : string
-}
-
-const makeMongooseQuery = (q : UserQuery) : any => {
-    let query =  {
-        username: {$regex: ".*" + q.username + ".*" , $options: "i"}
+        res = res.status(200);
+        return res.json(result);
     }
-
-    return query;
-}
-
-const makeQuery = (req : express.Request) => {
-    return {
-        username: (req.query.username) ? (req.query.username as string) : ""
+    catch (error) {
+        return res.status(500)
     }
 }
-
-export default {all, id, create, update, remove, filter};
