@@ -38,6 +38,7 @@ app.use(cors(corsOptions));
 
 import indexRoute from './routes/index';
 import initRoute from './routes/init';
+import authzRoutes from './routes/authz'
 
 // TOOD: Put all routes here
 // route calls
@@ -46,7 +47,7 @@ import initRoute from './routes/init';
 if (app.get('env') === 'development') {
     app.use('/api/init', initRoute);
 }
-// app.use('/api/authz', authzRoutes);
+app.use('/api/authz', authzRoutes);
 // app.use('/api/vehicle', vehicleRoutes);
 // app.use('/api/order', orderRoutes);
 // app.use('/api/customer', customerRoutes);

@@ -1,6 +1,6 @@
 import { db, sql } from '@vercel/postgres'
 import express = require('express')
-import { executeTransaction } from '../txn/transaction';
+import { buildTransactionStatement, executeTransaction } from '../txn/transaction';
 
 
 
@@ -21,9 +21,9 @@ const initialize = async(req : express.Request, res : express.Response) => {
         `;
         
         await executeTransaction([
-            `INSERT INTO "RoleEnum" ("Id", "Name") VALUES (1, 'ADMIN');`,
-            `INSERT INTO "RoleEnum" ("Id", "Name") VALUES (2, 'VIEW EDIT');`,
-            `INSERT INTO "RoleEnum" ("Id", "Name") VALUES (3, 'VIEW');`
+            buildTransactionStatement(`INSERT INTO "RoleEnum" ("Id", "Name") VALUES (1, 'ADMIN');`),
+            buildTransactionStatement(`INSERT INTO "RoleEnum" ("Id", "Name") VALUES (2, 'VIEW EDIT');`),
+            buildTransactionStatement(`INSERT INTO "RoleEnum" ("Id", "Name") VALUES (3, 'VIEW');`)
         ])
 
         // Users
@@ -37,7 +37,7 @@ const initialize = async(req : express.Request, res : express.Response) => {
             "FirstName" VARCHAR(45) NOT NULL,
             "LastName" VARCHAR(45) NOT NULL,
             "Username" VARCHAR(45) NOT NULL,
-            "Password" VARCHAR(45) NOT NULL,
+            "Password" VARCHAR(64) NOT NULL,
             "Role" INT NOT NULL,
             "MobileNumber" VARCHAR(45) NOT NULL,
             "Email" VARCHAR(45) NOT NULL,
@@ -64,10 +64,10 @@ const initialize = async(req : express.Request, res : express.Response) => {
         `
 
         await executeTransaction([
-            `INSERT INTO "TypeEnum" ("Id", "Name") VALUES (1, 'PERSONAL');`,
-            `INSERT INTO "TypeEnum" ("Id", "Name") VALUES (2, 'WALK IN');`,
-            `INSERT INTO "TypeEnum" ("Id", "Name") VALUES (3, 'FLEET');`,
-            `INSERT INTO "TypeEnum" ("Id", "Name") VALUES (4, 'INSURANCE');`
+            buildTransactionStatement(`INSERT INTO "TypeEnum" ("Id", "Name") VALUES (1, 'PERSONAL');`),
+            buildTransactionStatement(`INSERT INTO "TypeEnum" ("Id", "Name") VALUES (2, 'WALK IN');`),
+            buildTransactionStatement(`INSERT INTO "TypeEnum" ("Id", "Name") VALUES (3, 'FLEET');`),
+            buildTransactionStatement(`INSERT INTO "TypeEnum" ("Id", "Name") VALUES (4, 'INSURANCE');`)
         ])
 
         // Status Enum
@@ -85,13 +85,13 @@ const initialize = async(req : express.Request, res : express.Response) => {
         `
 
         await executeTransaction([
-            `INSERT INTO "StatusEnum" ("Id", "Name") VALUES (1, 'PAID');`,
-            `INSERT INTO "StatusEnum" ("Id", "Name") VALUES (2, 'UNPAID');`,
-            `INSERT INTO "StatusEnum" ("Id", "Name") VALUES (3, 'OK');`,
-            `INSERT INTO "StatusEnum" ("Id", "Name") VALUES (4, 'PENDING');`,
-            `INSERT INTO "StatusEnum" ("Id", "Name") VALUES (5, 'WITH BALANCE');`,
-            `INSERT INTO "StatusEnum" ("Id", "Name") VALUES (6, 'QUOTE OR CHECK');`,
-            `INSERT INTO "StatusEnum" ("Id", "Name") VALUES (7, 'FOR LOA OR INVOICE');`
+            buildTransactionStatement(`INSERT INTO "StatusEnum" ("Id", "Name") VALUES (1, 'PAID');`),
+            buildTransactionStatement(`INSERT INTO "StatusEnum" ("Id", "Name") VALUES (2, 'UNPAID');`),
+            buildTransactionStatement(`INSERT INTO "StatusEnum" ("Id", "Name") VALUES (3, 'OK');`),
+            buildTransactionStatement(`INSERT INTO "StatusEnum" ("Id", "Name") VALUES (4, 'PENDING');`),
+            buildTransactionStatement(`INSERT INTO "StatusEnum" ("Id", "Name") VALUES (5, 'WITH BALANCE');`),
+            buildTransactionStatement(`INSERT INTO "StatusEnum" ("Id", "Name") VALUES (6, 'QUOTE OR CHECK');`),
+            buildTransactionStatement(`INSERT INTO "StatusEnum" ("Id", "Name") VALUES (7, 'FOR LOA OR INVOICE');`)
         ])
 
         // Customer 

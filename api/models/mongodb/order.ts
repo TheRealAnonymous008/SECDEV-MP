@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import mongoose, { Decimal128 } from "mongoose";
-import { StatusEnum, TypeEnum } from "./enum";
+import { StatusEnum, TypeEnum } from "../enum";
 
 const DEFAULT_STATUS = "UNPAID";
 const DEFAULT_TYPE = "PERSONAL";

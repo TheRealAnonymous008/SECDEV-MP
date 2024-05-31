@@ -26,9 +26,9 @@ const initialize = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         );
         `;
         yield (0, transaction_1.executeTransaction)([
-            `INSERT INTO "RoleEnum" ("Id", "Name") VALUES (1, 'ADMIN');`,
-            `INSERT INTO "RoleEnum" ("Id", "Name") VALUES (2, 'VIEW EDIT');`,
-            `INSERT INTO "RoleEnum" ("Id", "Name") VALUES (3, 'VIEW');`
+            (0, transaction_1.buildTransactionStatement)(`INSERT INTO "RoleEnum" ("Id", "Name") VALUES (1, 'ADMIN');`),
+            (0, transaction_1.buildTransactionStatement)(`INSERT INTO "RoleEnum" ("Id", "Name") VALUES (2, 'VIEW EDIT');`),
+            (0, transaction_1.buildTransactionStatement)(`INSERT INTO "RoleEnum" ("Id", "Name") VALUES (3, 'VIEW');`)
         ]);
         // Users
         yield (0, postgres_1.sql) `
@@ -40,7 +40,7 @@ const initialize = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             "FirstName" VARCHAR(45) NOT NULL,
             "LastName" VARCHAR(45) NOT NULL,
             "Username" VARCHAR(45) NOT NULL,
-            "Password" VARCHAR(45) NOT NULL,
+            "Password" VARCHAR(64) NOT NULL,
             "Role" INT NOT NULL,
             "MobileNumber" VARCHAR(45) NOT NULL,
             "Email" VARCHAR(45) NOT NULL,
@@ -65,10 +65,10 @@ const initialize = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         );
         `;
         yield (0, transaction_1.executeTransaction)([
-            `INSERT INTO "TypeEnum" ("Id", "Name") VALUES (1, 'PERSONAL');`,
-            `INSERT INTO "TypeEnum" ("Id", "Name") VALUES (2, 'WALK IN');`,
-            `INSERT INTO "TypeEnum" ("Id", "Name") VALUES (3, 'FLEET');`,
-            `INSERT INTO "TypeEnum" ("Id", "Name") VALUES (4, 'INSURANCE');`
+            (0, transaction_1.buildTransactionStatement)(`INSERT INTO "TypeEnum" ("Id", "Name") VALUES (1, 'PERSONAL');`),
+            (0, transaction_1.buildTransactionStatement)(`INSERT INTO "TypeEnum" ("Id", "Name") VALUES (2, 'WALK IN');`),
+            (0, transaction_1.buildTransactionStatement)(`INSERT INTO "TypeEnum" ("Id", "Name") VALUES (3, 'FLEET');`),
+            (0, transaction_1.buildTransactionStatement)(`INSERT INTO "TypeEnum" ("Id", "Name") VALUES (4, 'INSURANCE');`)
         ]);
         // Status Enum
         yield (0, postgres_1.sql) `
@@ -83,13 +83,13 @@ const initialize = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         );
         `;
         yield (0, transaction_1.executeTransaction)([
-            `INSERT INTO "StatusEnum" ("Id", "Name") VALUES (1, 'PAID');`,
-            `INSERT INTO "StatusEnum" ("Id", "Name") VALUES (2, 'UNPAID');`,
-            `INSERT INTO "StatusEnum" ("Id", "Name") VALUES (3, 'OK');`,
-            `INSERT INTO "StatusEnum" ("Id", "Name") VALUES (4, 'PENDING');`,
-            `INSERT INTO "StatusEnum" ("Id", "Name") VALUES (5, 'WITH BALANCE');`,
-            `INSERT INTO "StatusEnum" ("Id", "Name") VALUES (6, 'QUOTE OR CHECK');`,
-            `INSERT INTO "StatusEnum" ("Id", "Name") VALUES (7, 'FOR LOA OR INVOICE');`
+            (0, transaction_1.buildTransactionStatement)(`INSERT INTO "StatusEnum" ("Id", "Name") VALUES (1, 'PAID');`),
+            (0, transaction_1.buildTransactionStatement)(`INSERT INTO "StatusEnum" ("Id", "Name") VALUES (2, 'UNPAID');`),
+            (0, transaction_1.buildTransactionStatement)(`INSERT INTO "StatusEnum" ("Id", "Name") VALUES (3, 'OK');`),
+            (0, transaction_1.buildTransactionStatement)(`INSERT INTO "StatusEnum" ("Id", "Name") VALUES (4, 'PENDING');`),
+            (0, transaction_1.buildTransactionStatement)(`INSERT INTO "StatusEnum" ("Id", "Name") VALUES (5, 'WITH BALANCE');`),
+            (0, transaction_1.buildTransactionStatement)(`INSERT INTO "StatusEnum" ("Id", "Name") VALUES (6, 'QUOTE OR CHECK');`),
+            (0, transaction_1.buildTransactionStatement)(`INSERT INTO "StatusEnum" ("Id", "Name") VALUES (7, 'FOR LOA OR INVOICE');`)
         ]);
         // Customer 
         yield (0, postgres_1.sql) `

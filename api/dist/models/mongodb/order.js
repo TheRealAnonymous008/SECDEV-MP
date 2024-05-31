@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Order = void 0;
 const crypto_1 = require("crypto");
 const mongoose_1 = __importDefault(require("mongoose"));
-const enum_1 = require("./enum");
+const enum_1 = require("../enum");
 const DEFAULT_STATUS = "UNPAID";
 const DEFAULT_TYPE = "PERSONAL";
 const OrderSchema = new mongoose_1.default.Schema({

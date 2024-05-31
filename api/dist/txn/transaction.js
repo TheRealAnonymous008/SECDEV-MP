@@ -9,13 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.executeTransaction = void 0;
+exports.executeTransaction = exports.buildTransactionStatement = void 0;
 const postgres_1 = require("@vercel/postgres");
-const executeTransaction = (statements) => __awaiter(void 0, void 0, void 0, function* () {
+const buildTransactionStatement = (statement, values = []) => {
+    return {
+        statement: statement,
+        values: values
+    };
+};
+exports.buildTransactionStatement = buildTransactionStatement;
+const executeTransaction = (body) => __awaiter(void 0, void 0, void 0, function* () {
     const client = yield postgres_1.db.connect();
     yield (0, postgres_1.sql) `BEGIN;`;
-    statements.forEach((statement) => __awaiter(void 0, void 0, void 0, function* () {
-        client.query(statement);
+    body.forEach((txn) => __awaiter(void 0, void 0, void 0, function* () {
+        if (txn.values) {
+            client.query(txn.statement, txn.values);
+        }
+        else {
+            client.query(txn.statement);
+        }
     }));
     yield (0, postgres_1.sql) `END;`;
 });

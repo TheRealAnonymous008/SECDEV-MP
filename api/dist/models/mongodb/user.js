@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = exports.UserSchema = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const enum_1 = require("./enum");
+const enum_1 = require("../enum");
 const DEFAULT_ROLE = enum_1.Roles.VIEW;
 exports.UserSchema = new mongoose_1.default.Schema({
     _id: {
