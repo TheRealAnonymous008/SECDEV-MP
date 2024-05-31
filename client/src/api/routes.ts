@@ -8,5 +8,6 @@ export const ROUTES = {
     invoices : "/invoices",
     expenses : "/expenses",
     users : '/users',
+    profile : "/profile",
     home : "/home"
 }

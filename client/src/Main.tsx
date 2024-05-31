@@ -11,6 +11,7 @@ import UsersView from "./components/users/ViewUsers";
 import { useEffect, useState } from "react";
 import {Logout} from "./utils/Logout";  
 import { WithNav } from "./WithNav";
+import UserProfile from "./components/profile/UserProfile";
 
 
 
@@ -79,7 +80,13 @@ export const Main = () => {
                     </Route>
                 </Route>
             
-            
+                <Route path={ROUTES.profile} element={<ProtectedRoute isLoggedIn={isLoggedIn}/>}>
+                    <Route
+                        path={ROUTES.profile}
+                        element={<UserProfile />}
+                    />
+                </Route>
+
 
             <Route
                 path={ROUTES.logout}
