@@ -3,11 +3,15 @@ import express = require('express')
 
 
 const all = async(req : express.Request, res : express.Response) => {
-    try {
+    try {        
+        await sql`
+        DROP TABLE IF EXISTS "Users";
+        `
+
         await sql`
         DROP TABLE IF EXISTS "RoleEnum";
         `
-
+        
         await sql`
         CREATE TABLE IF NOT EXISTS "RoleEnum" (
             "Id" SERIAL NOT NULL,
@@ -17,10 +21,6 @@ const all = async(req : express.Request, res : express.Response) => {
         );
         `;
 
-        
-        await sql`
-        DROP TABLE IF EXISTS "Users";
-        `
         
         await sql`
         CREATE TABLE IF NOT EXISTS "Users" (
@@ -40,12 +40,11 @@ const all = async(req : express.Request, res : express.Response) => {
               ON UPDATE NO ACTION
         );
         `
-
-        return res.status(200);
+        return res.status(200).end(); 
     }
     catch (error) {
         console.log(error);
-        return res.status(500)
+        return res.status(500).end()
     }
 }
 

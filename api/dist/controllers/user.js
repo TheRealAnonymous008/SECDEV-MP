@@ -13,6 +13,9 @@ const postgres_1 = require("@vercel/postgres");
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield (0, postgres_1.sql) `
+        DROP TABLE IF EXISTS "Users";
+        `;
+        yield (0, postgres_1.sql) `
         DROP TABLE IF EXISTS "RoleEnum";
         `;
         yield (0, postgres_1.sql) `
@@ -23,11 +26,6 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             UNIQUE ("Id")
         );
         `;
-        console.log("Ran 2");
-        yield (0, postgres_1.sql) `
-        DROP TABLE IF EXISTS "Users";
-        `;
-        console.log("Ran 1");
         yield (0, postgres_1.sql) `
         CREATE TABLE IF NOT EXISTS "Users" (
             "Id" SERIAL PRIMARY KEY,
@@ -46,11 +44,11 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
               ON UPDATE NO ACTION
         );
         `;
-        return res.status(200);
+        return res.status(200).end();
     }
     catch (error) {
         console.log(error);
-        return res.status(500);
+        return res.status(500).end();
     }
 });
 exports.default = { all };
