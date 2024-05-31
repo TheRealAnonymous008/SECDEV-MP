@@ -73,6 +73,18 @@ const Register = () => {
                             onChange={(e) => { onInputChange("username", e.target.value); }} />
                         <br />
 
+                        <input type="text"
+                            name="email"
+                            placeholder="Email"
+                            onChange={(e) => { onInputChange("email", e.target.value); }} />
+                        <br />
+
+                        <input type="text"
+                            name="mobileNumber"
+                            placeholder="Phone Number"
+                            onChange={(e) => { onInputChange("mobileNumber", e.target.value); }} />
+                        <br />
+
                         <input type="password"
                             name="password"
                             placeholder="Password"

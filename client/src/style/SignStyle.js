@@ -47,14 +47,14 @@ const SignBox = styles.div`
     }
 
     > .RegistLogo {
-        padding-top: 15rem;
+        padding-top: 7.5rem;
         height: 10%;
         width: 100%;
         background: url(${logo});
         background-position: right;
-        background-position-x: 43rem;
+        background-position-x: 52rem;
         background-repeat: no-repeat;
-        background-size: 35rem 10rem;
+        background-size: 17.5rem 5rem;
         position: absolute;
     }
 `
@@ -133,7 +133,7 @@ const LoginDiv = styles.div`
 
 const RegisterDiv = styles.div`
     width: 52vw;
-    height: 35vh;
+    height: 40vh;
     display: block;
     z-index: 100;
     position: relative;
@@ -143,7 +143,7 @@ const RegisterDiv = styles.div`
         width: 85rem;
         border: none;
         justify-content: center;
-        padding-top: 13.5rem;
+        padding-top: 7rem;
         padding-left: 45rem;
     }
     
@@ -198,6 +198,7 @@ const SignUp = styles.div`
     .registerDialogue{
         width:100%;
         padding-left:4rem;
+        margin-top: 0.5rem;
     }
 `
 
