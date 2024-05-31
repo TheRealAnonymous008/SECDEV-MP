@@ -1,24 +1,18 @@
+require('dotenv').config()
+
 import express from 'express';
-import mongoose from 'mongoose';
 import { AddressInfo } from "net";
 import * as path from 'path';
 import cookieparser = require('cookie-parser');
-import {MongoClient} from 'mongodb';
 
 const bodyParser = require('body-parser');
-
 const debug = require('debug')('my express app');
 const app = express();
-
 const cors = require('cors');
 
-
-// connections
-const CONNECTION_STRING = "mongodb+srv://Admin:oA5IQmJy33VXrIzj@autoworks.jagxl7s.mongodb.net/autoworks?retryWrites=true&w=majority";
-const mongo = mongoose.connect("mongodb+srv://Admin:oA5IQmJy33VXrIzj@autoworks.jagxl7s.mongodb.net/autoworks?retryWrites=true&w=majority");
-
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, '../views'));
+
 app.set('view engine', 'pug');
 
 app.use(cookieparser());
@@ -31,7 +25,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Enable cors
 
 var corsOptions = {
-    origin: ["https://toptech-autoworks-logger.netlify.app", "http://localhost:5000", "https://autoworks-logger-api.netlify.app, https://autoworks-api.up.railway.app/api/authz/login"],
+    // origin: ["https://toptech-autoworks-logger.netlify.app", "http://localhost:5000", "https://autoworks-logger-api.netlify.app, https://autoworks-api.up.railway.app/api/authz/login"],
+    origin: ["http://localhost:5000"],
     optionsSuccessStatus: 200,
     credentials: true,
     allowedHeaders: ['Origin', 'X-Requested-With',  'Accept', 'Content-Type', 'Authorization', "access-control-allow-credentials"],
@@ -40,22 +35,19 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 // route imports
-import authzRoutes from './routes/authz';
-import customerRoutes from './routes/customer';
-import orderRoutes from './routes/order';
-import userRoutes from './routes/user';
-import vehicleRoutes from './routes/vehicle';
-import enumRoutes from './routes/enums';
 
 import indexRoute from './routes/index';
+import userRoutes from './routes/user';
+
+// TOOD: Put all routes here
 // route calls
-app.use('/api/authz', authzRoutes);
+// app.use('/api/authz', authzRoutes);
 app.use('/api/user', userRoutes);
-app.use('/api/vehicle', vehicleRoutes);
-app.use('/api/order', orderRoutes);
-app.use('/api/customer', customerRoutes);
-app.use('/api', enumRoutes);
-app.use('/', indexRoute);
+// app.use('/api/vehicle', vehicleRoutes);
+// app.use('/api/order', orderRoutes);
+// app.use('/api/customer', customerRoutes);
+// app.use('/api', enumRoutes);
+// app.use('/', indexRoute);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -66,7 +58,6 @@ app.use((req, res, next) => {
 
 
 // error handlers
-
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
@@ -88,9 +79,6 @@ app.use((err, req, res, next) => { // eslint-disable-line @typescript-eslint/no-
         error: {}
     });
 });
-
-const mongoClient = new MongoClient("mongodb+srv://Admin:oA5IQmJy33VXrIzj@autoworks.jagxl7s.mongodb.net/autoworks?retryWrites=true&w=majority");
-const clientPromise = mongoClient.connect();
 
 app.set('port', process.env.PORT || 3000);
 

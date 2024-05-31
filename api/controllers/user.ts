@@ -2,6 +2,8 @@ import { sql } from '@vercel/postgres'
 import express = require('express')
 
 const all = async(req : express.Request, res : express.Response) => {
+    console.log("Hello World")
+    console.log(process.env)
     try {
         const result = 
         await sql`
@@ -27,6 +29,9 @@ const all = async(req : express.Request, res : express.Response) => {
         return res.json(result);
     }
     catch (error) {
+        console.log(error);
         return res.status(500)
     }
 }
+
+export default {all};
