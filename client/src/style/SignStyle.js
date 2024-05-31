@@ -47,7 +47,7 @@ const SignBox = styles.div`
     }
 
     > .RegistLogo {
-        padding-top: 15rem;
+        padding-top: 10.5rem;
         height: 10%;
         width: 100%;
         background: url(${logo});
@@ -133,7 +133,7 @@ const LoginDiv = styles.div`
 
 const RegisterDiv = styles.div`
     width: 52vw;
-    height: 35vh;
+    height: 40vh;
     display: block;
     z-index: 100;
     position: relative;
@@ -143,7 +143,7 @@ const RegisterDiv = styles.div`
         width: 85rem;
         border: none;
         justify-content: center;
-        padding-top: 13.5rem;
+        padding-top: 10.5rem;
         padding-left: 45rem;
     }
     
