@@ -4,12 +4,10 @@
 // import { ALL_ROLES, Roles } from '../models/enum';
 // import { makeCustomerArrayView, makeCustomerView } from '../projections/customer';
 // import { executeTransaction, buildTransactionStatement } from '../txn/transaction';
-
 // // No SQL
 // /*
 // const all = async (req: express.Request, res: express.Response) => {
 //     const count = await Customer.countDocuments({});
-
 //     Customer.find({})
 //     .skip(parseInt(req.query.skip as string))
 //     .limit(parseInt(req.query.limit as string))
@@ -19,20 +17,16 @@
 //     })
 // }
 // */
-
 // // SQL
 // const all = async (req: express.Request, res: express.Response) => {
-
 //     const query = `
 //         SELECT * FROM "Customer"
 //         LIMIT $1 OFFSET $2;
 //     `;
-
 //     const values = [
 //         req.query.limit,
 //         req.query.skip
 //     ];
-
 //     try {
 //         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
 //             .then((result) => {
@@ -44,7 +38,6 @@
 //         res.status(200)
 //     }
 // }
-
 // // No SQL
 // /*
 // const id = async (req: express.Request, res: express.Response) => {
@@ -54,19 +47,15 @@
 //     })
 // }
 // */
-
 // // SQL
 // const id = async (req: express.Request, res: express.Response) => {
-
 //     const query = `
 //         SELECT * FROM "Customer" WHERE "Id" = $1
 //         RETURNING "Id";
 //     `;
-
 //     const values = [
 //         req.query.id
 //     ];
-
 //     try {
 //         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
 //             .then((result) => {
@@ -78,16 +67,13 @@
 //         res.status(200)
 //     }
 // }
-
 // const create = (req: express.Request, res: express.Response) => {
 //     const id = randomUUID()
-
 //     const query = `
 //         INSERT INTO "Customer" ("Id", "FirstName", "LastName", "MobileNumber", "Email", "Company", "Insurance", "Remarks")
 //         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 //         RETURNING "Id";
 //     `;
-
 //     const values = [
 //         id,
 //         req.body.firstName,
@@ -98,7 +84,6 @@
 //         req.body.insurance,
 //         req.body.remarks
 //     ];
-
 //     try {
 //         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
 //             .then((result) => {
@@ -110,7 +95,6 @@
 //         res.status(200)
 //     }
 // }
-
 // // SQL
 // const update = (req: express.Request, res: express.Response) => {
 //     const query = `
@@ -118,7 +102,6 @@
 //         WHERE "Id" = $8
 //         RETURNING "Id";
 //     `;
-
 //     const values = [
 //         req.body.firstName,
 //         req.body.lastName,
@@ -129,7 +112,6 @@
 //         req.body.remarks,
 //         req.query.id
 //     ];
-
 //     try {
 //         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
 //             .then((result) => {
@@ -140,9 +122,7 @@
 //         console.log(err);
 //         res.status(200)
 //     }
-
 // }
-
 // // No SQL
 // /*
 // const remove = (req : express.Request, res : express.Response) => {
@@ -156,19 +136,15 @@
 //     })
 // }
 // */
-
 // // SQL
 // const remove = (req : express.Request, res : express.Response) => {
-
 //     const query = `
 //         DELETE FROM "Customer" WHERE "Id" = $1
 //         RETURNING "Id";
 //     `;
-
 //     const values = [
 //         req.query.id
 //     ];
-
 //     try {
 //         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
 //             .then((result) => {
@@ -179,15 +155,12 @@
 //         console.log(err);
 //         res.status(200)
 //     }
-
 // }
-
 // // No SQL
 // /*
 // const filter = async (req: express.Request, res: express.Response) => {
 //     const query : CustomerQuery = makeQuery(req);
 //     const count = await getCount(query);
-
 //     Customer.aggregate([
 //         {
 //             $project : {
@@ -218,13 +191,10 @@
 //     })
 // }
 // */
-
 // // SQL
 // const filter = async (req: express.Request, res: express.Response) => {
-
 //     const query : CustomerQuery = makeQuery(req);
 //     const count = await getCount(query);
-
 //     const query = `
 //         SELECT * FROM "Customer"
 //         WHERE "FirstName" LIKE $1
@@ -236,7 +206,6 @@
 //         AND "Remarks" LIKE $7
 //         LIMIT $8 OFFSET $9;
 //     `;
-
 //     const values = [
 //         query.name,
 //         query.email,
@@ -247,7 +216,6 @@
 //         req.query.limit,
 //         req.query.skip
 //     ];
-
 //     try {
 //         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
 //             .then((result) => {
@@ -261,7 +229,6 @@
 //         res.status(200)
 //     }
 // }
-
 // // No SQL
 // /*
 // const getCount = async (query) => {
@@ -286,7 +253,6 @@
 //     .count("count")
 // }
 // */
-
 // // SQL
 // const getCount = async (query) => {
 //     const query = `
@@ -299,7 +265,6 @@
 //         AND "Insurance" LIKE $6
 //         AND "Remarks" LIKE $7;
 //     `;
-
 //     const values = [
 //         query.name,
 //         query.email,
@@ -308,7 +273,6 @@
 //         query.insurance,
 //         query.remarks
 //     ];
-
 //     try {
 //         return await executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
 //     }
@@ -316,9 +280,7 @@
 //         console.log(err);
 //         res.status(200)
 //     }
-
 // }
-
 // interface CustomerQuery {
 //     name : string,
 //     email: string,
@@ -327,7 +289,6 @@
 //     insurance: string,
 //     remarks: string
 // }
-
 // const makeMongooseQuery = (q : CustomerQuery) : any => {
 //     let query =  {
 //         name: {$regex: ".*" + q.name + ".*" , $options: "i"},
@@ -337,10 +298,8 @@
 //         insurance: {$regex: ".*" + q.insurance + ".*" , $options: "i"},
 //         remarks: {$regex: ".*" + q.remarks + ".*" , $options: "i"}
 //     }
-
 //     return query;
 // }
-
 // const makeQuery = (req : express.Request) : CustomerQuery => {
 //     return {
 //         name: (req.query.name) ? (req.query.name as string) : "",
@@ -351,5 +310,4 @@
 //         remarks: (req.query.remarks) ? (req.query.remarks as string) : ""
 //     }
 // }
-
 // export default {all, id, create, update, remove, filter};
