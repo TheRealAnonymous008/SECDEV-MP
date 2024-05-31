@@ -50,6 +50,9 @@ const initialize = async(req : express.Request, res : express.Response) => {
         );
         `
 
+        
+
+
         // Type Enum
         await sql`
         DROP TABLE IF EXISTS "TypeEnum" CASCADE;

@@ -1,4 +1,4 @@
-import { sql, db, VercelPoolClient, Query } from "@vercel/postgres"
+import { sql, db, VercelPoolClient, Query, QueryResult } from "@vercel/postgres"
 
 export interface TransactionStatement {
     statement : string,
@@ -12,7 +12,7 @@ export const buildTransactionStatement = (statement : string, values : any[] = [
     };
 }
 
-export const executeTransaction = async (body : TransactionStatement[], errhandler? : () => void ) => {
+export const executeTransaction = async (body : TransactionStatement[], errhandler? : () => void ) : Promise<QueryResult[]> => {
     try {
         const client = await db.connect();
         const results = []

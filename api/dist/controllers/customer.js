@@ -1,43 +1,41 @@
-// import { randomUUID } from 'crypto';
-// import express = require('express');
-// import Bcrypt = require('bcryptjs');
-// import { ALL_ROLES, Roles } from '../models/enum';
-// import { makeCustomerArrayView, makeCustomerView } from '../projections/customer';
-// import { executeTransaction, buildTransactionStatement } from '../txn/transaction';
-// // No SQL
-// /*
-// const all = async (req: express.Request, res: express.Response) => {
-//     const count = await Customer.countDocuments({});
-//     Customer.find({})
-//     .skip(parseInt(req.query.skip as string))
-//     .limit(parseInt(req.query.limit as string))
-//     .sort({$natural:-1})
-//     .then ((data) => {
-//         res.json({data: makeCustomerArrayView(data), count: count ? count : 0});
-//     })
-// }
-// */
-// // SQL
-// const all = async (req: express.Request, res: express.Response) => {
-//     const query = `
-//         SELECT * FROM "Customer"
-//         LIMIT $1 OFFSET $2;
-//     `;
-//     const values = [
-//         req.query.limit,
-//         req.query.skip
-//     ];
-//     try {
-//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-//             .then((result) => {
-//                 res.json({data: makeCustomerArrayView(result), count: count ? count : 0});
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(200)
-//     }
-// }
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const customer_1 = require("../projections/customer");
+const transaction_1 = require("../txn/transaction");
+const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const query = `
+        SELECT * FROM "Customer"
+        LIMIT $1 OFFSET $2;
+    `;
+    const values = [
+        req.query.limit,
+        req.query.skip
+    ];
+    try {
+        (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
+            .then((result) => {
+            const count = result[0].rowCount;
+            const rows = result[0].rows;
+            res.json({
+                data: (0, customer_1.makeCustomerArrayView)(rows),
+                count: count
+            });
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(200);
+    }
+});
 // // No SQL
 // /*
 // const id = async (req: express.Request, res: express.Response) => {
@@ -310,4 +308,4 @@
 //         remarks: (req.query.remarks) ? (req.query.remarks as string) : ""
 //     }
 // }
-// export default {all, id, create, update, remove, filter};
+exports.default = { all };

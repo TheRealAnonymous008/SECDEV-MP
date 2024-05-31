@@ -1,49 +1,39 @@
-// import { randomUUID } from 'crypto';
-// import express = require('express');
-// import Bcrypt = require('bcryptjs');
-// import { ALL_ROLES, Roles } from '../models/enum';
-// import { makeCustomerArrayView, makeCustomerView } from '../projections/customer';
-// import { executeTransaction, buildTransactionStatement } from '../txn/transaction';
+import { randomUUID } from 'crypto';
+import express = require('express');
+import Bcrypt = require('bcryptjs');
+import { ALL_ROLES, Roles } from '../models/enum';
+import { makeCustomerArrayView, makeCustomerView } from '../projections/customer';
+import { executeTransaction, buildTransactionStatement } from '../txn/transaction';
 
-// // No SQL
-// /*
-// const all = async (req: express.Request, res: express.Response) => {
-//     const count = await Customer.countDocuments({});
+const all = async (req: express.Request, res: express.Response) => {
 
-//     Customer.find({})
-//     .skip(parseInt(req.query.skip as string))
-//     .limit(parseInt(req.query.limit as string))
-//     .sort({$natural:-1})
-//     .then ((data) => {
-//         res.json({data: makeCustomerArrayView(data), count: count ? count : 0});
-//     })
-// }
-// */
+    const query = `
+        SELECT * FROM "Customer"
+        LIMIT $1 OFFSET $2;
+    `;
 
-// // SQL
-// const all = async (req: express.Request, res: express.Response) => {
+    const values = [
+        req.query.limit,
+        req.query.skip
+    ];
 
-//     const query = `
-//         SELECT * FROM "Customer"
-//         LIMIT $1 OFFSET $2;
-//     `;
-
-//     const values = [
-//         req.query.limit,
-//         req.query.skip
-//     ];
-
-//     try {
-//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-//             .then((result) => {
-//                 res.json({data: makeCustomerArrayView(result), count: count ? count : 0});
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(200)
-//     }
-// }
+    try {
+        executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
+            .then((result) => {
+                const count = result[0].rowCount
+                const rows = result[0].rows;
+                res.json({
+                    data: makeCustomerArrayView(rows),
+                    count : count 
+                });
+                res.status(500).end();
+            })
+    }
+    catch (err) {
+        console.log(err);
+        res.status(200).end();
+    }
+}
 
 // // No SQL
 // /*
@@ -352,4 +342,4 @@
 //     }
 // }
 
-// export default {all, id, create, update, remove, filter};
+export default {all};

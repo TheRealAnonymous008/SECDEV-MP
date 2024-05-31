@@ -53,6 +53,7 @@ var corsOptions = {
 app.use(cors(corsOptions));
 const init_1 = __importDefault(require("./routes/init"));
 const authz_1 = __importDefault(require("./routes/authz"));
+const customer_1 = __importDefault(require("./routes/customer"));
 // TOOD: Put all routes here
 // route calls
 // Initializer is restricted to dev environment for security.
@@ -62,7 +63,7 @@ if (app.get('env') === 'development') {
 app.use('/api/authz', authz_1.default);
 // app.use('/api/vehicle', vehicleRoutes);
 // app.use('/api/order', orderRoutes);
-// app.use('/api/customer', customerRoutes);
+app.use('/api/customer', customer_1.default);
 // app.use('/api', enumRoutes);
 // app.use('/', indexRoute);
 // catch 404 and forward to error handler

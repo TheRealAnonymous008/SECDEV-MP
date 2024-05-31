@@ -2,20 +2,20 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeCustomerArrayView = exports.makeCustomerView = void 0;
 const makeCustomerView = (document) => {
+    console.log(document);
     if (document == null)
         return {};
     return {
-        id: document._id,
         name: {
-            firstName: document.firstName,
-            lastName: document.lastName,
-            val: document.firstName + " " + document.lastName,
+            firstName: document.FirstName,
+            lastName: document.LastName,
+            val: document.FirstName + " " + document.LastName,
         },
-        mobileNumber: document.mobileNumber,
-        email: document.email,
-        company: document.company,
-        insurance: document.insurance,
-        remarks: document.remarks
+        mobileNumber: document.MobileNumber,
+        email: document.Email,
+        company: document.Company,
+        insurance: document.Insurance,
+        remarks: document.Remarks
     };
 };
 exports.makeCustomerView = makeCustomerView;
