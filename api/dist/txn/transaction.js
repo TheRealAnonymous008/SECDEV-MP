@@ -20,9 +20,10 @@ const buildTransactionStatement = (statement, values = []) => {
 exports.buildTransactionStatement = buildTransactionStatement;
 const executeTransaction = (body, errhandler) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log("Called", body);
         const client = yield postgres_1.db.connect();
         const results = [];
-        yield (0, postgres_1.sql) `BEGIN;`;
+        yield client.query(`BEGIN;`);
         body.forEach((txn) => __awaiter(void 0, void 0, void 0, function* () {
             if (txn.values) {
                 yield client.query(txn.statement, txn.values)
@@ -44,7 +45,7 @@ const executeTransaction = (body, errhandler) => __awaiter(void 0, void 0, void 
                 });
             }
         }));
-        yield (0, postgres_1.sql) `END;`;
+        yield client.query(`END;`);
         return results;
     }
     catch (error) {

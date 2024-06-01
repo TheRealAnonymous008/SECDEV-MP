@@ -26,6 +26,7 @@ const Login = (props: {setIsLoggedIn : Function}) => {
     const onSubmit = (event: React.SyntheticEvent<HTMLInputElement>) => {
         props.setIsLoggedIn(true);
         sessionStorage.setItem("isLoggedIn", "true");
+        sessionStorage.setItem("role", "ADMIN");
         navigation(ROUTES.orders);
 
         // createAPIEndpoint(ENDPOINTS.login).post(state)

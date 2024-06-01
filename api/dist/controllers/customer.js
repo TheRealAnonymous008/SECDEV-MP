@@ -31,12 +31,12 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 data: (0, customer_1.makeCustomerArrayView)(rows),
                 count: count
             });
-            res.status(200).end();
+            res.status(200);
         });
     }
     catch (err) {
         console.log(err);
-        res.status(500).end();
+        res.status(500);
     }
 });
 const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -50,14 +50,12 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
             .then((result) => {
             const rows = result[0].rows;
-            res.json((0, customer_1.makeCustomerView)(rows[0]))
-                .status(200)
-                .end();
+            res.status(200).json((0, customer_1.makeCustomerView)(rows[0]));
         });
     }
     catch (err) {
         console.log(err);
-        res.status(500).end();
+        res.status(500);
     }
 });
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -80,13 +78,12 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
             .then((result) => {
-            res.json(Object.assign(Object.assign({}, req.body), { id: id }));
-            res.status(200).end();
+            res.status(200).json(Object.assign(Object.assign({}, req.body), { id: id }));
         });
     }
     catch (err) {
         console.log(err);
-        res.status(500).end();
+        res.status(500);
     }
 });
 const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -108,48 +105,33 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
             .then((result) => {
-            res.json(req.body);
-            res.status(200).end();
+            res.status(200).json(req.body);
         });
     }
     catch (err) {
         console.log(err);
-        res.status(500).end();
+        res.status(500);
     }
 });
-// // No SQL
-// /*
-// const remove = (req : express.Request, res : express.Response) => {
-//     Customer.deleteOne({_id: req.query.id})
-//     .then ((result) => {
-//         res.end();
-//     })
-//     .catch((error) => {
-//         console.log(error);
-//         res.end();
-//     })
-// }
-// */
-// // SQL
-// const remove = (req : express.Request, res : express.Response) => {
-//     const query = `
-//         DELETE FROM "Customer" WHERE "Id" = $1
-//         RETURNING "Id";
-//     `;
-//     const values = [
-//         req.query.id
-//     ];
-//     try {
-//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-//             .then((result) => {
-//                 res.end();
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(200)
-//     }
-// }
+const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const query = `
+        DELETE FROM "Customer" WHERE "Id" = $1
+        RETURNING "Id";
+    `;
+    const values = [
+        req.query.id
+    ];
+    try {
+        (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
+            .then((result) => {
+            res.status(200);
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(200);
+    }
+});
 // // No SQL
 // /*
 // const filter = async (req: express.Request, res: express.Response) => {
@@ -304,4 +286,4 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 //         remarks: (req.query.remarks) ? (req.query.remarks as string) : ""
 //     }
 // }
-exports.default = { all, id, create, update };
+exports.default = { all, id, create, update, remove };

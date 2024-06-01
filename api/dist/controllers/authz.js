@@ -39,7 +39,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         (0, transaction_1.executeTransaction)([
             (0, transaction_1.buildTransactionStatement)(query, values)
         ], () => {
-            res.status(200).end();
+            res.status(200);
         })
             .then((result) => {
             console.log(result);
@@ -49,5 +49,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(err);
         res.status(500).end();
     }
+});
+const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.default = { register };

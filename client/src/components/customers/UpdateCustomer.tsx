@@ -13,6 +13,8 @@ export const UpdateCustomer = (props : {customer : Customer, observer : Function
     const [isVisible, setIsVisible] = useState<boolean>(false);
     
     useEffect(() => {
+        if (data == undefined)
+            return;
         if (isRole("VIEW"))
             return;
 

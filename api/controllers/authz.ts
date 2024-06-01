@@ -35,7 +35,7 @@ const register = async (req : express.Request, res : express.Response) => {
     try {
         executeTransaction([
             buildTransactionStatement(query, values)], () => {
-            res.status(200).end();
+            res.status(200);
         })
             .then((result) => {
                 console.log(result);
@@ -45,6 +45,10 @@ const register = async (req : express.Request, res : express.Response) => {
         console.log(err);
         res.status(500).end();
     }
+
+}
+
+const login = async (req : express.Request, res : express.Response) => {
 
 }
 

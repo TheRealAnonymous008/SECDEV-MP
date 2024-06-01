@@ -14,9 +14,11 @@ export const buildTransactionStatement = (statement : string, values : any[] = [
 
 export const executeTransaction = async (body : TransactionStatement[], errhandler? : () => void ) : Promise<QueryResult[]> => {
     try {
-        const client = await db.connect();
+        console.log("Called", body)
+        const client = await db.connect()
+        
         const results = []
-        await sql`BEGIN;`
+        await client.query(`BEGIN;`)
 
         body.forEach(async (txn : TransactionStatement) => {
             if(txn.values){
@@ -39,7 +41,7 @@ export const executeTransaction = async (body : TransactionStatement[], errhandl
             }
         })
 
-        await sql`END;`
+        await client.query(`END;`)
 
         return results;
     }

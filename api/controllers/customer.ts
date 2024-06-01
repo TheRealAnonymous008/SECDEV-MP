@@ -27,12 +27,12 @@ const all = async (req: express.Request, res: express.Response) => {
                     data: makeCustomerArrayView(rows),
                     count : count 
                 });
-                res.status(200).end();
+                res.status(200);
             })
     }
     catch (err) {
         console.log(err);
-        res.status(500).end();
+        res.status(500);
     }
 }
 
@@ -50,14 +50,13 @@ const id = async (req: express.Request, res: express.Response) => {
         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
             .then((result) => {
                 const rows = result[0].rows;
-                res.json(makeCustomerView(rows[0]))
-                     .status(200)
-                     .end();
+                res.status(200).json(makeCustomerView(rows[0]))
+                     
             })
     }
     catch (err) {
         console.log(err);
-        res.status(500).end();
+        res.status(500);
     }
 }
 
@@ -84,13 +83,12 @@ const create = async (req: express.Request, res: express.Response) => {
     try {
         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
             .then((result) => {
-                res.json({...req.body, id : id})
-                res.status(200).end();
+                res.status(200).json({...req.body, id : id})
             })
     }
     catch (err) {
         console.log(err);
-        res.status(500).end();
+        res.status(500);
     }
 }
 
@@ -115,32 +113,17 @@ const update = async (req: express.Request, res: express.Response) => {
     try {
         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
             .then((result) => {
-                res.json(req.body);
-                res.status(200).end();
+                res.status(200).json(req.body);
             })
     }
     catch (err) {
         console.log(err);
-        res.status(500).end();
+        res.status(500);
     }
 
 }
 
-// // No SQL
-// /*
-// const remove = (req : express.Request, res : express.Response) => {
-//     Customer.deleteOne({_id: req.query.id})
-//     .then ((result) => {
-//         res.end();
-//     })
-//     .catch((error) => {
-//         console.log(error);
-//         res.end();
-//     })
-// }
-// */
 
-// SQL
 const remove = async (req : express.Request, res : express.Response) => {
 
     const query = `
@@ -155,7 +138,7 @@ const remove = async (req : express.Request, res : express.Response) => {
     try {
         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
             .then((result) => {
-                res.status(200).end();
+                res.status(200);
             })
     }
     catch (err) {
