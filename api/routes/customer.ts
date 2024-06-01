@@ -9,7 +9,7 @@ router.get('/all', controller.all);
 router.get('/id', controller.id);
 router.post('/create', controller.create);
 router.post('/update', controller.update);
-router.delete('/deltee', controller.remove)
+router.delete('/delete', controller.remove)
 
 // router.get('/all', validateToken, validateRole(ALL_ROLES), controller.all);
 // router.get('/id', validateToken, validateRole(ALL_ROLES), controller.id);

@@ -6,6 +6,7 @@ const makeCustomerView = (document) => {
     if (document == null)
         return {};
     return {
+        id: document.Id,
         name: {
             firstName: document.FirstName,
             lastName: document.LastName,

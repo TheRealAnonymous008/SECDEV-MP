@@ -4,6 +4,7 @@ export const makeCustomerView = (document) => {
         return {};
         
     return {
+        id: document.Id,
         name: {
             firstName: document.FirstName,
             lastName: document.LastName,
