@@ -7,7 +7,7 @@ interface IRepositiory<T> {
     retieveById : (id :  number) => Promise<T | undefined>;
     insert : (object) => Promise<number>;
     update(id : number, object) : Promise<number>, 
-    // delete(id : number) : Promise<number>  
+    delete(id : number) : Promise<number>  
 };
 
 export const CustomerRepository : IRepositiory<Customer> = {
@@ -103,8 +103,21 @@ export const CustomerRepository : IRepositiory<Customer> = {
                 }
             )
         })
-    }
-    // delete(id : number) : Promise<number> {
+    },
 
-    // }
+    delete(id : number) : Promise<number> {
+        let query =`DELETE FROM customer WHERE id = ${id}`
+        
+        return new Promise((resolve, reject) => {
+            connection.execute<ResultSetHeader>(
+                query,
+                (err, res) => {
+                    if (err) reject(err);
+                    else{
+                        resolve(id)
+                    }
+                }
+            )
+        })
+    }
 }

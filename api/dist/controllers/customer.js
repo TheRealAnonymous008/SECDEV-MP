@@ -113,25 +113,27 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500);
     }
 });
-// const remove = async (req : express.Request, res : express.Response) => {
-//     const query = `
-//         DELETE FROM "Customer" WHERE "Id" = $1
-//         RETURNING "Id";
-//     `;
-//     const values = [
-//         req.query.id
-//     ];
-//     try {
-//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-//             .then((result) => {
-//                 res.status(200);
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(200)
-//     }
-// }
+const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        customer_2.CustomerRepository.delete(parseInt(req.query.id.toString()))
+            .then((result) => {
+            console.log(result);
+            if (result == undefined) {
+                res.status(500).end();
+                return;
+            }
+            res.status(200).end();
+        })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+    }
+});
 // // No SQL
 // /*
 // const filter = async (req: express.Request, res: express.Response) => {
@@ -286,4 +288,4 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 //         remarks: (req.query.remarks) ? (req.query.remarks as string) : ""
 //     }
 // }
-exports.default = { all, id, create, update };
+exports.default = { all, id, create, update, remove };

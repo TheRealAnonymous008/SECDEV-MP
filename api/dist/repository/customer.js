@@ -80,7 +80,17 @@ exports.CustomerRepository = {
                 }
             });
         });
+    },
+    delete(id) {
+        let query = `DELETE FROM customer WHERE id = ${id}`;
+        return new Promise((resolve, reject) => {
+            connection_1.default.execute(query, (err, res) => {
+                if (err)
+                    reject(err);
+                else {
+                    resolve(id);
+                }
+            });
+        });
     }
-    // delete(id : number) : Promise<number> {
-    // }
 };
