@@ -82,33 +82,37 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500);
     }
 });
-// const update = async (req: express.Request, res: express.Response) => {
-//     const query = `
-//         UPDATE "Customer" SET "FirstName" = $1, "LastName" = $2, "MobileNumber" = $3, "Email" = $4, "Company" = $5, "Insurance" = $6, "Remarks" = $7
-//         WHERE "Id" = $8
-//         RETURNING "Id";
-//     `;
-//     const values = [
-//         req.body.firstName,
-//         req.body.lastName,
-//         req.body.mobileNumber,
-//         req.body.email,
-//         req.body.company,
-//         req.body.insurance,
-//         req.body.remarks,
-//         req.query.id
-//     ];
-//     try {
-//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-//             .then((result) => {
-//                 res.status(200).json(req.body);
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(500);
-//     }
-// }
+const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const customer = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        mobileNumber: req.body.mobileNumber,
+        email: req.body.email,
+        company: req.body.company,
+        insurance: req.body.insurance,
+        remarks: req.body.remarks
+    };
+    try {
+        customer_2.CustomerRepository.update(parseInt(req.query.id.toString()), customer)
+            .then((result) => {
+            console.log(result);
+            if (result == undefined) {
+                res.status(500).end();
+                return;
+            }
+            res.json((0, customer_1.makeCustomerView)(Object.assign(Object.assign({}, customer), { id: result })));
+            res.status(200).end();
+        })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+    }
+});
 // const remove = async (req : express.Request, res : express.Response) => {
 //     const query = `
 //         DELETE FROM "Customer" WHERE "Id" = $1
@@ -282,4 +286,4 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 //         remarks: (req.query.remarks) ? (req.query.remarks as string) : ""
 //     }
 // }
-exports.default = { all, id, create };
+exports.default = { all, id, create, update };

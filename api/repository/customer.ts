@@ -6,7 +6,7 @@ interface IRepositiory<T> {
     retrieveAll: (limit? : number, offset? : number) => Promise<T[]>;
     retieveById : (id :  number) => Promise<T | undefined>;
     insert : (object) => Promise<number>;
-    // update(id : number, object : T) : Promise<number>, 
+    update(id : number, object) : Promise<number>, 
     // delete(id : number) : Promise<number>  
 };
 
@@ -75,10 +75,35 @@ export const CustomerRepository : IRepositiory<Customer> = {
                 }
             )
         })
-    }
-    // update(id : number, object : Customer) : Promise<number> {
+    },
 
-    // }
+    update(id : number, object : CustomerRow) : Promise<number> {
+        let values = [
+            object.firstName,
+            object.lastName,
+            object.mobileNumber,
+            object.email,
+            object.company,
+            object.insurance,
+            object.remarks,
+            id
+        ]
+
+        let query ="UPDATE customer SET FirstName = ?, LastName = ?, MobileNumber = ?, Email = ?, Company = ?, Insurance = ?, Remarks = ? WHERE Id=?"
+        
+        return new Promise((resolve, reject) => {
+            connection.execute<ResultSetHeader>(
+                query,
+                values,
+                (err, res) => {
+                    if (err) reject(err);
+                    else{
+                        resolve(id)
+                    }
+                }
+            )
+        })
+    }
     // delete(id : number) : Promise<number> {
 
     // }

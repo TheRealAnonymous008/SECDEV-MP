@@ -58,9 +58,29 @@ exports.CustomerRepository = {
                 }
             });
         });
+    },
+    update(id, object) {
+        let values = [
+            object.firstName,
+            object.lastName,
+            object.mobileNumber,
+            object.email,
+            object.company,
+            object.insurance,
+            object.remarks,
+            id
+        ];
+        let query = "UPDATE customer SET FirstName = ?, LastName = ?, MobileNumber = ?, Email = ?, Company = ?, Insurance = ?, Remarks = ? WHERE Id=?";
+        return new Promise((resolve, reject) => {
+            connection_1.default.execute(query, values, (err, res) => {
+                if (err)
+                    reject(err);
+                else {
+                    resolve(id);
+                }
+            });
+        });
     }
-    // update(id : number, object : Customer) : Promise<number> {
-    // }
     // delete(id : number) : Promise<number> {
     // }
 };

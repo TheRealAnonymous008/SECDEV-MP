@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/all', customer_1.default.all);
 router.get('/id', customer_1.default.id);
 router.post('/create', customer_1.default.create);
-// router.post('/update', controller.update);
+router.post('/update', customer_1.default.update);
 // router.delete('/delete', controller.remove)
 // router.get('/all', validateToken, validateRole(ALL_ROLES), controller.all);
 // router.get('/id', validateToken, validateRole(ALL_ROLES), controller.id);
