@@ -8,7 +8,7 @@ const customer_1 = __importDefault(require("../controllers/customer"));
 const router = express.Router();
 router.get('/all', customer_1.default.all);
 router.get('/id', customer_1.default.id);
-// router.post('/create', controller.create);
+router.post('/create', customer_1.default.create);
 // router.post('/update', controller.update);
 // router.delete('/delete', controller.remove)
 // router.get('/all', validateToken, validateRole(ALL_ROLES), controller.all);

@@ -14,8 +14,10 @@ const customer_2 = require("../repository/customer");
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     customer_2.CustomerRepository.retrieveAll()
         .then((result) => {
-        if (result.length == 0)
+        if (result.length == 0) {
+            res.status(500).end();
             return;
+        }
         res.json({
             data: (0, customer_1.makeCustomerArrayView)(result),
             count: result.length
@@ -32,8 +34,10 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         let id = parseInt(req.query.id.toString());
         customer_2.CustomerRepository.retieveById(id)
             .then((result) => {
-            if (result.length == 0)
+            if (result.length == 0) {
+                res.status(500).end();
                 return;
+            }
             res.json((0, customer_1.makeCustomerView)(result));
             res.status(200).end();
         })
@@ -47,34 +51,37 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).end();
     }
 });
-// const create = async (req: express.Request, res: express.Response) => {
-//     const id = randomInt(MAX_INTEGER)
-//     const query = `
-//         INSERT INTO "Customer" ("Id", "FirstName", "LastName", "MobileNumber", "Email", "Company", "Insurance", "Remarks")
-//         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-//         RETURNING "Id";
-//     `;
-//     const values = [
-//         id,
-//         req.body.firstName,
-//         req.body.lastName,
-//         req.body.mobileNumber,
-//         req.body.email,
-//         req.body.company,
-//         req.body.insurance,
-//         req.body.remarks
-//     ];
-//     try {
-//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-//             .then((result) => {
-//                 res.status(200).json({...req.body, id : id})
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(500);
-//     }
-// }
+const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const customer = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        mobileNumber: req.body.mobileNumber,
+        email: req.body.email,
+        company: req.body.company,
+        insurance: req.body.insurance,
+        remarks: req.body.remarks
+    };
+    try {
+        customer_2.CustomerRepository.insert(customer)
+            .then((result) => {
+            console.log(result);
+            if (result == undefined) {
+                res.status(500).end();
+                return;
+            }
+            res.json((0, customer_1.makeCustomerView)(Object.assign(Object.assign({}, customer), { id: result })));
+            res.status(200).end();
+        })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+    }
+});
 // const update = async (req: express.Request, res: express.Response) => {
 //     const query = `
 //         UPDATE "Customer" SET "FirstName" = $1, "LastName" = $2, "MobileNumber" = $3, "Email" = $4, "Company" = $5, "Insurance" = $6, "Remarks" = $7
@@ -275,4 +282,4 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 //         remarks: (req.query.remarks) ? (req.query.remarks as string) : ""
 //     }
 // }
-exports.default = { all, id };
+exports.default = { all, id, create };
