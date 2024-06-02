@@ -8,14 +8,14 @@ const connection_1 = __importDefault(require("../config/connection"));
 exports.UserRepository = {
     register(user) {
         let values = [
-            user.firstName,
-            user.lastName,
-            user.username,
-            user.password,
-            user.salt,
-            user.role,
-            user.email,
-            user.mobileNumber
+            user.FirstName,
+            user.LastName,
+            user.Username,
+            user.Password,
+            user.Salt,
+            user.Role,
+            user.Email,
+            user.MobileNumber
         ];
         let query = "INSERT INTO users(FirstName, LastName, Username, Password, Salt ,Role, Email, MobileNumber) \
         VALUES(?, ?, ?, ?, ?, ?, ?, ?);";
@@ -26,6 +26,18 @@ exports.UserRepository = {
                     reject(err);
                 else {
                     resolve(res.insertId);
+                }
+            });
+        });
+    },
+    retrieveByUsername(username) {
+        let query = `SELECT * FROM users WHERE Username = "${username}"`;
+        return new Promise((resolve, reject) => {
+            connection_1.default.execute(query, (err, res) => {
+                if (err)
+                    reject(err);
+                else {
+                    resolve(res[0]);
                 }
             });
         });

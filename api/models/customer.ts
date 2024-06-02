@@ -1,22 +1,22 @@
 import { RowDataPacket } from "mysql2";
 
 export default interface Customer extends RowDataPacket {
-    id : number, 
-    firstName?: string,
-    lastName?: string, 
-    mobileNumber?: string,
-    email?: string,
-    company?: string, 
-    insurance?: string ,
-    remarks?: string 
+    Id : number, 
+    FirstName?: string,
+    LastName?: string, 
+    MobileNumber?: string,
+    Email?: string,
+    Company?: string, 
+    Insurance?: string ,
+    Remarks?: string 
 }
 
 export interface CustomerRow {
-    firstName?: string,
-    lastName?: string, 
-    mobileNumber?: string,
-    email?: string,
-    company?: string, 
-    insurance?: string ,
-    remarks?: string 
+    FirstName?: string,
+    LastName?: string, 
+    MobileNumber?: string,
+    Email?: string,
+    Company?: string, 
+    Insurance?: string ,
+    Remarks?: string 
 } 

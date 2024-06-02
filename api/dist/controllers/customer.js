@@ -32,7 +32,7 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let id = parseInt(req.query.id.toString());
-        customer_2.CustomerRepository.retieveById(id)
+        customer_2.CustomerRepository.retrieveById(id)
             .then((result) => {
             if (result.length == 0) {
                 res.status(500).end();
@@ -53,13 +53,13 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const customer = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        mobileNumber: req.body.mobileNumber,
-        email: req.body.email,
-        company: req.body.company,
-        insurance: req.body.insurance,
-        remarks: req.body.remarks
+        FirstName: req.body.firstName,
+        LastName: req.body.lastName,
+        MobileNumber: req.body.mobileNumber,
+        Email: req.body.email,
+        Company: req.body.company,
+        Insurance: req.body.insurance,
+        Remarks: req.body.remarks
     };
     try {
         customer_2.CustomerRepository.insert(customer)
@@ -83,13 +83,13 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const customer = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        mobileNumber: req.body.mobileNumber,
-        email: req.body.email,
-        company: req.body.company,
-        insurance: req.body.insurance,
-        remarks: req.body.remarks
+        FirstName: req.body.firstName,
+        LastName: req.body.lastName,
+        MobileNumber: req.body.mobileNumber,
+        Email: req.body.email,
+        Company: req.body.company,
+        Insurance: req.body.insurance,
+        Remarks: req.body.remarks
     };
     try {
         customer_2.CustomerRepository.update(parseInt(req.query.id.toString()), customer)

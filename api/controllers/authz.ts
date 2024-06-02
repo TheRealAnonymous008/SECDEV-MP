@@ -4,20 +4,21 @@ import signToken from '../utils/signToken';
 import { randomUUID } from 'crypto';
 import { Roles } from '../models/enum';
 import { UserRepository } from '../repository/user';
+import { UserRow } from '../models/user';
 
 const SALT_ROUNDS = 10
 
 const register = async (req : express.Request, res : express.Response) => {
     const salt = Bcrypt.genSaltSync(SALT_ROUNDS)
-    const user = {
-        firstName : req.body.firstName,
-        lastName : req.body.lastName,
-        username : req.body.username,
-        mobileNumber : req.body.mobileNumber,
-        email : req.body.email,
-        salt: salt,
-        password : Bcrypt.hashSync(req.body.password, salt),
-        role : Roles.ADMIN
+    const user : UserRow= {
+        FirstName : req.body.firstName,
+        LastName : req.body.lastName,
+        Username : req.body.username,
+        MobileNumber : req.body.mobileNumber,
+        Email : req.body.email,
+        Salt: salt,
+        Password : Bcrypt.hashSync(req.body.password, salt),
+        Role : Roles.ADMIN
     }
 
     try {
@@ -41,108 +42,80 @@ const register = async (req : express.Request, res : express.Response) => {
 
 }
 
-// // const login = (req : express.Request, res : express.Response) => {
-// //     User.findOne({username : req.body.username})
-// //     .then((user) => {
-// //         if (user) {
-// //             Bcrypt.compare(req.body.password, user.password, (error, result) => {
-// //                 if(!result) {
-// //                     return res.json({
-// //                         auth : false,
-// //                         message : "Incorrect Password!"
-// //                     }).end()
-// //                 } 
-// //                 else if (result) {
-// //                     signToken(user, (err, token, refreshToken) => {
-// //                         if (err) {
-// //                             return res.status(500).json({
-// //                                 auth : false,
-// //                                 message : err.message,
-// //                                 error : err,
-// //                             })
-// //                         }
-// //                         else if (token) {
-// //                             if(refreshToken) {
-// //                                 res.cookie('jwt', refreshToken, 
-// //                                 {
-// //                                     httpOnly:true,
-// //                                     secure: true,
-// //                                     sameSite: "none",
-// //                                 })
-// //                                 res.cookie('jwtacc', token, 
-// //                                 {
-// //                                     httpOnly: false,
-// //                                     secure: true,
-// //                                     sameSite: "none",
-// //                                 })
-// //                                 return res.status(200).json({
-// //                                     auth : true,
-// //                                     message : "Authenticated",
-// //                                     token: token,
-// //                                     success : true,
-// //                                 });
-// //                             }   
-// //                         }
-// //                     });
-// //                 }
-// //                 else if(error) {
-// //                     return res.json({
-// //                         auth : false,
-// //                         message : "Password Input Failure",
-// //                     }).end()
-// //                 }
-// //             });
-// //         } 
-// //         else {
-// //             res.json({
-// //                 auth : false, 
-// //                 error : "User does not exist",
-// //             }).end()
-// //         }
-// //     })
-// //     .catch((error) => {
-// //         res.sendStatus(500).json({
-// //             auth : false, 
-// //             error : error
-// //         });
-// //     });
-// // }
+const login = async (req : express.Request, res : express.Response) => {
+    UserRepository.retrieveByUsername(req.body.username)
+    .then((user) => {
+        if (user) {
+            Bcrypt.compare(req.body.password, user.Password, (error, result) => {
+                if(!result) {
+                    console.log(req.body.password, user.Password)
+                    res.json({
+                        auth : false,
+                        message : "Username and Password do not match!"
+                    }).end()
+                } 
+                else if (result) {
+                    signToken(user, (err, token, refreshToken) => {
+                        if (err) {
+                            res.status(500).json({
+                                auth : false,
+                                message : err.message,
+                                error : err,
+                            })
+                        }
+                        else if (token) {
+                            if(refreshToken) {
+                                res.cookie('jwt', refreshToken, 
+                                {
+                                    httpOnly:true,
+                                    secure: true,
+                                    sameSite: "none",
+                                })
+                                res.cookie('jwtacc', token, 
+                                {
+                                    httpOnly: false,
+                                    secure: true,
+                                    sameSite: "none",
+                                })
+                                res.json({
+                                    auth : true,
+                                    message : "Authenticated",
+                                    token: token,
+                                    success : true,
+                                }).status(200).end();
+                            }   
+                        }
+                    });
+                }
+                else if(error) {
+                    res.json({
+                        auth : false,
+                        message : "Password Input Failure",
+                    }).end()
+                }
+            });
+        } 
+        else {
+            res.json({
+                auth : false, 
+                error : "Username and Password do not match",
+            }).end()
+        }
+    })
+    .catch((error) => {
+        res.json({
+            auth : false, 
+            error : error
+        })
+        .status(500)
+        .end();
+    });
+}
 
 
-// const login = async (req : express.Request, res : express.Response) => {
-//     const userId = await findUser(req.body.username)
-//     console.log(userId)
-// }
-
-// const findUser = async (username : string) => {
-//     const query = `
-//     SELECT "Id" FROM "Users" WHERE "Username" = $1
-//     `;
-
-//     const values = [username]
-
-//     try {
-//         const val = executeTransaction([buildTransactionStatement(query, values)], () => {throw Error()})
-//             .then((result) => {
-//                 const rows = result[0].rows;
-//                 if(rows.length == 0)
-//                     return -1;
-
-//                 return rows[0];
-//             })
-
-//         return val;
-//     }
-//     catch (err) {
-//         console.log(err);
-//         return -1;
-//     }
-// }
+const logout = (req : express.Request, res : express.Response) => {
+    res.clearCookie("jwt").clearCookie("jwtacc").end();
+}
 
 
-// const logout = (req : express.Request, res : express.Response) => {
-//     res.clearCookie("jwt").clearCookie("jwtacc").end();
-// }
-
-
-export default {register}
+export default {register, login, logout}

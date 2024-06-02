@@ -30,7 +30,7 @@ const id = async (req: express.Request, res: express.Response) => {
 
     try {
         let id = parseInt(req.query.id.toString())
-        CustomerRepository.retieveById(id)
+        CustomerRepository.retrieveById(id)
             .then((result) => {
                 if (result.length == 0){
                     res.status(500).end();
@@ -52,13 +52,13 @@ const id = async (req: express.Request, res: express.Response) => {
 
 const create = async (req: express.Request, res: express.Response) => {
     const customer : CustomerRow = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        mobileNumber: req.body.mobileNumber,
-        email: req.body.email,
-        company: req.body.company,
-        insurance: req.body.insurance,
-        remarks: req.body.remarks
+        FirstName: req.body.firstName,
+        LastName: req.body.lastName,
+        MobileNumber: req.body.mobileNumber,
+        Email: req.body.email,
+        Company: req.body.company,
+        Insurance: req.body.insurance,
+        Remarks: req.body.remarks
     };
 
     try {
@@ -85,13 +85,13 @@ const create = async (req: express.Request, res: express.Response) => {
 
 const update = async (req: express.Request, res: express.Response) => {
     const customer : CustomerRow = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        mobileNumber: req.body.mobileNumber,
-        email: req.body.email,
-        company: req.body.company,
-        insurance: req.body.insurance,
-        remarks: req.body.remarks
+        FirstName: req.body.firstName,
+        LastName: req.body.lastName,
+        MobileNumber: req.body.mobileNumber,
+        Email: req.body.email,
+        Company: req.body.company,
+        Insurance: req.body.insurance,
+        Remarks: req.body.remarks
     };
 
     try {

@@ -25,7 +25,7 @@ exports.CustomerRepository = {
             });
         });
     },
-    retieveById(id) {
+    retrieveById(id) {
         let query = `SELECT * FROM customer WHERE Id = ${id}`;
         return new Promise((resolve, reject) => {
             connection_1.default.execute(query, (err, res) => {
@@ -39,13 +39,13 @@ exports.CustomerRepository = {
     },
     insert(object) {
         let values = [
-            object.firstName,
-            object.lastName,
-            object.mobileNumber,
-            object.email,
-            object.company,
-            object.insurance,
-            object.remarks
+            object.FirstName,
+            object.LastName,
+            object.MobileNumber,
+            object.Email,
+            object.Company,
+            object.Insurance,
+            object.Remarks
         ];
         let query = "INSERT INTO customer(FirstName, LastName, MobileNumber, Email, Company, Insurance, Remarks) \
         VALUES(?, ?, ?, ?, ?, ?, ?);";
@@ -61,13 +61,13 @@ exports.CustomerRepository = {
     },
     update(id, object) {
         let values = [
-            object.firstName,
-            object.lastName,
-            object.mobileNumber,
-            object.email,
-            object.company,
-            object.insurance,
-            object.remarks,
+            object.FirstName,
+            object.LastName,
+            object.MobileNumber,
+            object.Email,
+            object.Company,
+            object.Insurance,
+            object.Remarks,
             id
         ];
         let query = "UPDATE customer SET FirstName = ?, LastName = ?, MobileNumber = ?, Email = ?, Company = ?, Insurance = ?, Remarks = ? WHERE Id=?";

@@ -8,22 +8,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const Bcrypt = require("bcryptjs");
+const signToken_1 = __importDefault(require("../utils/signToken"));
 const enum_1 = require("../models/enum");
 const user_1 = require("../repository/user");
 const SALT_ROUNDS = 10;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
     const user = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        username: req.body.username,
-        mobileNumber: req.body.mobileNumber,
-        email: req.body.email,
-        salt: salt,
-        password: Bcrypt.hashSync(req.body.password, salt),
-        role: enum_1.Roles.ADMIN
+        FirstName: req.body.firstName,
+        LastName: req.body.lastName,
+        Username: req.body.username,
+        MobileNumber: req.body.mobileNumber,
+        Email: req.body.email,
+        Salt: salt,
+        Password: Bcrypt.hashSync(req.body.password, salt),
+        Role: enum_1.Roles.ADMIN
     };
     try {
         user_1.UserRepository.register(user)
@@ -44,97 +48,74 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).end();
     }
 });
-// // const login = (req : express.Request, res : express.Response) => {
-// //     User.findOne({username : req.body.username})
-// //     .then((user) => {
-// //         if (user) {
-// //             Bcrypt.compare(req.body.password, user.password, (error, result) => {
-// //                 if(!result) {
-// //                     return res.json({
-// //                         auth : false,
-// //                         message : "Incorrect Password!"
-// //                     }).end()
-// //                 } 
-// //                 else if (result) {
-// //                     signToken(user, (err, token, refreshToken) => {
-// //                         if (err) {
-// //                             return res.status(500).json({
-// //                                 auth : false,
-// //                                 message : err.message,
-// //                                 error : err,
-// //                             })
-// //                         }
-// //                         else if (token) {
-// //                             if(refreshToken) {
-// //                                 res.cookie('jwt', refreshToken, 
-// //                                 {
-// //                                     httpOnly:true,
-// //                                     secure: true,
-// //                                     sameSite: "none",
-// //                                 })
-// //                                 res.cookie('jwtacc', token, 
-// //                                 {
-// //                                     httpOnly: false,
-// //                                     secure: true,
-// //                                     sameSite: "none",
-// //                                 })
-// //                                 return res.status(200).json({
-// //                                     auth : true,
-// //                                     message : "Authenticated",
-// //                                     token: token,
-// //                                     success : true,
-// //                                 });
-// //                             }   
-// //                         }
-// //                     });
-// //                 }
-// //                 else if(error) {
-// //                     return res.json({
-// //                         auth : false,
-// //                         message : "Password Input Failure",
-// //                     }).end()
-// //                 }
-// //             });
-// //         } 
-// //         else {
-// //             res.json({
-// //                 auth : false, 
-// //                 error : "User does not exist",
-// //             }).end()
-// //         }
-// //     })
-// //     .catch((error) => {
-// //         res.sendStatus(500).json({
-// //             auth : false, 
-// //             error : error
-// //         });
-// //     });
-// // }
-// const login = async (req : express.Request, res : express.Response) => {
-//     const userId = await findUser(req.body.username)
-//     console.log(userId)
-// }
-// const findUser = async (username : string) => {
-//     const query = `
-//     SELECT "Id" FROM "Users" WHERE "Username" = $1
-//     `;
-//     const values = [username]
-//     try {
-//         const val = executeTransaction([buildTransactionStatement(query, values)], () => {throw Error()})
-//             .then((result) => {
-//                 const rows = result[0].rows;
-//                 if(rows.length == 0)
-//                     return -1;
-//                 return rows[0];
-//             })
-//         return val;
-//     }
-//     catch (err) {
-//         console.log(err);
-//         return -1;
-//     }
-// }
+const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    user_1.UserRepository.retrieveByUsername(req.body.username)
+        .then((user) => {
+        if (user) {
+            Bcrypt.compare(req.body.password, user.Password, (error, result) => {
+                if (!result) {
+                    console.log(req.body.password, user.Password);
+                    res.json({
+                        auth: false,
+                        message: "Username and Password do not match!"
+                    }).end();
+                }
+                else if (result) {
+                    (0, signToken_1.default)(user, (err, token, refreshToken) => {
+                        if (err) {
+                            res.status(500).json({
+                                auth: false,
+                                message: err.message,
+                                error: err,
+                            });
+                        }
+                        else if (token) {
+                            if (refreshToken) {
+                                res.cookie('jwt', refreshToken, {
+                                    httpOnly: true,
+                                    secure: true,
+                                    sameSite: "none",
+                                });
+                                res.cookie('jwtacc', token, {
+                                    httpOnly: false,
+                                    secure: true,
+                                    sameSite: "none",
+                                });
+                                res.json({
+                                    auth: true,
+                                    message: "Authenticated",
+                                    token: token,
+                                    success: true,
+                                }).status(200).end();
+                            }
+                        }
+                    });
+                }
+                else if (error) {
+                    res.json({
+                        auth: false,
+                        message: "Password Input Failure",
+                    }).end();
+                }
+            });
+        }
+        else {
+            res.json({
+                auth: false,
+                error: "Username and Password do not match",
+            }).end();
+        }
+    })
+        .catch((error) => {
+        res.json({
+            auth: false,
+            error: error
+        })
+            .status(500)
+            .end();
+    });
+});
 // const logout = (req : express.Request, res : express.Response) => {
 //     res.clearCookie("jwt").clearCookie("jwtacc").end();
 // }
-exports.default = { register };
+exports.default = { register, login };

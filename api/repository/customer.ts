@@ -4,7 +4,7 @@ import Customer, { CustomerRow } from "../models/customer";
 
 interface IRepositiory<T> {
     retrieveAll: (limit? : number, offset? : number) => Promise<T[]>;
-    retieveById : (id :  number) => Promise<T | undefined>;
+    retrieveById : (id :  number) => Promise<T | undefined>;
     insert : (object) => Promise<number>;
     update(id : number, object) : Promise<number>, 
     delete(id : number) : Promise<number>  
@@ -33,7 +33,7 @@ export const CustomerRepository : IRepositiory<Customer> = {
         })
     },
 
-    retieveById(id :  number) : Promise<Customer | undefined> {
+    retrieveById(id :  number) : Promise<Customer | undefined> {
         let query = `SELECT * FROM customer WHERE Id = ${id}`
 
         return new Promise((resolve, reject) => {
@@ -51,13 +51,13 @@ export const CustomerRepository : IRepositiory<Customer> = {
 
     insert(object : CustomerRow ) : Promise<number> {
         let values = [
-            object.firstName,
-            object.lastName,
-            object.mobileNumber,
-            object.email,
-            object.company,
-            object.insurance,
-            object.remarks
+            object.FirstName,
+            object.LastName,
+            object.MobileNumber,
+            object.Email,
+            object.Company,
+            object.Insurance,
+            object.Remarks
         ]
 
         let query ="INSERT INTO customer(FirstName, LastName, MobileNumber, Email, Company, Insurance, Remarks) \
@@ -79,13 +79,13 @@ export const CustomerRepository : IRepositiory<Customer> = {
 
     update(id : number, object : CustomerRow) : Promise<number> {
         let values = [
-            object.firstName,
-            object.lastName,
-            object.mobileNumber,
-            object.email,
-            object.company,
-            object.insurance,
-            object.remarks,
+            object.FirstName,
+            object.LastName,
+            object.MobileNumber,
+            object.Email,
+            object.Company,
+            object.Insurance,
+            object.Remarks,
             id
         ]
 

@@ -1,24 +1,24 @@
 import { RowDataPacket } from "mysql2";
 
 export default interface User extends RowDataPacket {
-    id : number, 
-    firstName?: string,
-    lastName?: string, 
-    username? : string, 
-    password? : string,
-    salt? : string,
-    mobileNumber?: string,
-    email?: string,
-    role?: number
+    Id : number, 
+    FirstName?: string,
+    LastName?: string, 
+    Username? : string, 
+    Password? : string,
+    Salt? : string,
+    MobileNumber?: string,
+    Email?: string,
+    Role?: number
 }
 
 export interface UserRow {
-    firstName?: string,
-    lastName?: string, 
-    username? : string, 
-    password? : string,
-    salt? : string,
-    mobileNumber?: string,
-    email?: string,
-    role?: number
+    FirstName?: string,
+    LastName?: string, 
+    Username? : string, 
+    Password? : string,
+    Salt? : string,
+    MobileNumber?: string,
+    Email?: string,
+    Role?: number
 } 
