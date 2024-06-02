@@ -31,6 +31,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^4.12.1",
     "mongoose": "^6.12.9",
+    "mysql2": "^3.10.0",
     "netlify-lambda": "^2.0.15",
     "pug": "^3.0.3",
     "serverless-http": "^3.1.0",

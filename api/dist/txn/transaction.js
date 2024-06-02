@@ -25,7 +25,7 @@ const executeTransaction = (body, errhandler) => __awaiter(void 0, void 0, void 
         const results = [];
         yield client.query(`BEGIN;`);
         body.forEach((txn) => __awaiter(void 0, void 0, void 0, function* () {
-            if (txn.values) {
+            if (txn.values && txn.values.length > 0) {
                 yield client.query(txn.statement, txn.values)
                     .then(result => {
                     results.push(result);
@@ -38,6 +38,9 @@ const executeTransaction = (body, errhandler) => __awaiter(void 0, void 0, void 
             }
             else {
                 yield client.query(txn.statement)
+                    .then(result => {
+                    results.push(result);
+                })
                     .catch(error => {
                     console.log(error);
                     if (errhandler)

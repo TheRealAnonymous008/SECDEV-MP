@@ -1,4 +1,8 @@
-import { sql, db, VercelPoolClient, Query, QueryResult } from "@vercel/postgres"
+import mysql from "mysql2"
+
+export default mysql.createConnection({
+    
+})
 
 export interface TransactionStatement {
     statement : string,
@@ -21,7 +25,7 @@ export const executeTransaction = async (body : TransactionStatement[], errhandl
         await client.query(`BEGIN;`)
 
         body.forEach(async (txn : TransactionStatement) => {
-            if(txn.values){
+            if(txn.values && txn.values.length > 0){
                 await client.query(txn.statement, txn.values)
                     .then(result => {
                         results.push(result)
@@ -33,6 +37,9 @@ export const executeTransaction = async (body : TransactionStatement[], errhandl
                     });
             } else {
                 await client.query(txn.statement)
+                    .then(result => {
+                        results.push(result)
+                    })
                     .catch(error => {
                         console.log(error)
                         if (errhandler)

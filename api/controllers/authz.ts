@@ -13,7 +13,7 @@ const register = async (req : express.Request, res : express.Response) => {
         mobileNumber : req.body.mobileNumber,
         email : req.body.email,
         password : Bcrypt.hashSync(req.body.password, 10),
-        role : req.body.role
+        role : Roles.ADMIN
     }
 
     const query = `
@@ -117,12 +117,39 @@ const register = async (req : express.Request, res : express.Response) => {
 
 
 const login = async (req : express.Request, res : express.Response) => {
-
+    const userId = await findUser(req.body.username)
+    console.log(userId)
 }
+
+const findUser = async (username : string) => {
+    const query = `
+    SELECT "Id" FROM "Users" WHERE "Username" = $1
+    `;
+
+    const values = [username]
+
+    try {
+        const val = executeTransaction([buildTransactionStatement(query, values)], () => {throw Error()})
+            .then((result) => {
+                const rows = result[0].rows;
+                if(rows.length == 0)
+                    return -1;
+
+                return rows[0];
+            })
+
+        return val;
+    }
+    catch (err) {
+        console.log(err);
+        return -1;
+    }
+}
+
 
 const logout = (req : express.Request, res : express.Response) => {
     res.clearCookie("jwt").clearCookie("jwtacc").end();
 }
 
 
-export default {register}
+export default {register, login, logout}

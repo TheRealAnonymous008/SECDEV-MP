@@ -50,7 +50,12 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
             .then((result) => {
             const rows = result[0].rows;
-            res.status(200).json((0, customer_1.makeCustomerView)(rows[0]));
+            if (rows.length == 0) {
+                res.status(200).json({ id: -1 });
+            }
+            else {
+                res.status(200).json((0, customer_1.makeCustomerView)(rows[0]));
+            }
         });
     }
     catch (err) {

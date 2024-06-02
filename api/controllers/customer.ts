@@ -50,8 +50,12 @@ const id = async (req: express.Request, res: express.Response) => {
         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
             .then((result) => {
                 const rows = result[0].rows;
-                res.status(200).json(makeCustomerView(rows[0]))
-                     
+                if (rows.length == 0){
+                    res.status(200).json({id : -1})
+                }
+                else {
+                    res.status(200).json(makeCustomerView(rows[0]))
+                }
             })
     }
     catch (err) {

@@ -36,15 +36,14 @@ const initialize = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         `;
         yield (0, postgres_1.sql) `
         CREATE TABLE IF NOT EXISTS "Users" (
-            "Id" INT PRIMARY KEY,
             "FirstName" VARCHAR(45) NOT NULL,
             "LastName" VARCHAR(45) NOT NULL,
-            "Username" VARCHAR(45) NOT NULL,
+            "Username" VARCHAR(45) NOT NULL PRIMARY KEY,
             "Password" VARCHAR(64) NOT NULL,
             "Role" INT NOT NULL,
             "MobileNumber" VARCHAR(45) NOT NULL,
             "Email" VARCHAR(45) NOT NULL,
-            UNIQUE ("Id"),
+            UNIQUE ("Username"),
             CONSTRAINT "fk_Users_RoleEnum"
               FOREIGN KEY ("Role")
               REFERENCES "RoleEnum" ("Id")
