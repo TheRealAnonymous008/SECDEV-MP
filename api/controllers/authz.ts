@@ -48,7 +48,6 @@ const login = async (req : express.Request, res : express.Response) => {
         if (user) {
             Bcrypt.compare(req.body.password, user.Password, (error, result) => {
                 if(!result) {
-                    console.log(req.body.password, user.Password)
                     res.json({
                         auth : false,
                         message : "Username and Password do not match!"
@@ -61,7 +60,7 @@ const login = async (req : express.Request, res : express.Response) => {
                                 auth : false,
                                 message : err.message,
                                 error : err,
-                            })
+                            }).end()
                         }
                         else if (token) {
                             if(refreshToken) {

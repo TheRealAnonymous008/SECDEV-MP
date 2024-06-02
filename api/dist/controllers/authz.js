@@ -54,7 +54,6 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (user) {
             Bcrypt.compare(req.body.password, user.Password, (error, result) => {
                 if (!result) {
-                    console.log(req.body.password, user.Password);
                     res.json({
                         auth: false,
                         message: "Username and Password do not match!"
@@ -67,7 +66,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                                 auth: false,
                                 message: err.message,
                                 error: err,
-                            });
+                            }).end();
                         }
                         else if (token) {
                             if (refreshToken) {
@@ -115,7 +114,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             .end();
     });
 });
-// const logout = (req : express.Request, res : express.Response) => {
-//     res.clearCookie("jwt").clearCookie("jwtacc").end();
-// }
-exports.default = { register, login };
+const logout = (req, res) => {
+    res.clearCookie("jwt").clearCookie("jwtacc").end();
+};
+exports.default = { register, login, logout };

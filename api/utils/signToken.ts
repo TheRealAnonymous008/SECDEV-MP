@@ -1,8 +1,8 @@
 import jwt = require('jsonwebtoken');
 import config from "../config/authConfig";
 
-const makeRefreshToken = (user, token, callback) => {
-    jwt.sign(
+const makeRefreshToken = async (user, token, callback) => {
+    await jwt.sign(
         {
             id : user.id,
             role: user.role,
@@ -38,11 +38,11 @@ const signToken = (user,  callback: (error: Error | null, token: string | null, 
                 expiresIn: config.token.expireTime,
                 issuer: config.token.issuer
             },
-            (error, token) => {
+            async (error, token) => {
                 if (error) {
                     callback(error, null, null);
                 } else if (token) {
-                    makeRefreshToken(user, token, callback);
+                    await makeRefreshToken(user, token, callback);
                 }
 
             }

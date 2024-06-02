@@ -29,13 +29,11 @@ const Login = (props: {setIsLoggedIn : Function}) => {
                 if(response.data.auth) {
                     props.setIsLoggedIn(true);
                     sessionStorage.setItem("isLoggedIn", "true");
-                    setRole(response.data.token);
                     navigation(ROUTES.orders);
                 }
                 else {
                     props.setIsLoggedIn(false);
                     sessionStorage.setItem("isLoggedIn", "false");
-                    removeRole();
                 }
                 
             })
