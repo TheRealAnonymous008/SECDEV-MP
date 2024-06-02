@@ -3,154 +3,142 @@ import express = require('express');
 import Bcrypt = require('bcryptjs');
 import { ALL_ROLES, Roles } from '../models/enum';
 import { makeCustomerArrayView, makeCustomerView } from '../projections/customer';
-import { executeTransaction, buildTransactionStatement } from '../txn/transaction';
-import { MAX_INTEGER } from '../utils/constants';
+import { CustomerRepository } from '../repository/customer';
 
 const all = async (req: express.Request, res: express.Response) => {
+    CustomerRepository.retrieveAll()
+        .then((result) => {
+            if (result.length == 0)
+                return;
 
-    const query = `
-        SELECT * FROM "Customer"
-        LIMIT $1 OFFSET $2;
-    `;
-
-    const values = [
-        req.query.limit,
-        req.query.skip
-    ];
-
-    try {
-        executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-            .then((result) => {
-                const count = result[0].rowCount
-                const rows = result[0].rows;
-                res.json({
-                    data: makeCustomerArrayView(rows),
-                    count : count 
-                });
-                res.status(200);
-            })
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500);
-    }
+            res.json({
+                data: makeCustomerArrayView(result),
+                count : result.length 
+            });
+            res.status(200).end();
+        })
+        .catch((err) => {
+                    
+            console.log(err);
+            res.status(500).end();
+        })
 }
 
 
-const id = async (req: express.Request, res: express.Response) => {
-    const query = `
-        SELECT * FROM "Customer" WHERE "Id" = $1
-    `;
+// const id = async (req: express.Request, res: express.Response) => {
+//     const query = `
+//         SELECT * FROM "Customer" WHERE "Id" = $1
+//     `;
 
-    const values = [
-        req.query.id
-    ];
+//     const values = [
+//         req.query.id
+//     ];
 
-    try {
-        executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-            .then((result) => {
-                const rows = result[0].rows;
-                if (rows.length == 0){
-                    res.status(200).json({id : -1})
-                }
-                else {
-                    res.status(200).json(makeCustomerView(rows[0]))
-                }
-            })
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500);
-    }
-}
+//     try {
+//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
+//             .then((result) => {
+//                 const rows = result[0].rows;
+//                 if (rows.length == 0){
+//                     res.status(200).json({id : -1})
+//                 }
+//                 else {
+//                     res.status(200).json(makeCustomerView(rows[0]))
+//                 }
+//             })
+//     }
+//     catch (err) {
+//         console.log(err);
+//         res.status(500);
+//     }
+// }
 
-const create = async (req: express.Request, res: express.Response) => {
-    const id = randomInt(MAX_INTEGER)
+// const create = async (req: express.Request, res: express.Response) => {
+//     const id = randomInt(MAX_INTEGER)
 
-    const query = `
-        INSERT INTO "Customer" ("Id", "FirstName", "LastName", "MobileNumber", "Email", "Company", "Insurance", "Remarks")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        RETURNING "Id";
-    `;
+//     const query = `
+//         INSERT INTO "Customer" ("Id", "FirstName", "LastName", "MobileNumber", "Email", "Company", "Insurance", "Remarks")
+//         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+//         RETURNING "Id";
+//     `;
 
-    const values = [
-        id,
-        req.body.firstName,
-        req.body.lastName,
-        req.body.mobileNumber,
-        req.body.email,
-        req.body.company,
-        req.body.insurance,
-        req.body.remarks
-    ];
+//     const values = [
+//         id,
+//         req.body.firstName,
+//         req.body.lastName,
+//         req.body.mobileNumber,
+//         req.body.email,
+//         req.body.company,
+//         req.body.insurance,
+//         req.body.remarks
+//     ];
 
-    try {
-        executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-            .then((result) => {
-                res.status(200).json({...req.body, id : id})
-            })
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500);
-    }
-}
+//     try {
+//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
+//             .then((result) => {
+//                 res.status(200).json({...req.body, id : id})
+//             })
+//     }
+//     catch (err) {
+//         console.log(err);
+//         res.status(500);
+//     }
+// }
 
-const update = async (req: express.Request, res: express.Response) => {
-    const query = `
-        UPDATE "Customer" SET "FirstName" = $1, "LastName" = $2, "MobileNumber" = $3, "Email" = $4, "Company" = $5, "Insurance" = $6, "Remarks" = $7
-        WHERE "Id" = $8
-        RETURNING "Id";
-    `;
+// const update = async (req: express.Request, res: express.Response) => {
+//     const query = `
+//         UPDATE "Customer" SET "FirstName" = $1, "LastName" = $2, "MobileNumber" = $3, "Email" = $4, "Company" = $5, "Insurance" = $6, "Remarks" = $7
+//         WHERE "Id" = $8
+//         RETURNING "Id";
+//     `;
 
-    const values = [
-        req.body.firstName,
-        req.body.lastName,
-        req.body.mobileNumber,
-        req.body.email,
-        req.body.company,
-        req.body.insurance,
-        req.body.remarks,
-        req.query.id
-    ];
+//     const values = [
+//         req.body.firstName,
+//         req.body.lastName,
+//         req.body.mobileNumber,
+//         req.body.email,
+//         req.body.company,
+//         req.body.insurance,
+//         req.body.remarks,
+//         req.query.id
+//     ];
 
-    try {
-        executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-            .then((result) => {
-                res.status(200).json(req.body);
-            })
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500);
-    }
+//     try {
+//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
+//             .then((result) => {
+//                 res.status(200).json(req.body);
+//             })
+//     }
+//     catch (err) {
+//         console.log(err);
+//         res.status(500);
+//     }
 
-}
+// }
 
 
-const remove = async (req : express.Request, res : express.Response) => {
+// const remove = async (req : express.Request, res : express.Response) => {
 
-    const query = `
-        DELETE FROM "Customer" WHERE "Id" = $1
-        RETURNING "Id";
-    `;
+//     const query = `
+//         DELETE FROM "Customer" WHERE "Id" = $1
+//         RETURNING "Id";
+//     `;
 
-    const values = [
-        req.query.id
-    ];
+//     const values = [
+//         req.query.id
+//     ];
 
-    try {
-        executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-            .then((result) => {
-                res.status(200);
-            })
-    }
-    catch (err) {
-        console.log(err);
-        res.status(200)
-    }
+//     try {
+//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
+//             .then((result) => {
+//                 res.status(200);
+//             })
+//     }
+//     catch (err) {
+//         console.log(err);
+//         res.status(200)
+//     }
 
-}
+// }
 
 // // No SQL
 // /*
@@ -323,4 +311,4 @@ const remove = async (req : express.Request, res : express.Response) => {
 //     }
 // }
 
-export default {all, id, create, update, remove};
+export default {all};

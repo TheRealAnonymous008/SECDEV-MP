@@ -1,5 +1,5 @@
 import express = require('express');
-import controller from '../controllers/authz'
+// import controller from '../controllers/authz'
 import validateRole from '../middleware/roleValidation';
 import validateToken from '../middleware/authValidation';
 

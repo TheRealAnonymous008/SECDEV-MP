@@ -9,134 +9,123 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const crypto_1 = require("crypto");
 const customer_1 = require("../projections/customer");
-const transaction_1 = require("../txn/transaction");
-const constants_1 = require("../utils/constants");
+const customer_2 = require("../repository/customer");
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const query = `
-        SELECT * FROM "Customer"
-        LIMIT $1 OFFSET $2;
-    `;
-    const values = [
-        req.query.limit,
-        req.query.skip
-    ];
-    try {
-        (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
-            .then((result) => {
-            const count = result[0].rowCount;
-            const rows = result[0].rows;
-            res.json({
-                data: (0, customer_1.makeCustomerArrayView)(rows),
-                count: count
-            });
-            res.status(200);
+    customer_2.CustomerRepository.retrieveAll()
+        .then((result) => {
+        console.log(result);
+        if (result.length == 0)
+            return;
+        res.json({
+            data: (0, customer_1.makeCustomerArrayView)(result),
+            count: result.length
         });
-    }
-    catch (err) {
+        res.status(200).end();
+    })
+        .catch((err) => {
         console.log(err);
-        res.status(500);
-    }
+        res.status(500).end();
+    });
 });
-const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const query = `
-        SELECT * FROM "Customer" WHERE "Id" = $1
-    `;
-    const values = [
-        req.query.id
-    ];
-    try {
-        (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
-            .then((result) => {
-            const rows = result[0].rows;
-            if (rows.length == 0) {
-                res.status(200).json({ id: -1 });
-            }
-            else {
-                res.status(200).json((0, customer_1.makeCustomerView)(rows[0]));
-            }
-        });
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500);
-    }
-});
-const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = (0, crypto_1.randomInt)(constants_1.MAX_INTEGER);
-    const query = `
-        INSERT INTO "Customer" ("Id", "FirstName", "LastName", "MobileNumber", "Email", "Company", "Insurance", "Remarks")
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        RETURNING "Id";
-    `;
-    const values = [
-        id,
-        req.body.firstName,
-        req.body.lastName,
-        req.body.mobileNumber,
-        req.body.email,
-        req.body.company,
-        req.body.insurance,
-        req.body.remarks
-    ];
-    try {
-        (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
-            .then((result) => {
-            res.status(200).json(Object.assign(Object.assign({}, req.body), { id: id }));
-        });
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500);
-    }
-});
-const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const query = `
-        UPDATE "Customer" SET "FirstName" = $1, "LastName" = $2, "MobileNumber" = $3, "Email" = $4, "Company" = $5, "Insurance" = $6, "Remarks" = $7
-        WHERE "Id" = $8
-        RETURNING "Id";
-    `;
-    const values = [
-        req.body.firstName,
-        req.body.lastName,
-        req.body.mobileNumber,
-        req.body.email,
-        req.body.company,
-        req.body.insurance,
-        req.body.remarks,
-        req.query.id
-    ];
-    try {
-        (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
-            .then((result) => {
-            res.status(200).json(req.body);
-        });
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500);
-    }
-});
-const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const query = `
-        DELETE FROM "Customer" WHERE "Id" = $1
-        RETURNING "Id";
-    `;
-    const values = [
-        req.query.id
-    ];
-    try {
-        (0, transaction_1.executeTransaction)([(0, transaction_1.buildTransactionStatement)(query, values)], () => { res.status(500).end(); })
-            .then((result) => {
-            res.status(200);
-        });
-    }
-    catch (err) {
-        console.log(err);
-        res.status(200);
-    }
-});
+// const id = async (req: express.Request, res: express.Response) => {
+//     const query = `
+//         SELECT * FROM "Customer" WHERE "Id" = $1
+//     `;
+//     const values = [
+//         req.query.id
+//     ];
+//     try {
+//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
+//             .then((result) => {
+//                 const rows = result[0].rows;
+//                 if (rows.length == 0){
+//                     res.status(200).json({id : -1})
+//                 }
+//                 else {
+//                     res.status(200).json(makeCustomerView(rows[0]))
+//                 }
+//             })
+//     }
+//     catch (err) {
+//         console.log(err);
+//         res.status(500);
+//     }
+// }
+// const create = async (req: express.Request, res: express.Response) => {
+//     const id = randomInt(MAX_INTEGER)
+//     const query = `
+//         INSERT INTO "Customer" ("Id", "FirstName", "LastName", "MobileNumber", "Email", "Company", "Insurance", "Remarks")
+//         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+//         RETURNING "Id";
+//     `;
+//     const values = [
+//         id,
+//         req.body.firstName,
+//         req.body.lastName,
+//         req.body.mobileNumber,
+//         req.body.email,
+//         req.body.company,
+//         req.body.insurance,
+//         req.body.remarks
+//     ];
+//     try {
+//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
+//             .then((result) => {
+//                 res.status(200).json({...req.body, id : id})
+//             })
+//     }
+//     catch (err) {
+//         console.log(err);
+//         res.status(500);
+//     }
+// }
+// const update = async (req: express.Request, res: express.Response) => {
+//     const query = `
+//         UPDATE "Customer" SET "FirstName" = $1, "LastName" = $2, "MobileNumber" = $3, "Email" = $4, "Company" = $5, "Insurance" = $6, "Remarks" = $7
+//         WHERE "Id" = $8
+//         RETURNING "Id";
+//     `;
+//     const values = [
+//         req.body.firstName,
+//         req.body.lastName,
+//         req.body.mobileNumber,
+//         req.body.email,
+//         req.body.company,
+//         req.body.insurance,
+//         req.body.remarks,
+//         req.query.id
+//     ];
+//     try {
+//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
+//             .then((result) => {
+//                 res.status(200).json(req.body);
+//             })
+//     }
+//     catch (err) {
+//         console.log(err);
+//         res.status(500);
+//     }
+// }
+// const remove = async (req : express.Request, res : express.Response) => {
+//     const query = `
+//         DELETE FROM "Customer" WHERE "Id" = $1
+//         RETURNING "Id";
+//     `;
+//     const values = [
+//         req.query.id
+//     ];
+//     try {
+//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
+//             .then((result) => {
+//                 res.status(200);
+//             })
+//     }
+//     catch (err) {
+//         console.log(err);
+//         res.status(200)
+//     }
+// }
 // // No SQL
 // /*
 // const filter = async (req: express.Request, res: express.Response) => {
@@ -291,4 +280,4 @@ const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 //         remarks: (req.query.remarks) ? (req.query.remarks as string) : ""
 //     }
 // }
-exports.default = { all, id, create, update, remove };
+exports.default = { all };
