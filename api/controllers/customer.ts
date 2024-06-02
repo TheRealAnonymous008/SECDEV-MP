@@ -24,33 +24,28 @@ const all = async (req: express.Request, res: express.Response) => {
         })
 }
 
+const id = async (req: express.Request, res: express.Response) => {
 
-// const id = async (req: express.Request, res: express.Response) => {
-//     const query = `
-//         SELECT * FROM "Customer" WHERE "Id" = $1
-//     `;
+    try {
+        let id = parseInt(req.query.id.toString())
+        CustomerRepository.retieveById(id)
+            .then((result) => {
+                if (result.length == 0)
+                    return;
 
-//     const values = [
-//         req.query.id
-//     ];
-
-//     try {
-//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-//             .then((result) => {
-//                 const rows = result[0].rows;
-//                 if (rows.length == 0){
-//                     res.status(200).json({id : -1})
-//                 }
-//                 else {
-//                     res.status(200).json(makeCustomerView(rows[0]))
-//                 }
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(500);
-//     }
-// }
+                res.json(makeCustomerView(result));
+                res.status(200).end();
+            })
+            .catch((err) => {
+                        
+                console.log(err);
+                res.status(500).end();
+            })
+    } catch (error) {
+        console.log(error);
+        res.status(500).end();
+    }
+}
 
 // const create = async (req: express.Request, res: express.Response) => {
 //     const id = randomInt(MAX_INTEGER)
@@ -311,4 +306,4 @@ const all = async (req: express.Request, res: express.Response) => {
 //     }
 // }
 
-export default {all};
+export default {all, id};

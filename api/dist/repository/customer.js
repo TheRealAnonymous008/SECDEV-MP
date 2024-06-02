@@ -7,9 +7,16 @@ exports.CustomerRepository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
 ;
 exports.CustomerRepository = {
-    retrieveAll() {
+    retrieveAll(limit, offset) {
+        let query = "SELECT * FROM customer";
+        if (limit) {
+            query += ` LIMIT ${limit}`;
+        }
+        if (offset) {
+            query += ` OFFST ${offset}`;
+        }
         return new Promise((resolve, reject) => {
-            connection_1.default.query(`SELECT * FROM customer;`, (err, res) => {
+            connection_1.default.execute(query, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -17,9 +24,19 @@ exports.CustomerRepository = {
                 }
             });
         });
+    },
+    retieveById(id) {
+        let query = `SELECT * FROM customer WHERE Id = ${id}`;
+        return new Promise((resolve, reject) => {
+            connection_1.default.execute(query, (err, res) => {
+                if (err)
+                    reject(err);
+                else {
+                    resolve(res[0]);
+                }
+            });
+        });
     }
-    // retieveById(id :  number) : Promise<Customer | undefined> {
-    // }
     // insert(object : Customer) : Promise<Customer> {
     // }
     // update(id : number, object : Customer) : Promise<number> {

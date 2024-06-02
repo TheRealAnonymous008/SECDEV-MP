@@ -14,7 +14,6 @@ const customer_2 = require("../repository/customer");
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     customer_2.CustomerRepository.retrieveAll()
         .then((result) => {
-        console.log(result);
         if (result.length == 0)
             return;
         res.json({
@@ -28,30 +27,26 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).end();
     });
 });
-// const id = async (req: express.Request, res: express.Response) => {
-//     const query = `
-//         SELECT * FROM "Customer" WHERE "Id" = $1
-//     `;
-//     const values = [
-//         req.query.id
-//     ];
-//     try {
-//         executeTransaction([buildTransactionStatement(query, values)], () => {res.status(500).end()})
-//             .then((result) => {
-//                 const rows = result[0].rows;
-//                 if (rows.length == 0){
-//                     res.status(200).json({id : -1})
-//                 }
-//                 else {
-//                     res.status(200).json(makeCustomerView(rows[0]))
-//                 }
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(500);
-//     }
-// }
+const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let id = parseInt(req.query.id.toString());
+        customer_2.CustomerRepository.retieveById(id)
+            .then((result) => {
+            if (result.length == 0)
+                return;
+            res.json((0, customer_1.makeCustomerView)(result));
+            res.status(200).end();
+        })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).end();
+    }
+});
 // const create = async (req: express.Request, res: express.Response) => {
 //     const id = randomInt(MAX_INTEGER)
 //     const query = `
@@ -280,4 +275,4 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 //         remarks: (req.query.remarks) ? (req.query.remarks as string) : ""
 //     }
 // }
-exports.default = { all };
+exports.default = { all, id };

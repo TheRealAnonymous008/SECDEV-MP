@@ -11,3 +11,4 @@ exports.default = mysql2_1.default.createConnection({
     password: dbConfig_1.default.password,
     database: dbConfig_1.default.database
 });
+// Note: We use connection.execute rather than connection.query. This is more secure since we prepare the statement fiirst. 

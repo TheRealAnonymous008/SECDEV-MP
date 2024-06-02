@@ -7,3 +7,5 @@ export default mysql.createConnection({
     password: dbConfig.password,
     database: dbConfig.database
 })
+
+// Note: We use connection.execute rather than connection.query. This is more secure since we prepare the statement fiirst. 

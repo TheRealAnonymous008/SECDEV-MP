@@ -4,7 +4,7 @@ import Customer from "../models/customer";
 
 interface IRepositiory<T> {
     retrieveAll: (limit? : number, offset? : number) => Promise<T[]>;
-    // retieveById(id :  number) : Promise<T | undefined>,
+    retieveById : (id :  number) => Promise<T | undefined>;
     // insert(object : T) : Promise<T>,
     // update(id : number, object : T) : Promise<number>, 
     // delete(id : number) : Promise<number>  
@@ -21,7 +21,7 @@ export const CustomerRepository : IRepositiory<Customer> = {
         }
 
         return new Promise((resolve, reject) => {
-            connection.query<Customer[]>(
+            connection.execute<Customer[]>(
                 query,
                 (err, res) => {
                     if (err) reject(err);
@@ -31,11 +31,23 @@ export const CustomerRepository : IRepositiory<Customer> = {
                 }
             )
         })
-    }
+    },
 
-    // retieveById(id :  number) : Promise<Customer | undefined> {
-        
-    // }
+    retieveById(id :  number) : Promise<Customer | undefined> {
+        let query = `SELECT * FROM customer WHERE Id = ${id}`
+
+        return new Promise((resolve, reject) => {
+            connection.execute<Customer[]>(
+                query,
+                (err, res) => {
+                    if (err) reject(err);
+                    else{
+                        resolve(res[0])
+                    }
+                }
+            )
+        })
+    }
     // insert(object : Customer) : Promise<Customer> {
 
     // }
