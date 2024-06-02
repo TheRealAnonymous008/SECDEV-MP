@@ -1,47 +1,49 @@
-// import express = require('express');
-// import Bcrypt = require('bcryptjs');
-// import signToken from '../utils/signToken';
-// import { randomUUID } from 'crypto';
-// import { buildTransactionStatement, executeTransaction } from '../txn/transaction';
-// import { Roles } from '../models/enum';
-// const register = async (req : express.Request, res : express.Response) => {
-//     const user = {
-//         firstName : req.body.firstName,
-//         lastName : req.body.lastName,
-//         username : req.body.username,
-//         mobileNumber : req.body.mobileNumber,
-//         email : req.body.email,
-//         password : Bcrypt.hashSync(req.body.password, 10),
-//         role : Roles.ADMIN
-//     }
-//     const query = `
-//       INSERT INTO "Users" ("FirstName", "LastName", "Username", "Password", "Role", "MobileNumber", "Email")
-//       VALUES ($1, $2, $3, $4, $5, $6, $7)
-//       RETURNING "Id";
-//     `;
-//     const values = [
-//       user.firstName,
-//       user.lastName,
-//       user.username,
-//       user.password, 
-//       user.role,
-//       user.mobileNumber,
-//       user.email,
-//     ];
-//     try {
-//         executeTransaction([
-//             buildTransactionStatement(query, values)], () => {
-//             res.status(200);
-//         })
-//             .then((result) => {
-//                 console.log(result);
-//             })
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(500).end();
-//     }
-// }
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const Bcrypt = require("bcryptjs");
+const enum_1 = require("../models/enum");
+const user_1 = require("../repository/user");
+const SALT_ROUNDS = 10;
+const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
+    const user = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        username: req.body.username,
+        mobileNumber: req.body.mobileNumber,
+        email: req.body.email,
+        salt: salt,
+        password: Bcrypt.hashSync(req.body.password, salt),
+        role: enum_1.Roles.ADMIN
+    };
+    try {
+        user_1.UserRepository.register(user)
+            .then((result) => {
+            if (result == undefined) {
+                res.status(500).end();
+                return;
+            }
+            res.status(200).end();
+        })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
+});
 // // const login = (req : express.Request, res : express.Response) => {
 // //     User.findOne({username : req.body.username})
 // //     .then((user) => {
@@ -135,4 +137,4 @@
 // const logout = (req : express.Request, res : express.Response) => {
 //     res.clearCookie("jwt").clearCookie("jwtacc").end();
 // }
-// export default {register, login, logout}
+exports.default = { register };

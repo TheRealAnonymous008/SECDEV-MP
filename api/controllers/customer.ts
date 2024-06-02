@@ -64,7 +64,6 @@ const create = async (req: express.Request, res: express.Response) => {
     try {
         CustomerRepository.insert(customer)
             .then((result) => {
-                console.log(result)
                 if (result == undefined){
                     res.status(500).end();
                     return
@@ -98,7 +97,6 @@ const update = async (req: express.Request, res: express.Response) => {
     try {
         CustomerRepository.update(parseInt(req.query.id.toString()), customer)
             .then((result) => {
-                console.log(result)
                 if (result == undefined){
                     res.status(500).end();
                     return
@@ -122,7 +120,6 @@ const remove = async (req: express.Request, res: express.Response) => {
     try {
         CustomerRepository.delete(parseInt(req.query.id.toString()))
             .then((result) => {
-                console.log(result)
                 if (result == undefined){
                     res.status(500).end();
                     return

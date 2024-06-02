@@ -64,7 +64,6 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         customer_2.CustomerRepository.insert(customer)
             .then((result) => {
-            console.log(result);
             if (result == undefined) {
                 res.status(500).end();
                 return;
@@ -95,7 +94,6 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         customer_2.CustomerRepository.update(parseInt(req.query.id.toString()), customer)
             .then((result) => {
-            console.log(result);
             if (result == undefined) {
                 res.status(500).end();
                 return;
@@ -117,7 +115,6 @@ const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         customer_2.CustomerRepository.delete(parseInt(req.query.id.toString()))
             .then((result) => {
-            console.log(result);
             if (result == undefined) {
                 res.status(500).end();
                 return;

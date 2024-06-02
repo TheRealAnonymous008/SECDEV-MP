@@ -1,9 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
-// import controller from "../controllers/authz";
+const authz_1 = __importDefault(require("../controllers/authz"));
 const router = express.Router();
-// router.post('/register', controller.register) 
+router.post('/register', authz_1.default.register);
 // router.post('/login', controller.login)       
 // router.post('/logout', controller.logout)
 exports.default = router;
