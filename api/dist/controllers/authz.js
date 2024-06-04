@@ -48,6 +48,26 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).end();
     }
 });
+const verify = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        user_1.UserRepository.verifyRole(req.body.username, req.body.role)
+            .then((result) => {
+            if (result == undefined) {
+                res.status(500).end();
+                return;
+            }
+            res.status(200).end();
+        })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
+});
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     user_1.UserRepository.retrieveByUsername(req.body.username)
         .then((user) => {
@@ -62,6 +82,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 else if (result) {
                     (0, signToken_1.default)(user, (err, token, refreshToken) => {
                         if (err) {
+                            console.log(err);
                             res.status(500).json({
                                 auth: false,
                                 message: err.message,
@@ -70,15 +91,15 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                         }
                         else if (token) {
                             if (refreshToken) {
-                                res.cookie('jwt', refreshToken, {
+                                res = res.cookie('jwt', refreshToken, {
                                     httpOnly: true,
                                     secure: true,
-                                    sameSite: "none",
+                                    sameSite: "lax",
                                 });
                                 res.cookie('jwtacc', token, {
                                     httpOnly: false,
                                     secure: true,
-                                    sameSite: "none",
+                                    sameSite: "lax",
                                 });
                                 res.json({
                                     auth: true,
@@ -117,4 +138,4 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 const logout = (req, res) => {
     res.clearCookie("jwt").clearCookie("jwtacc").end();
 };
-exports.default = { register, login, logout };
+exports.default = { register, login, logout, verify };

@@ -1,11 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const validateRole = (allowedRoles) => {
-    // TODO: This is temporary, Replace after debugging
     return (req, res, next) => {
-        next();
-    };
-    return (req, res, next) => {
+        console.log(res.locals.jwt);
         if (allowedRoles.includes(res.locals.jwt.role))
             next();
         else {

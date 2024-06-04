@@ -30,6 +30,18 @@ exports.UserRepository = {
             });
         });
     },
+    verifyRole(username, role) {
+        let query = `SELECT * FROM users JOIN roleenum ON users.Role = roleenum.Id WHERE Username = "${username}" AND Name = "${role.toUpperCase()}"`;
+        return new Promise((resolve, reject) => {
+            connection_1.default.execute(query, (err, res) => {
+                if (err)
+                    reject(err);
+                else {
+                    resolve(res.length > 0);
+                }
+            });
+        });
+    },
     retrieveByUsername(username) {
         let query = `SELECT * FROM users WHERE Username = "${username}"`;
         return new Promise((resolve, reject) => {

@@ -78,6 +78,7 @@ const login = async (req : express.Request, res : express.Response) => {
                 else if (result) {
                     signToken(user, (err, token, refreshToken) => {
                         if (err) {
+                            console.log(err)
                             res.status(500).json({
                                 auth : false,
                                 message : err.message,
@@ -86,7 +87,7 @@ const login = async (req : express.Request, res : express.Response) => {
                         }
                         else if (token) {
                             if(refreshToken) {
-                                res.cookie('jwt', refreshToken, 
+                                res = res.cookie('jwt', refreshToken, 
                                 {
                                     httpOnly:true,
                                     secure: true,

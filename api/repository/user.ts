@@ -49,7 +49,7 @@ export const UserRepository = {
         })
     },
 
-    retrieveByUsername(username : string) : Promise<UserRow | undefined> {
+    retrieveByUsername(username : string) : Promise<User | undefined> {
         let query = `SELECT * FROM users WHERE Username = "${username}"`
 
         return new Promise((resolve, reject) => {

@@ -4,7 +4,7 @@ export const Roles = {
     VIEW: 3
 };
 
-export const ALL_ROLES = [Roles.ADMIN, Roles.VIEW_EDIT, Roles.VIEW];
+export const ALL_ROLES = ["ADMIN", "VIEW_EDIT", "VIEW"];
 
 export const StatusEnum = [
     "PAID", 

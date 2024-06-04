@@ -36,8 +36,8 @@ const signToken = (user, callback) => {
     const expirationTime = timeSinceEpoch + Number(authConfig_1.default.token.expireTime) * 10000;
     try {
         jwt.sign({
-            id: user.id,
-            role: user.role,
+            id: user.Id,
+            role: user.Role,
         }, authConfig_1.default.token.secret, {
             expiresIn: authConfig_1.default.token.expireTime,
             issuer: authConfig_1.default.token.issuer
