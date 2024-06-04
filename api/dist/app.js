@@ -53,8 +53,10 @@ var corsOptions = {
 app.use(cors(corsOptions));
 const authz_1 = __importDefault(require("./routes/authz"));
 const customer_1 = __importDefault(require("./routes/customer"));
+const user_1 = __importDefault(require("./routes/user"));
 // TOOD: Put all routes here
 // route calls
+app.use('/api/user', user_1.default);
 app.use('/api/authz', authz_1.default);
 // app.use('/api/vehicle', vehicleRoutes);
 // app.use('/api/order', orderRoutes);

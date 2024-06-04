@@ -12,6 +12,8 @@ export const UpdateUser = (props : {user : User, observer : Function}) => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
     
     useEffect(() => {
+        if (data == undefined)
+            return;
         if (isRole("VIEW")) 
             return;
         createAPIEndpoint(ENDPOINTS.updateUser).post(data, {id: props.user.id})

@@ -1,6 +1,7 @@
 import User, { UserRow } from "../models/user";
 import { ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
+import IRepositiory from "./IRepository";
 
 export const UserRepository = {
     register (user : UserRow) : Promise<number> {
@@ -48,4 +49,85 @@ export const UserRepository = {
             )
         })
     },
+
+    retrieveAll(limit? : number, offset? : number) : Promise<User[]> {
+        let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id;`;
+        if (limit){
+            query += ` LIMIT ${limit}`
+        }
+        if (offset){
+            query += ` OFFST ${offset}`
+        }
+
+        return new Promise((resolve, reject) => {
+            connection.execute<User[]>(
+                query,
+                (err, res) => {
+                    if (err) reject(err);
+                    else{
+                        resolve(res)
+                    }
+                }
+            )
+        })
+    },
+
+    retrieveById(id :  number) : Promise<User | undefined> {
+        let query =  `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id; WHERE u.Id = ${id}`
+
+        return new Promise((resolve, reject) => {
+            connection.execute<User[]>(
+                query,
+                (err, res) => {
+                    if (err) reject(err);
+                    else{
+                        resolve(res[0])
+                    }
+                }
+            )
+        })
+    },
+    
+    update(id : number, object : UserRow) : Promise<number> {
+        let values = [
+            object.FirstName,
+            object.LastName,
+            object.Username,
+            object.Role,
+            object.Email,
+            object.MobileNumber,
+            id
+        ]
+
+        let query ="UPDATE users SET FirstName = ?, LastName = ?, Username = ?, Role = ?, Email = ?, MobileNubmer = ? WHERE Id=?"
+        
+        return new Promise((resolve, reject) => {
+            connection.execute<ResultSetHeader>(
+                query,
+                values,
+                (err, res) => {
+                    if (err) reject(err);
+                    else{
+                        resolve(id)
+                    }
+                }
+            )
+        })
+    },
+
+    delete(id : number) : Promise<number> {
+        let query =`DELETE FROM users WHERE id = ${id}`
+        
+        return new Promise((resolve, reject) => {
+            connection.execute<ResultSetHeader>(
+                query,
+                (err, res) => {
+                    if (err) reject(err);
+                    else{
+                        resolve(id)
+                    }
+                }
+            )
+        })
+    }
 }

@@ -39,10 +39,11 @@ app.use(cors(corsOptions));
 import indexRoute from './routes/index';
 import authzRoutes from './routes/authz';
 import customerRoutes from './routes/customer';
+import userRoutes from './routes/user';
 
 // TOOD: Put all routes here
 // route calls
-
+app.use('/api/user', userRoutes);
 app.use('/api/authz', authzRoutes);
 // app.use('/api/vehicle', vehicleRoutes);
 // app.use('/api/order', orderRoutes);

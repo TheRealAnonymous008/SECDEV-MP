@@ -5,11 +5,13 @@ const makeUserView = (document) => {
     if (document == null)
         return {};
     return {
-        id: document._id,
-        firstName: document.firstName,
-        lastName: document.lastName,
-        username: document.username,
-        role: document.role,
+        id: document.Id,
+        firstName: document.FirstName,
+        lastName: document.LastName,
+        username: document.Username,
+        mobileNumber: document.MobileNubmer,
+        email: document.Email,
+        role: document.Role,
     };
 };
 exports.makeUserView = makeUserView;

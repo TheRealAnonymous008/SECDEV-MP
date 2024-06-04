@@ -1,7 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
+const user_1 = __importDefault(require("../controllers/user"));
 const router = express.Router();
+router.get('/all', user_1.default.all);
+router.get('/id', user_1.default.id);
+router.post('/create', user_1.default.register);
+router.post('/update', user_1.default.update);
+router.delete('/delete', user_1.default.remove);
 // router.get('/all', validateToken, validateRole(ALL_ROLES), controller.all);
 // router.get('/id', validateToken, validateRole(ALL_ROLES), controller.id);
 // router.post('/create', validateToken, validateRole([Roles.ADMIN, Roles.VIEW_EDIT]), controller.create);

@@ -1,14 +1,8 @@
 import { ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
 import Customer, { CustomerRow } from "../models/customer";
+import IRepositiory from "./IRepository";
 
-interface IRepositiory<T> {
-    retrieveAll: (limit? : number, offset? : number) => Promise<T[]>;
-    retrieveById : (id :  number) => Promise<T | undefined>;
-    insert : (object) => Promise<number>;
-    update(id : number, object) : Promise<number>, 
-    delete(id : number) : Promise<number>  
-};
 
 export const CustomerRepository : IRepositiory<Customer> = {
     retrieveAll(limit? : number, offset? : number) : Promise<Customer[]> {

@@ -83,6 +83,8 @@ const UsersView = () => {
                                     sortAlphabetically(false);
                                 }}>▼</OptionButton>
                             </th>
+                            <th> Email </th>
+                            <th> Mobile Number </th>
                             <th> Role </th>
                             
                             <th hidden={isRole("VIEW") || isRole("VIEW_EDIT")}></th>
