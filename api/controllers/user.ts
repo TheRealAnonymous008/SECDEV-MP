@@ -55,6 +55,14 @@ const id = async (req: express.Request, res: express.Response) => {
 
 const register = async (req : express.Request, res : express.Response) => {
     try {
+        inputValidation.validateRegistrationInput(
+            req.body.firstName, 
+            req.body.lastName, 
+            req.body.username, 
+            req.body.password, 
+            req.body.mobileNumber, 
+            req.body.email
+        );
 
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
         const user : UserRow= {
@@ -68,18 +76,16 @@ const register = async (req : express.Request, res : express.Response) => {
             Role : RoleIds.VIEW
         };
 
-        UserRepository.register(user)
-            .then((result) => {
-                if (result == undefined){
-                    res.status(500).end();
-                    return
-                }
-                res.status(200).end();
-            })
-            .catch((err) => {
-                console.log(err);
-                res.status(500).send({message: "Error registering user"});
-            })
+        try {
+            const result = UserRepository.register(user);
+            if (result === undefined) {
+                throw new Error("Failed to register user");
+            }
+            res.status(200).end();
+        } catch (err) {
+            console.log(err);
+            res.status(500).send({message: "Error registering user"});
+        }
     } catch (err) {
         console.log(err);
         res.status(400).json({ message: err.message });

@@ -11,7 +11,13 @@ export function validateRequiredFields(firstName, lastName, username, password, 
     }
 }
 
-export async function validateRegistrationInput(firstName, lastName, username, password, mobileNumber, email) {
-    await Promise.resolve(validateRequiredFields(firstName, lastName, username, password, mobileNumber, email));
-    await Promise.resolve(validateEmail(email));
+export function validateRegistrationInput(firstName, lastName, username, password, mobileNumber, email) {
+    try {
+        validateRequiredFields(firstName, lastName, username, password, mobileNumber, email);
+        validateEmail(email);
+        
+        console.log('All validations passed');
+    } catch (error) {
+        console.error(error.message);
+    }
 }
