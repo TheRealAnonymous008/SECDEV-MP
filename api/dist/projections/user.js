@@ -9,7 +9,7 @@ const makeUserView = (document) => {
         firstName: document.FirstName,
         lastName: document.LastName,
         username: document.Username,
-        mobileNumber: document.MobileNubmer,
+        mobileNumber: document.MobileNumber,
         email: document.Email,
         role: document.Role,
     };
