@@ -5,7 +5,7 @@ import { CustomerRepository } from '../repository/customer';
 import { UserRow } from '../models/user';
 import { makeUserArrayView, makeUserView } from '../projections/user';
 import { UserRepository } from '../repository/user';
-import { Roles } from '../models/enum';
+import { RoleIds, Roles } from '../models/enum';
 
 const SALT_ROUNDS = 10
 const all = async (req: express.Request, res: express.Response) => {
@@ -15,7 +15,6 @@ const all = async (req: express.Request, res: express.Response) => {
                 res.status(500).end();
                 return
             }
-            console.log(result)
             res.json({
                 data: makeUserArrayView(result),
                 count : result.length 
@@ -63,7 +62,7 @@ const register = async (req : express.Request, res : express.Response) => {
         Email : req.body.email,
         Salt: salt,
         Password : Bcrypt.hashSync(req.body.password, salt),
-        Role : Roles.ADMIN
+        Role : RoleIds.VIEW
     }
 
     try {

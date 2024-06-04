@@ -1,12 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TypeEnum = exports.StatusEnum = exports.ALL_ROLES = exports.Roles = void 0;
+exports.TypeEnum = exports.StatusEnum = exports.ALL_ROLES = exports.RoleIds = exports.Roles = void 0;
 exports.Roles = {
+    ADMIN: "ADMIN",
+    VIEW_EDIT: "VIEW_EDIT",
+    VIEW: "VIEW"
+};
+exports.RoleIds = {
     ADMIN: 1,
     VIEW_EDIT: 2,
-    VIEW: 3
+    VIEW: 3,
 };
-exports.ALL_ROLES = [exports.Roles.ADMIN, exports.Roles.VIEW_EDIT, exports.Roles.VIEW];
+exports.ALL_ROLES = ["ADMIN", "VIEW_EDIT", "VIEW"];
 exports.StatusEnum = [
     "PAID",
     "UNPAID",

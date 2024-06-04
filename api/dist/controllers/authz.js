@@ -27,7 +27,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         Email: req.body.email,
         Salt: salt,
         Password: Bcrypt.hashSync(req.body.password, salt),
-        Role: enum_1.Roles.ADMIN
+        Role: enum_1.RoleIds.VIEW
     };
     try {
         user_1.UserRepository.register(user)
@@ -97,7 +97,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                                     sameSite: "lax",
                                 });
                                 res.cookie('jwtacc', token, {
-                                    httpOnly: false,
+                                    httpOnly: true,
                                     secure: true,
                                     sameSite: "lax",
                                 });

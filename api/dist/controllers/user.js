@@ -21,7 +21,6 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(500).end();
             return;
         }
-        console.log(result);
         res.json({
             data: (0, user_1.makeUserArrayView)(result),
             count: result.length
@@ -65,7 +64,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         Email: req.body.email,
         Salt: salt,
         Password: Bcrypt.hashSync(req.body.password, salt),
-        Role: enum_1.Roles.ADMIN
+        Role: enum_1.RoleIds.VIEW
     };
     try {
         user_2.UserRepository.register(user)

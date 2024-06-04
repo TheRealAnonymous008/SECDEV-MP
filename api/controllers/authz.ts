@@ -2,7 +2,7 @@ import express = require('express');
 import Bcrypt = require('bcryptjs');
 import signToken from '../utils/signToken';
 import { randomUUID } from 'crypto';
-import { Roles } from '../models/enum';
+import { RoleIds, Roles } from '../models/enum';
 import { UserRepository } from '../repository/user';
 import { UserRow } from '../models/user';
 
@@ -18,7 +18,7 @@ const register = async (req : express.Request, res : express.Response) => {
         Email : req.body.email,
         Salt: salt,
         Password : Bcrypt.hashSync(req.body.password, salt),
-        Role : Roles.ADMIN
+        Role : RoleIds.VIEW
     }
 
     try {
@@ -95,7 +95,7 @@ const login = async (req : express.Request, res : express.Response) => {
                                 })
                                 res.cookie('jwtacc', token, 
                                 {
-                                    httpOnly: false,
+                                    httpOnly: true,
                                     secure: true,
                                     sameSite: "lax",
                                 })
