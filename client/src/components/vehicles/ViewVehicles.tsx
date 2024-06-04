@@ -3,7 +3,7 @@ import { Vehicle } from "./VehicleDetails";
 import { VehicleRecord } from "./VehicleRecord";
 import {ViewHandler} from "../view/ViewHandler";
 import { CreateVehicle } from "./CreateVehicle";
-import { getRole, isRole } from "../../utils/CheckRole";
+import { isRole } from "../../utils/CheckRole";
 import { OptionButton } from "../../style/SearchbarStyle";
 import { TableBody, TableHead } from "../../style/TableStyle";
 import { CreateButton } from "../../style/CreateButton";
@@ -25,7 +25,7 @@ const ViewVehicles = () => {
     }, [queryResult]);
 
     useEffect(() => {
-        console.log(getRole())
+        
     }, []);
 
 

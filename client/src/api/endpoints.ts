@@ -3,6 +3,7 @@ export const ENDPOINTS = {
     register: 'authz/register',
     refreshToken: 'authz/refresh',
     logout: 'authz/logout',
+    verify : 'authz/verify',
 
     orderTypes: 'order/types',
     orderStatuses: 'order/statuses',

@@ -35,7 +35,7 @@ const signToken = (user,  callback: (error: Error | null, token: string | null, 
             },
             config.token.secret,
             {
-                expiresIn: config.token.expireTime,
+                expiresIn: expirationTime,
                 issuer: config.token.issuer
             },
             async (error, token) => {

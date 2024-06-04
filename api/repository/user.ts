@@ -34,6 +34,21 @@ export const UserRepository = {
         })
     },
 
+    verifyRole(username : string, role : string ) : Promise<boolean> {
+        let query = `SELECT * FROM users JOIN roleenum ON users.Role = roleenum.Id WHERE Username = "${username}" AND Name = "${role.toUpperCase()}"`;
+        return new Promise((resolve, reject) => {
+            connection.execute<ResultSetHeader[]>(
+                query, 
+                (err, res) => {
+                    if (err) reject(err);
+                    else {
+                        resolve(res.length > 0)
+                    }
+                }
+            )
+        })
+    },
+
     retrieveByUsername(username : string) : Promise<UserRow | undefined> {
         let query = `SELECT * FROM users WHERE Username = "${username}"`
 

@@ -42,6 +42,28 @@ const register = async (req : express.Request, res : express.Response) => {
 
 }
 
+
+const verify = async (req : express.Request, res : express.Response) => {
+    try {
+        UserRepository.verifyRole(req.body.username, req.body.role)
+            .then((result) => {
+                if (result == undefined){
+                    res.status(500).end();
+                    return
+                }
+                res.status(200).end();
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).end();
+            })
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
+}
+
 const login = async (req : express.Request, res : express.Response) => {
     UserRepository.retrieveByUsername(req.body.username)
     .then((user) => {
@@ -68,13 +90,13 @@ const login = async (req : express.Request, res : express.Response) => {
                                 {
                                     httpOnly:true,
                                     secure: true,
-                                    sameSite: "none",
+                                    sameSite: "lax",
                                 })
                                 res.cookie('jwtacc', token, 
                                 {
                                     httpOnly: false,
                                     secure: true,
-                                    sameSite: "none",
+                                    sameSite: "lax",
                                 })
                                 res.json({
                                     auth : true,
@@ -117,4 +139,4 @@ const logout = (req : express.Request, res : express.Response) => {
 }
 
 
-export default {register, login, logout}
+export default {register, login, logout, verify}
