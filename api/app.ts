@@ -51,6 +51,15 @@ app.use('/api/customer', customerRoutes);
 // app.use('/api', enumRoutes);
 // app.use('/', indexRoute);
 
+app.use((err, req, res, next) => {
+    if (err.status === 400) {
+        console.error(err.stack); 
+        res.status(400).json({ message: 'Bad Request', details: err.message }); 
+    } else {
+        next(err);
+    }
+});
+
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
     const err = new Error('Not Found');

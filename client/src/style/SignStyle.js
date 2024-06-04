@@ -192,6 +192,7 @@ const SignUp = styles.div`
     text-align: center;
     width: 70%;
     p {
+        margin-top: -0.3rem;
         font-weight: 800;
     }
 

@@ -55,18 +55,18 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
-    const user = {
-        FirstName: req.body.firstName,
-        LastName: req.body.lastName,
-        Username: req.body.username,
-        MobileNumber: req.body.mobileNumber,
-        Email: req.body.email,
-        Salt: salt,
-        Password: Bcrypt.hashSync(req.body.password, salt),
-        Role: enum_1.RoleIds.VIEW
-    };
     try {
+        const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
+        const user = {
+            FirstName: req.body.firstName,
+            LastName: req.body.lastName,
+            Username: req.body.username,
+            MobileNumber: req.body.mobileNumber,
+            Email: req.body.email,
+            Salt: salt,
+            Password: Bcrypt.hashSync(req.body.password, salt),
+            Role: enum_1.RoleIds.VIEW
+        };
         user_2.UserRepository.register(user)
             .then((result) => {
             if (result == undefined) {
@@ -77,12 +77,12 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         })
             .catch((err) => {
             console.log(err);
-            res.status(500).end();
+            res.status(500).send({ message: "Error registering user" });
         });
     }
     catch (err) {
         console.log(err);
-        res.status(500).end();
+        res.status(400).json({ message: err.message });
     }
 });
 const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
