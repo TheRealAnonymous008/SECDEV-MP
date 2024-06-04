@@ -53,7 +53,7 @@ const id = async (req: express.Request, res: express.Response) => {
     }
 }
 
-const register = async (req : express.Request, res : express.Response) => {
+const register = async (req : express.Request, res : express.Response, next: express.NextFunction) => {
     try {
         inputValidation.validateRegistrationInput(
             req.body.firstName, 
@@ -63,7 +63,7 @@ const register = async (req : express.Request, res : express.Response) => {
             req.body.mobileNumber, 
             req.body.email
         );
-
+        next();
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
         const user : UserRow= {
             FirstName : req.body.firstName,

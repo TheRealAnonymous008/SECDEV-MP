@@ -22,6 +22,7 @@ function validateRegistrationInput(firstName, lastName, username, password, mobi
     }
     catch (error) {
         console.error(error.message);
+        throw error;
     }
 }
 exports.validateRegistrationInput = validateRegistrationInput;

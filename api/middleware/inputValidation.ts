@@ -19,5 +19,6 @@ export function validateRegistrationInput(firstName, lastName, username, passwor
         console.log('All validations passed');
     } catch (error) {
         console.error(error.message);
+        throw error;
     }
 }
