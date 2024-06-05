@@ -30,7 +30,10 @@ const express = require("express");
 const authz_1 = __importDefault(require("../controllers/authz"));
 const inputValidation = __importStar(require("../middleware/inputValidation"));
 const router = express.Router();
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
 function validateRequestBody(req, res, next) {
+    console.log("validateRequestbody called");
     try {
         try {
             inputValidation.validateRegistrationInput(req.body.firstName, req.body.lastName, req.body.username, req.body.password, req.body.mobileNumber, req.body.email);

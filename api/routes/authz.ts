@@ -3,7 +3,11 @@ import controller from "../controllers/authz";
 import * as inputValidation from '../middleware/inputValidation';
 const router = express.Router();
 
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
+
 function validateRequestBody(req: express.Request, res: express.Response, next: express.NextFunction) {
+    console.log("validateRequestbody called");
     try {
         try {
             inputValidation.validateRegistrationInput(
@@ -14,6 +18,8 @@ function validateRequestBody(req: express.Request, res: express.Response, next: 
                 req.body.mobileNumber, 
                 req.body.email
             );
+
+            
         } catch (error) {
             return res.status(400).json({ message: error.message });
         }
