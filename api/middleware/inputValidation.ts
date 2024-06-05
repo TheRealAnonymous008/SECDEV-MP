@@ -14,12 +14,18 @@ export function validateMobileNumber(mobileNumber) {
 }
 
 export function validateFirstName(firstName) {
-    const firstNameRegex = /^[A-Z][a-zA-Z]{1,}$/;
-    if (firstName == null || firstName == undefined || firstName == "") {
-        throw new Error("First name is required");
-    }
+    const firstNameRegex = /^[A-Z][a-zA-Z]{1,34}$/;
+
     if (!firstNameRegex.test(firstName)) {
         throw new Error("Invalid first name format");
+    }
+}
+
+export function validateLastName(lastName) {
+    const lastNameRegex = /^[A-Z][a-zA-Z]{1,34}$/;
+
+    if (!lastNameRegex.test(lastName)) {
+        throw new Error("Invalid last name format");
     }
 }
 
@@ -49,6 +55,7 @@ export function validateRegistrationInput(firstName, lastName, username, passwor
     try {
         validateRequiredFields(firstName, lastName, username, password, mobileNumber, email);
         validateFirstName(firstName);
+        validateLastName(lastName);
         validateMobileNumber(mobileNumber);
         validateEmail(email);
         
