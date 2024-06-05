@@ -1,12 +1,12 @@
 import { ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
-import Customer, { CustomerRow } from "../models/customer";
+import Vehicle, { VehicleRow } from "../models/vehicle";
 import IRepository from "./IRepository";
 
 
-export const CustomerRepository : IRepository<Customer> = {
-    retrieveAll(limit? : number, offset? : number) : Promise<Customer[]> {
-        let query = "SELECT * FROM customer";
+export const VehicleRepository : IRepository<Vehicle> = {
+    retrieveAll(limit? : number, offset? : number) : Promise<Vehicle[]> {
+        let query = "SELECT * FROM vehicle";
         if (limit){
             query += ` LIMIT ${limit}`
         }
@@ -15,7 +15,7 @@ export const CustomerRepository : IRepository<Customer> = {
         }
 
         return new Promise((resolve, reject) => {
-            connection.execute<Customer[]>(
+            connection.execute<Vehicle[]>(
                 query,
                 (err, res) => {
                     if (err) reject(err);
@@ -27,11 +27,11 @@ export const CustomerRepository : IRepository<Customer> = {
         })
     },
 
-    retrieveById(id :  number) : Promise<Customer | undefined> {
-        let query = `SELECT * FROM customer WHERE Id = ${id}`
+    retrieveById(id :  number) : Promise<Vehicle | undefined> {
+        let query = `SELECT * FROM vehicle WHERE Id = ${id}`
 
         return new Promise((resolve, reject) => {
-            connection.execute<Customer[]>(
+            connection.execute<Vehicle[]>(
                 query,
                 (err, res) => {
                     if (err) reject(err);
@@ -43,18 +43,18 @@ export const CustomerRepository : IRepository<Customer> = {
         })
     },
 
-    insert(object : CustomerRow ) : Promise<number> {
+    insert(object : VehicleRow ) : Promise<number> {
         let values = [
-            object.FirstName,
-            object.LastName,
-            object.MobileNumber,
-            object.Email,
-            object.Company,
-            object.Insurance,
+            object.LicensePlate,
+            object.Model,
+            object.Manufacturer,
+            object.YearManufactured,
+            object.Color,
+            object.Engine,
             object.Remarks
         ]
 
-        let query ="INSERT INTO customer(FirstName, LastName, MobileNumber, Email, Company, Insurance, Remarks) \
+        let query ="INSERT INTO vehicle(LicensePlate, Model, Manufacturer, YearManufactured, Color, Engine, Remarks) \
         VALUES(?, ?, ?, ?, ?, ?, ?);"
         
         return new Promise((resolve, reject) => {
@@ -71,19 +71,19 @@ export const CustomerRepository : IRepository<Customer> = {
         })
     },
 
-    update(id : number, object : CustomerRow) : Promise<number> {
+    update(id : number, object : VehicleRow) : Promise<number> {
         let values = [
-            object.FirstName,
-            object.LastName,
-            object.MobileNumber,
-            object.Email,
-            object.Company,
-            object.Insurance,
+            object.LicensePlate,
+            object.Model,
+            object.Manufacturer,
+            object.YearManufactured,
+            object.Color,
+            object.Engine,
             object.Remarks,
             id
         ]
 
-        let query ="UPDATE customer SET FirstName = ?, LastName = ?, MobileNumber = ?, Email = ?, Company = ?, Insurance = ?, Remarks = ? WHERE Id=?"
+        let query ="UPDATE vehicle SET LicensePlate = ?, Model = ?, Manufacturer = ?, YearManufactured = ?, Color = ?, Engine = ?, Remarks = ? WHERE Id=?"
         
         return new Promise((resolve, reject) => {
             connection.execute<ResultSetHeader>(
@@ -100,7 +100,7 @@ export const CustomerRepository : IRepository<Customer> = {
     },
 
     delete(id : number) : Promise<number> {
-        let query =`DELETE FROM customer WHERE id = ${id}`
+        let query =`DELETE FROM vehicle WHERE id = ${id}`
         
         return new Promise((resolve, reject) => {
             connection.execute<ResultSetHeader>(
@@ -109,6 +109,22 @@ export const CustomerRepository : IRepository<Customer> = {
                     if (err) reject(err);
                     else{
                         resolve(id)
+                    }
+                }
+            )
+        })
+    },
+
+    count() : Promise<number> {
+        let query = "SELECT COUNT(*) FROM vehicle"
+        
+        return new Promise((resolve, reject) => {
+            connection.execute<number>(
+                query,
+                (err, res) => {
+                    if (err) reject(err);
+                    else{
+                        resolve(res[0]['COUNT(*)'])
                     }
                 }
             )

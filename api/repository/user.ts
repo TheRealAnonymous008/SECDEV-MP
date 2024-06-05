@@ -1,7 +1,7 @@
 import User, { UserRow } from "../models/user";
 import { ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
-import IRepositiory from "./IRepository";
+import IRepository from "./IRepository";
 
 export const UserRepository = {
     register (user : UserRow) : Promise<number> {
