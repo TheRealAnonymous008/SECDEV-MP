@@ -38,7 +38,7 @@ export function validateMobileNumber(mobileNumber) {
 }
 
 export function validatePassword(password) {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{12,64}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{8,32}$/;
 
     if (!passwordRegex.test(password)) {
         throw new Error("Invalid password format.");
@@ -46,7 +46,7 @@ export function validatePassword(password) {
 }
 
 export function validateRequiredFields(firstName, lastName, username, password, mobileNumber, email) {
-    console.log('Validating required fields');
+    //console.log('Validating required fields');
     if (firstName == null || firstName == undefined || firstName == "") {
         throw new Error("First name is required");
     }
