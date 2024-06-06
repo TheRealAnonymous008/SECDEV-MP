@@ -5,14 +5,6 @@ export function validateEmail(email) {
     }
 }
 
-export function validateMobileNumber(mobileNumber) {
-    const mobileNumberRegex = /^09\d{9}$/;
-
-    if (!mobileNumberRegex.test(mobileNumber)) {
-        throw new Error("Invalid mobile number format.");
-    }
-}
-
 export function validateFirstName(firstName) {
     const firstNameRegex = /^[A-Z][a-zA-Z]{1,34}$/;
 
@@ -26,6 +18,30 @@ export function validateLastName(lastName) {
 
     if (!lastNameRegex.test(lastName)) {
         throw new Error("Invalid last name format");
+    }
+}
+
+export function validateUsername(username) {
+    const usernameRegex = /^[a-zA-Z0-9]{4,35}$/;
+
+    if (!usernameRegex.test(username)) {
+        throw new Error("Invalid username format");
+    }
+}
+
+export function validateMobileNumber(mobileNumber) {
+    const mobileNumberRegex = /^09\d{9}$/;
+
+    if (!mobileNumberRegex.test(mobileNumber)) {
+        throw new Error("Invalid mobile number format.");
+    }
+}
+
+export function validatePassword(password) {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{12,64}$/;
+
+    if (!passwordRegex.test(password)) {
+        throw new Error("Invalid password format.");
     }
 }
 
@@ -56,6 +72,8 @@ export function validateRegistrationInput(firstName, lastName, username, passwor
         validateRequiredFields(firstName, lastName, username, password, mobileNumber, email);
         validateFirstName(firstName);
         validateLastName(lastName);
+        validateUsername(username);
+        validatePassword(password);
         validateMobileNumber(mobileNumber);
         validateEmail(email);
         
