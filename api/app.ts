@@ -40,16 +40,27 @@ import indexRoute from './routes/index';
 import authzRoutes from './routes/authz';
 import customerRoutes from './routes/customer';
 import userRoutes from './routes/user';
+import vehicleRoutes from './routes/vehicle';
+// import orderRoutes from './routes/order';
 
 // TOOD: Put all routes here
 // route calls
 app.use('/api/user', userRoutes);
 app.use('/api/authz', authzRoutes);
-// app.use('/api/vehicle', vehicleRoutes);
+app.use('/api/vehicle', vehicleRoutes);
 // app.use('/api/order', orderRoutes);
 app.use('/api/customer', customerRoutes);
 // app.use('/api', enumRoutes);
 // app.use('/', indexRoute);
+
+app.use((err, req, res, next) => {
+    if (err.status === 400) {
+        console.error(err.stack); 
+        res.status(400).json({ message: 'Bad Request', details: err.message }); 
+    } else {
+        next(err);
+    }
+});
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

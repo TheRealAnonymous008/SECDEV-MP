@@ -6,6 +6,7 @@ import { UserRow } from '../models/user';
 import { makeUserArrayView, makeUserView } from '../projections/user';
 import { UserRepository } from '../repository/user';
 import { RoleIds, Roles } from '../models/enum';
+import * as inputValidation from '../middleware/inputValidation';
 
 const SALT_ROUNDS = 10
 const all = async (req: express.Request, res: express.Response) => {
@@ -52,36 +53,42 @@ const id = async (req: express.Request, res: express.Response) => {
     }
 }
 
-const register = async (req : express.Request, res : express.Response) => {
-    const salt = Bcrypt.genSaltSync(SALT_ROUNDS)
-    const user : UserRow= {
-        FirstName : req.body.firstName,
-        LastName : req.body.lastName,
-        Username : req.body.username,
-        MobileNumber : req.body.mobileNumber,
-        Email : req.body.email,
-        Salt: salt,
-        Password : Bcrypt.hashSync(req.body.password, salt),
-        Role : RoleIds.VIEW
-    }
-
+const register = async (req : express.Request, res : express.Response, next: express.NextFunction) => {
     try {
-        UserRepository.register(user)
-            .then((result) => {
-                if (result == undefined){
-                    res.status(500).end();
-                    return
-                }
-                res.status(200).end();
-            })
-            .catch((err) => {
-                console.log(err);
-                res.status(500).end();
-            })
-    }
-    catch (err) {
+        inputValidation.validateRegistrationInput(
+            req.body.firstName, 
+            req.body.lastName, 
+            req.body.username, 
+            req.body.password, 
+            req.body.mobileNumber, 
+            req.body.email
+        );
+        next();
+        const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
+        const user : UserRow= {
+            FirstName : req.body.firstName,
+            LastName : req.body.lastName,
+            Username : req.body.username,
+            MobileNumber : req.body.mobileNumber,
+            Email : req.body.email,
+            Salt: salt,
+            Password : Bcrypt.hashSync(req.body.password, salt),
+            Role : RoleIds.VIEW
+        };
+
+        try {
+            const result = UserRepository.register(user);
+            if (result === undefined) {
+                throw new Error("Failed to register user");
+            }
+            res.status(200).end();
+        } catch (err) {
+            console.log(err);
+            res.status(500).send({message: "Error registering user"});
+        }
+    } catch (err) {
         console.log(err);
-        res.status(500).end();
+        res.status(400).json({ message: err.message });
     }
 
 }

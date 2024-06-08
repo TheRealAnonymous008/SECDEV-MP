@@ -5,6 +5,7 @@ import { ROUTES } from '../api/routes';
 import { SignBox, LoginDiv, SignPage, RightImage, SignUp } from '../style/SignStyle';
 import { RedDialogue } from '../style/Dialogue';
 import { ENDPOINTS } from '../api/endpoints';
+import { set } from 'react-hook-form';
 
 
 type LoginState = {
@@ -17,12 +18,26 @@ const Login = (props: {setIsLoggedIn : Function}) => {
         username: "",
         password: ""
     });
+
+    const [usernameError, setUsernameError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
     
     const navigation = useNavigate();
 
-
-    // TODO: Actually implement this later. Just uncomment the code and create an admin account.
     const onSubmit = (event: React.SyntheticEvent<HTMLInputElement>) => {
+
+        if (!state.username) {
+            setUsernameError("Username is required.");
+            return;
+        }
+        setUsernameError("");
+
+        if (!state.password) {
+            setPasswordError("Password is required.");
+            return;
+        }
+        setPasswordError("");
+
         createAPIEndpoint(ENDPOINTS.login).post(state)
             .then((response) => {
                 if(response.data.auth) {
@@ -59,8 +74,7 @@ const Login = (props: {setIsLoggedIn : Function}) => {
                                 value={state.username}
                                 placeholder="Username"
                                 onChange={(e) => { onInputChange("username", e.target.value); }} />
-                            <br />
-                            <br />
+                            {usernameError && <p style={{ color: 'red' }}>{usernameError}</p>}
                         </span>
                         <span>
                             <input
@@ -69,8 +83,7 @@ const Login = (props: {setIsLoggedIn : Function}) => {
                                 placeholder="Password"
                                 value={state.password}
                                 onChange={(e) => { onInputChange("password", e.target.value); }} />
-                            <br />
-                            <br />
+                            {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
                         </span>
                         <span>
                             <input
