@@ -30,10 +30,11 @@ const express = require("express");
 const authz_1 = __importDefault(require("../controllers/authz"));
 const inputValidation = __importStar(require("../middleware/inputValidation"));
 const router = express.Router();
+const express_rate_limit_1 = require("express-rate-limit");
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 function validateRequestBody(req, res, next) {
-    console.log("validateRequestbody called");
+    //console.log("validateRequestbody called");
     try {
         try {
             inputValidation.validateRegistrationInput(req.body.firstName, req.body.lastName, req.body.username, req.body.password, req.body.mobileNumber, req.body.email);
@@ -48,8 +49,15 @@ function validateRequestBody(req, res, next) {
         res.status(500).json({ message: 'An unexpected error occurred' });
     }
 }
+// Rate limiter for login capping
+const limiter = (0, express_rate_limit_1.rateLimit)({
+    windowMs: 5 * 60 * 1000,
+    limit: 10,
+    standardHeaders: true,
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
 router.get('/verify', authz_1.default.verify);
 router.post('/register', validateRequestBody, authz_1.default.register);
-router.post('/login', authz_1.default.login);
+router.post('/login', limiter, authz_1.default.login);
 router.post('/logout', authz_1.default.logout);
 exports.default = router;

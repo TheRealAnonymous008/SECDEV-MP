@@ -3,11 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CustomerRepository = void 0;
+exports.VehicleRepository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
-exports.CustomerRepository = {
+exports.VehicleRepository = {
     retrieveAll(limit, offset) {
-        let query = "SELECT * FROM customer";
+        let query = "SELECT * FROM vehicle";
         if (limit) {
             query += ` LIMIT ${limit}`;
         }
@@ -25,7 +25,7 @@ exports.CustomerRepository = {
         });
     },
     retrieveById(id) {
-        let query = `SELECT * FROM customer WHERE Id = ${id}`;
+        let query = `SELECT * FROM vehicle WHERE Id = ${id}`;
         return new Promise((resolve, reject) => {
             connection_1.default.execute(query, (err, res) => {
                 if (err)
@@ -38,15 +38,15 @@ exports.CustomerRepository = {
     },
     insert(object) {
         let values = [
-            object.FirstName,
-            object.LastName,
-            object.MobileNumber,
-            object.Email,
-            object.Company,
-            object.Insurance,
+            object.LicensePlate,
+            object.Model,
+            object.Manufacturer,
+            object.YearManufactured,
+            object.Color,
+            object.Engine,
             object.Remarks
         ];
-        let query = "INSERT INTO customer(FirstName, LastName, MobileNumber, Email, Company, Insurance, Remarks) \
+        let query = "INSERT INTO vehicle(LicensePlate, Model, Manufacturer, YearManufactured, Color, Engine, Remarks) \
         VALUES(?, ?, ?, ?, ?, ?, ?);";
         return new Promise((resolve, reject) => {
             connection_1.default.execute(query, values, (err, res) => {
@@ -60,16 +60,16 @@ exports.CustomerRepository = {
     },
     update(id, object) {
         let values = [
-            object.FirstName,
-            object.LastName,
-            object.MobileNumber,
-            object.Email,
-            object.Company,
-            object.Insurance,
+            object.LicensePlate,
+            object.Model,
+            object.Manufacturer,
+            object.YearManufactured,
+            object.Color,
+            object.Engine,
             object.Remarks,
             id
         ];
-        let query = "UPDATE customer SET FirstName = ?, LastName = ?, MobileNumber = ?, Email = ?, Company = ?, Insurance = ?, Remarks = ? WHERE Id=?";
+        let query = "UPDATE vehicle SET LicensePlate = ?, Model = ?, Manufacturer = ?, YearManufactured = ?, Color = ?, Engine = ?, Remarks = ? WHERE Id=?";
         return new Promise((resolve, reject) => {
             connection_1.default.execute(query, values, (err, res) => {
                 if (err)
@@ -81,7 +81,7 @@ exports.CustomerRepository = {
         });
     },
     delete(id) {
-        let query = `DELETE FROM customer WHERE id = ${id}`;
+        let query = `DELETE FROM vehicle WHERE id = ${id}`;
         return new Promise((resolve, reject) => {
             connection_1.default.execute(query, (err, res) => {
                 if (err)

@@ -1,54 +1,88 @@
-import { randomInt, randomUUID } from 'crypto';
-import  express = require('express');
-import BCrypt = require('bcryptjs');
-import { ALL_ROLES, Roles } from '../models/enum';
-import { makeVehicleArrayView, makeVehicleView } from '../projections/vehicle';
-import { VehicleRepository } from '../repository/vehicle';
-import Vehicle, { VehicleRow } from '../models/vehicle';
-
-const all = async (req: express.Request, res: express.Response) => {
-    VehicleRepository.retrieveAll()
-    .then((result) => {
-        if (result.length == 0){
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const vehicle_1 = require("../projections/vehicle");
+const vehicle_2 = require("../repository/vehicle");
+const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    vehicle_2.VehicleRepository.retrieveAll()
+        .then((result) => {
+        if (result.length == 0) {
             res.status(500).end();
-            return
+            return;
         }
         res.json({
-            data: makeVehicleArrayView(result),
-            count : result.length 
+            data: (0, vehicle_1.makeVehicleArrayView)(result),
+            count: result.length
         });
         res.status(200).end();
     })
-    .catch((err) => {
+        .catch((err) => {
         console.log(err);
         res.status(500).end();
-    })
-}
-
-const id = async (req: express.Request, res: express.Response) => {
+    });
+});
+const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let id = parseInt(req.query.id.toString())
-        VehicleRepository.retrieveById(id)
-        .then((result) => {
-            if (result.length == 0){
+        let id = parseInt(req.query.id.toString());
+        vehicle_2.VehicleRepository.retrieveById(id)
+            .then((result) => {
+            if (result.length == 0) {
                 res.status(500).end();
-                return
+                return;
             }
-            res.json(makeVehicleView(result));
+            res.json((0, vehicle_1.makeVehicleView)(result));
             res.status(200).end();
         })
-        .catch((err) => {
+            .catch((err) => {
             console.log(err);
             res.status(500).end();
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).end();
+    }
+});
+const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const vehicle = {
+        LicensePlate: req.body.licensePlate,
+        Model: req.body.model,
+        Manufacturer: req.body.manufacturer,
+        YearManufactured: req.body.yearManufactured,
+        Color: req.body.color,
+        Engine: req.body.engine,
+        Remarks: req.body.remarks
+    };
+    try {
+        vehicle_2.VehicleRepository.insert(vehicle)
+            .then((result) => {
+            if (result == undefined) {
+                res.status(500).end();
+                return;
+            }
+            res.json((0, vehicle_1.makeVehicleView)(Object.assign(Object.assign({}, vehicle), { id: result })));
+            res.status(200).end();
         })
-    } catch (error) {
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (error) {
         console.log(error);
         res.status(500).end();
     }
-}
-
-const create = async (req: express.Request, res: express.Response) => {
-    const vehicle : VehicleRow = {
+});
+const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const vehicle = {
         LicensePlate: req.body.licensePlate,
         Model: req.body.model,
         Manufacturer: req.body.manufacturer,
@@ -57,78 +91,46 @@ const create = async (req: express.Request, res: express.Response) => {
         Engine: req.body.engine,
         Remarks: req.body.remarks
     };
-
     try {
-        VehicleRepository.insert(vehicle)
+        vehicle_2.VehicleRepository.update(parseInt(req.query.id.toString()), vehicle)
             .then((result) => {
-                if (result == undefined){
-                    res.status(500).end();
-                    return
-                }
-                res.json(makeVehicleView({...vehicle, id: result}));
-                res.status(200).end();
-            })
-            .catch((err) => {
-                console.log(err);
+            if (result == undefined) {
                 res.status(500).end();
-            })
-    } catch (error) {
+                return;
+            }
+            res.json((0, vehicle_1.makeVehicleView)(Object.assign(Object.assign({}, vehicle), { id: result })));
+            res.status(200).end();
+        })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (error) {
         console.log(error);
         res.status(500).end();
     }
-}
-
-const update = async (req: express.Request, res: express.Response) => {
-    const vehicle : VehicleRow = {
-        LicensePlate: req.body.licensePlate,
-        Model: req.body.model,
-        Manufacturer: req.body.manufacturer,
-        YearManufactured: req.body.yearManufactured,
-        Color: req.body.color,
-        Engine: req.body.engine,
-        Remarks: req.body.remarks
-    };
-
+});
+const remove = (req, res) => {
     try {
-        VehicleRepository.update(parseInt(req.query.id.toString()), vehicle)
+        vehicle_2.VehicleRepository.delete(parseInt(req.query.id.toString()))
             .then((result) => {
-                if (result == undefined){
-                    res.status(500).end();
-                    return
-                }
-                res.json(makeVehicleView({...vehicle, id: result}));
-                res.status(200).end();
-            })
-            .catch((err) => {
-                console.log(err);
+            if (result == undefined) {
                 res.status(500).end();
-            })
-    } catch (error) {
+                return;
+            }
+            res.status(200).end();
+        })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (error) {
         console.log(error);
         res.status(500).end();
     }
-}
-
-const remove = (req: express.Request, res: express.Response) => {
-    try {
-        VehicleRepository.delete(parseInt(req.query.id.toString()))
-            .then((result) => {
-                if (result == undefined){
-                    res.status(500).end();
-                    return
-                }
-                res.status(200).end();
-            })
-            .catch((err) => {
-                console.log(err);
-                res.status(500).end();
-            })
-    } catch (error) {
-        console.log(error);
-        res.status(500).end();
-    }
-}
-
+};
 /*
 const filter = async (req: express.Request, res: express.Response) => {
     const query : VehicleQuery = makeQuery(req);
@@ -254,5 +256,4 @@ const remove = (req: express.Request, res: express.Response) => {
     });
 };
 */
-
-export default {all, id, create, update, remove};
+exports.default = { all, id, create, update, remove };

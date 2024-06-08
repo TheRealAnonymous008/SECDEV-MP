@@ -1,9 +1,16 @@
-// import express = require('express');
-// import controller from '../controllers/vehicle';
-// import { ALL_ROLES, Roles } from '../models/mongodb/enum';
-// import validateRole from '../middleware/roleValidation';
-// import validateToken from '../middleware/authValidation';
-// const router = express.Router();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express = require("express");
+const vehicle_1 = __importDefault(require("../controllers/vehicle"));
+const router = express.Router();
+router.get('/all', vehicle_1.default.all);
+router.get('/id', vehicle_1.default.id);
+router.post('/create', vehicle_1.default.create);
+router.post('/update', vehicle_1.default.update);
+router.delete('/delete', vehicle_1.default.remove);
 // router.get('/all', validateToken, validateRole(ALL_ROLES), controller.all);
 // router.get('/id', validateToken, validateRole(ALL_ROLES), controller.id);
 // router.post('/create', validateToken, validateRole([Roles.ADMIN, Roles.VIEW_EDIT]), controller.create);
@@ -11,4 +18,4 @@
 // router.delete('/delete', validateToken, validateRole([Roles.ADMIN, Roles.VIEW_EDIT]), controller.remove);
 // router.get('/filter', validateToken, validateRole(ALL_ROLES), controller.filter);
 // router.get('/count', validateToken, validateRole(ALL_ROLES), controller.count);
-// export default router;
+exports.default = router;

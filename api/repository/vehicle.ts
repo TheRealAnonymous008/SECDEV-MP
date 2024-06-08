@@ -1,4 +1,4 @@
-import { ResultSetHeader } from "mysql2";
+import { QueryResult, ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
 import Vehicle, { VehicleRow } from "../models/vehicle";
 import IRepository from "./IRepository";
@@ -119,7 +119,7 @@ export const VehicleRepository : IRepository<Vehicle> = {
         let query = "SELECT COUNT(*) FROM vehicle"
         
         return new Promise((resolve, reject) => {
-            connection.execute<number>(
+            connection.execute<QueryResult>(
                 query,
                 (err, res) => {
                     if (err) reject(err);

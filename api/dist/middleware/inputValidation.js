@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateRegistrationInput = exports.validateRequiredFields = exports.validateLastName = exports.validateFirstName = exports.validateMobileNumber = exports.validateEmail = void 0;
+exports.validateRegistrationInput = exports.validateRequiredFields = exports.validatePassword = exports.validateMobileNumber = exports.validateUsername = exports.validateLastName = exports.validateFirstName = exports.validateEmail = void 0;
 function validateEmail(email) {
     const emailRegex = /^(?!.*[-_.](?![a-zA-Z0-9]))[a-zA-Z0-9][a-zA-Z0-9._-]*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
@@ -8,13 +8,6 @@ function validateEmail(email) {
     }
 }
 exports.validateEmail = validateEmail;
-function validateMobileNumber(mobileNumber) {
-    const mobileNumberRegex = /^09\d{9}$/;
-    if (!mobileNumberRegex.test(mobileNumber)) {
-        throw new Error("Invalid mobile number format.");
-    }
-}
-exports.validateMobileNumber = validateMobileNumber;
 function validateFirstName(firstName) {
     const firstNameRegex = /^[A-Z][a-zA-Z]{1,34}$/;
     if (!firstNameRegex.test(firstName)) {
@@ -29,8 +22,29 @@ function validateLastName(lastName) {
     }
 }
 exports.validateLastName = validateLastName;
+function validateUsername(username) {
+    const usernameRegex = /^[a-zA-Z0-9]{4,35}$/;
+    if (!usernameRegex.test(username)) {
+        throw new Error("Invalid username format");
+    }
+}
+exports.validateUsername = validateUsername;
+function validateMobileNumber(mobileNumber) {
+    const mobileNumberRegex = /^09\d{9}$/;
+    if (!mobileNumberRegex.test(mobileNumber)) {
+        throw new Error("Invalid mobile number format.");
+    }
+}
+exports.validateMobileNumber = validateMobileNumber;
+function validatePassword(password) {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{8,32}$/;
+    if (!passwordRegex.test(password)) {
+        throw new Error("Invalid password format.");
+    }
+}
+exports.validatePassword = validatePassword;
 function validateRequiredFields(firstName, lastName, username, password, mobileNumber, email) {
-    console.log('Validating required fields');
+    //console.log('Validating required fields');
     if (firstName == null || firstName == undefined || firstName == "") {
         throw new Error("First name is required");
     }
@@ -56,6 +70,8 @@ function validateRegistrationInput(firstName, lastName, username, password, mobi
         validateRequiredFields(firstName, lastName, username, password, mobileNumber, email);
         validateFirstName(firstName);
         validateLastName(lastName);
+        validateUsername(username);
+        validatePassword(password);
         validateMobileNumber(mobileNumber);
         validateEmail(email);
         console.log('All validations passed');
