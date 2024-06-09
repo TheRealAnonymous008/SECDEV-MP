@@ -113,14 +113,33 @@ export const UserRepository = {
                     if (err) reject(err);
                     else{
                         const fk = res.insertId;
-                        let q2 = `UPDATE users SET PictureId =${fk} WHERE Id = ${id}`
+                        // Cleanup a bit by removing the old BLOB if the user had this 
+                        query = `SELECT PictureId from users WHERE Id = ${id}`
+                        connection.execute<User[]>(
+                            query, 
+                            (err, res) => {
+                                if (err) reject(err);
+                                if (res.length > 0) {
+                                    query = `DELETE FROM picture WHERE Id = ${res[0].PictureId}`
+                                    connection.execute<ResultSetHeader>(
+                                        query, 
+                                        (err, res) => {
+                                            if (err) reject(err);
+                                        }
+                                    )
+                                }
+                            }
+                        )
+
+                        query = `UPDATE users SET PictureId =${fk} WHERE Id = ${id}`
                         connection.execute<ResultSetHeader>(
-                            q2,
+                            query,
                             (err, res) => {
                                 if(err) reject(err);
                                 resolve(fk)
                             }
                         )
+
                     }
                 }
             )

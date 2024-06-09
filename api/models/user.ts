@@ -9,7 +9,8 @@ export default interface User extends RowDataPacket {
     Salt? : string,
     MobileNumber?: string,
     Email?: string,
-    Role?: number
+    Role?: number,
+    PictureId? : number,
 }
 
 export interface UserRow {
@@ -21,4 +22,5 @@ export interface UserRow {
     MobileNumber?: string,
     Email?: string,
     Role?: number
+    PictureId? : number,
 } 
