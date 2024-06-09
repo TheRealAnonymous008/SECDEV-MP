@@ -74,7 +74,7 @@ const login = async (req : express.Request, res : express.Response) => {
         UserRepository.retrieveByUsername(username)
         .then((user) => {
             if (user) {
-                Bcrypt.compare(req.body.password, user.Password, (error, result) => {
+                Bcrypt.compare(req.body.password, user.Password, async (error, result) => {
                     if(!result) {
                         res.json({
                             auth : false,
@@ -82,7 +82,7 @@ const login = async (req : express.Request, res : express.Response) => {
                         }).end()
                     } 
                     else if (result) {
-                        signToken(user, (err, token, refreshToken) => {
+                        await signToken(user, (err, token, refreshToken) => {
                             if (err) {
                                 console.log(err)
                                 res.status(500).json({

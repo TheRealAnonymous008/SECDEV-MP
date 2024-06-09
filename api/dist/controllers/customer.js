@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const customer_1 = require("../projections/customer");
 const customer_2 = require("../repository/customer");
+const inputValidation_1 = require("../middleware/inputValidation");
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     customer_2.CustomerRepository.retrieveAll()
         .then((result) => {
@@ -31,7 +32,7 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let id = parseInt(req.query.id.toString());
+        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         customer_2.CustomerRepository.retrieveById(id)
             .then((result) => {
             if (result.length == 0) {
@@ -52,16 +53,16 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const customer = {
-        FirstName: req.body.firstName,
-        LastName: req.body.lastName,
-        MobileNumber: req.body.mobileNumber,
-        Email: req.body.email,
-        Company: req.body.company,
-        Insurance: req.body.insurance,
-        Remarks: req.body.remarks
-    };
     try {
+        const customer = {
+            FirstName: (0, inputValidation_1.validateName)(req.body.firstName),
+            LastName: (0, inputValidation_1.validateName)(req.body.lastName),
+            MobileNumber: (0, inputValidation_1.validateMobileNumber)(req.body.mobileNumber),
+            Email: (0, inputValidation_1.validateEmail)(req.body.email),
+            Company: (0, inputValidation_1.validateWord)(req.body.company),
+            Insurance: (0, inputValidation_1.validateWord)(req.body.insurance),
+            Remarks: req.body.remarks // This is a free field. SQL injection is prevented via prepared statements. XSS prevented by not accepting HTML
+        };
         customer_2.CustomerRepository.insert(customer)
             .then((result) => {
             if (result == undefined) {
@@ -82,17 +83,18 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const customer = {
-        FirstName: req.body.firstName,
-        LastName: req.body.lastName,
-        MobileNumber: req.body.mobileNumber,
-        Email: req.body.email,
-        Company: req.body.company,
-        Insurance: req.body.insurance,
-        Remarks: req.body.remarks
-    };
     try {
-        customer_2.CustomerRepository.update(parseInt(req.query.id.toString()), customer)
+        const customer = {
+            FirstName: (0, inputValidation_1.validateName)(req.body.firstName),
+            LastName: (0, inputValidation_1.validateName)(req.body.lastName),
+            MobileNumber: (0, inputValidation_1.validateMobileNumber)(req.body.mobileNumber),
+            Email: (0, inputValidation_1.validateEmail)(req.body.email),
+            Company: (0, inputValidation_1.validateWord)(req.body.company),
+            Insurance: (0, inputValidation_1.validateWord)(req.body.insurance),
+            Remarks: req.body.remarks
+        };
+        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        customer_2.CustomerRepository.update(id, customer)
             .then((result) => {
             if (result == undefined) {
                 res.status(500).end();
@@ -113,7 +115,8 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        customer_2.CustomerRepository.delete(parseInt(req.query.id.toString()))
+        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        customer_2.CustomerRepository.delete(id)
             .then((result) => {
             if (result == undefined) {
                 res.status(500).end();

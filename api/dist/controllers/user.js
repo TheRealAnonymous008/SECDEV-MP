@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,7 +13,7 @@ const Bcrypt = require("bcryptjs");
 const user_1 = require("../projections/user");
 const user_2 = require("../repository/user");
 const enum_1 = require("../models/enum");
-const inputValidation = __importStar(require("../middleware/inputValidation"));
+const inputValidation_1 = require("../middleware/inputValidation");
 const SALT_ROUNDS = 10;
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     user_2.UserRepository.retrieveAll()
@@ -58,7 +35,7 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let id = parseInt(req.query.id.toString());
+        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         user_2.UserRepository.retrieveById(id)
             .then((result) => {
             if (result.length == 0) {
@@ -80,15 +57,14 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        inputValidation.validateRegistrationInput(req.body.firstName, req.body.lastName, req.body.username, req.body.password, req.body.mobileNumber, req.body.email);
         next();
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
         const user = {
-            FirstName: req.body.firstName,
-            LastName: req.body.lastName,
-            Username: req.body.username,
-            MobileNumber: req.body.mobileNumber,
-            Email: req.body.email,
+            FirstName: (0, inputValidation_1.validateName)(req.body.firstName),
+            LastName: (0, inputValidation_1.validateName)(req.body.lastName),
+            Username: (0, inputValidation_1.validateUsername)(req.body.username),
+            MobileNumber: (0, inputValidation_1.validateMobileNumber)(req.body.mobileNumber),
+            Email: (0, inputValidation_1.validateEmail)(req.body.email),
             Salt: salt,
             Password: Bcrypt.hashSync(req.body.password, salt),
             Role: enum_1.RoleIds.VIEW
@@ -111,16 +87,17 @@ const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = {
-        FirstName: req.body.firstName,
-        LastName: req.body.lastName,
-        Username: req.body.username,
-        MobileNumber: req.body.mobileNumber,
-        Email: req.body.email,
-        Role: req.body.role
-    };
     try {
-        user_2.UserRepository.update(parseInt(req.query.id.toString()), user)
+        const user = {
+            FirstName: (0, inputValidation_1.validateName)(req.body.firstName),
+            LastName: (0, inputValidation_1.validateName)(req.body.lastName),
+            Username: (0, inputValidation_1.validateUsername)(req.body.username),
+            MobileNumber: (0, inputValidation_1.validateMobileNumber)(req.body.mobileNumber),
+            Email: (0, inputValidation_1.validateEmail)(req.body.email),
+            Role: req.body.role
+        };
+        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        user_2.UserRepository.update(id, user)
             .then((result) => {
             if (result == undefined) {
                 res.status(500).end();
@@ -141,7 +118,8 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        user_2.UserRepository.delete(parseInt(req.query.id.toString()))
+        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        user_2.UserRepository.delete(id)
             .then((result) => {
             if (result == undefined) {
                 res.status(500).end();

@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const vehicle_1 = require("../projections/vehicle");
 const vehicle_2 = require("../repository/vehicle");
+const inputValidation_1 = require("../middleware/inputValidation");
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     vehicle_2.VehicleRepository.retrieveAll()
         .then((result) => {
@@ -31,7 +32,7 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let id = parseInt(req.query.id.toString());
+        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         vehicle_2.VehicleRepository.retrieveById(id)
             .then((result) => {
             if (result.length == 0) {
@@ -52,16 +53,16 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const vehicle = {
-        LicensePlate: req.body.licensePlate,
-        Model: req.body.model,
-        Manufacturer: req.body.manufacturer,
-        YearManufactured: req.body.yearManufactured,
-        Color: req.body.color,
-        Engine: req.body.engine,
-        Remarks: req.body.remarks
-    };
     try {
+        const vehicle = {
+            LicensePlate: (0, inputValidation_1.validateLicensePlate)(req.body.licensePlate),
+            Model: (0, inputValidation_1.validateWord)(req.body.model),
+            Manufacturer: (0, inputValidation_1.validateWord)(req.body.manufacturer),
+            YearManufactured: req.body.yearManufactured,
+            Color: (0, inputValidation_1.validateWord)(req.body.color),
+            Engine: (0, inputValidation_1.validateWord)(req.body.engine),
+            Remarks: req.body.remarks
+        };
         vehicle_2.VehicleRepository.insert(vehicle)
             .then((result) => {
             if (result == undefined) {
@@ -82,17 +83,18 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const vehicle = {
-        LicensePlate: req.body.licensePlate,
-        Model: req.body.model,
-        Manufacturer: req.body.manufacturer,
-        YearManufactured: req.body.yearManufactured,
-        Color: req.body.color,
-        Engine: req.body.engine,
-        Remarks: req.body.remarks
-    };
     try {
-        vehicle_2.VehicleRepository.update(parseInt(req.query.id.toString()), vehicle)
+        const vehicle = {
+            LicensePlate: (0, inputValidation_1.validateLicensePlate)(req.body.licensePlate),
+            Model: (0, inputValidation_1.validateWord)(req.body.model),
+            Manufacturer: (0, inputValidation_1.validateWord)(req.body.manufacturer),
+            YearManufactured: req.body.yearManufactured,
+            Color: (0, inputValidation_1.validateWord)(req.body.color),
+            Engine: (0, inputValidation_1.validateWord)(req.body.engine),
+            Remarks: req.body.remarks
+        };
+        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        vehicle_2.VehicleRepository.update(id, vehicle)
             .then((result) => {
             if (result == undefined) {
                 res.status(500).end();
@@ -113,7 +115,8 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const remove = (req, res) => {
     try {
-        vehicle_2.VehicleRepository.delete(parseInt(req.query.id.toString()))
+        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        vehicle_2.VehicleRepository.delete(id)
             .then((result) => {
             if (result == undefined) {
                 res.status(500).end();

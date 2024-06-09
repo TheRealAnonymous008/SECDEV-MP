@@ -5,8 +5,8 @@ import User from '../models/user';
 const makeRefreshToken = async (user, token, callback) => {
     await jwt.sign(
         {
-            id : user.id,
-            role: user.role,
+            id : user.Id,
+            role: user.Role,
             accessIssuer: config.token.issuer,
         }
         , config.refreshToken.secret,
@@ -25,19 +25,19 @@ const makeRefreshToken = async (user, token, callback) => {
     )
 }
 
-const signToken = (user : User,  callback: (error: Error | null, token: string | null, refreshToken: string | null) => void): void => {
+const signToken = async (user : User,  callback: (error: Error | null, token: string | null, refreshToken: string | null) => void): Promise<void> => {
     const timeSinceEpoch = new Date().getTime();
     const expirationTime = timeSinceEpoch + Number(config.token.expireTime) * 10000;
     try {
-        jwt.sign(
+        await jwt.sign(
             {
-                id : user.Id,
-                role: user.Role,
+                id : user.Id.toString(),
+                role: user.Role.toString(),
             },
             config.token.secret,
             {
                 expiresIn: config.token.expireTime,
-                issuer: config.token.issuer
+                issuer: config.token.issuer,
             },
             async (error, token) => {
                 if (error) {

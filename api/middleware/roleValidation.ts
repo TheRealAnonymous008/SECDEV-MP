@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-const validateRole = (allowedRoles : string[]) => {
+const validateRole = (allowedRoles : number[]) => {
     return (req : Request, res : Response, next : NextFunction) => {
         if(allowedRoles.includes(res.locals.jwt.role))
             next();
