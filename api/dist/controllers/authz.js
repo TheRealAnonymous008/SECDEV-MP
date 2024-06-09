@@ -52,7 +52,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             Email: inputValidation.validateEmail(req.body.email),
             Salt: salt,
             Password: Bcrypt.hashSync(req.body.password, salt),
-            Role: enum_1.RoleIds.ADMIN
+            Role: enum_1.RoleIds.VIEW
         };
         user_1.UserRepository.register(user)
             .then((result) => {

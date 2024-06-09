@@ -18,8 +18,6 @@ export const UserRepository = {
 
         let query ="INSERT INTO users(FirstName, LastName, Username, Password, Salt ,Role, Email, MobileNumber) \
         VALUES(?, ?, ?, ?, ?, ?, ?, ?);"
-        
-        console.log(query)
         return new Promise((resolve, reject) => {
             connection.execute<ResultSetHeader>(
                 query,

@@ -51,6 +51,18 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).end();
     }
 });
+// req is any so thatwe can get all the files
+const upload = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const file = req.file;
+        console.log(file);
+        res.status(200).end();
+    }
+    catch (err) {
+        console.log(err);
+        res.status(400).json({ message: err.message });
+    }
+});
 const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         next();
@@ -133,4 +145,4 @@ const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500);
     }
 });
-exports.default = { all, id, register, update, remove };
+exports.default = { all, id, register, upload, update, remove };

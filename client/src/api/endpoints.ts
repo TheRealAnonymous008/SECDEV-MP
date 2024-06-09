@@ -10,6 +10,7 @@ export const ENDPOINTS = {
     userRoles: 'user/roles',
 
     users: 'user/all',
+    uploadImage: 'user/upload',
 
     customers: 'customer/all',
     getCustomer: 'customer/id',

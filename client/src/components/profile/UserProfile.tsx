@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createAPIEndpoint } from '../../api';
+import { ENDPOINTS } from '../../api/endpoints';
 
 const UserProfile = () => {
     const navigate = useNavigate();
@@ -15,14 +17,12 @@ const UserProfile = () => {
 
     const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // if (selectedFile) {
-        //     const formData = new FormData();
-        //     formData.append('file', selectedFile);
-        //     // uploadFile(formData);
-        // }
-
-        console.log("Check submit: ", selectedFile);
-        setSelectedFile(null);
+        if (selectedFile) {
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+            createAPIEndpoint(ENDPOINTS.uploadImage).upload(formData)
+        }
+        navigate("/orders")
     };
 
     return (
