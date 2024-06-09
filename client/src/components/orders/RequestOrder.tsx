@@ -58,8 +58,8 @@ export const RequestOrder = (props : {setResponse : Function, default? : OrderRe
             setValue("status", props.default?.status);
             setValue("type", props.default?.type);
             setValue("expenses", props.default?.expenses);
-            setValue("customer", props.default?.customer.id);
-            setValue("vehicle", props.default?.vehicle.id);
+            setValue("customer", props.default?.customer.id.toString());
+            setValue("vehicle", props.default?.vehicle.id.toString());
             setValue("scopeOfWork", props.default?.scopeOfWork);
             setValue("estimateNumber", props.default?.estimateNumber);
             setValue("invoice", props.default?.invoice);
