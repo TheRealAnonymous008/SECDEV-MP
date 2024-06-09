@@ -12,10 +12,6 @@ const SALT_ROUNDS = 10
 const all = async (req: express.Request, res: express.Response) => {
     UserRepository.retrieveAll()
         .then((result) => {
-            if (result.length == 0){
-                res.status(500).end();
-                return
-            }
             res.json({
                 data: makeUserArrayView(result),
                 count : result.length 
@@ -35,7 +31,7 @@ const id = async (req: express.Request, res: express.Response) => {
         UserRepository.retrieveById(id)
             .then((result) => {
                 if (result.length == 0){
-                    res.status(500).end();
+                    res.status(404).end();
                     return
                 }
                 res.json(makeUserView(result));

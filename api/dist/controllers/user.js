@@ -18,10 +18,6 @@ const SALT_ROUNDS = 10;
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     user_2.UserRepository.retrieveAll()
         .then((result) => {
-        if (result.length == 0) {
-            res.status(500).end();
-            return;
-        }
         res.json({
             data: (0, user_1.makeUserArrayView)(result),
             count: result.length
@@ -39,7 +35,7 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         user_2.UserRepository.retrieveById(id)
             .then((result) => {
             if (result.length == 0) {
-                res.status(500).end();
+                res.status(404).end();
                 return;
             }
             res.json((0, user_1.makeUserView)(result));

@@ -16,10 +16,6 @@ const order_2 = require("../projections/order");
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     order_1.OrderRespository.retrieveAll()
         .then((result) => {
-        if (result.length == 0) {
-            res.status(500).end();
-            return;
-        }
         res.json({
             data: (0, order_2.makeOrderArrayView)(result),
             count: result.length
@@ -37,7 +33,7 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         customer_1.CustomerRepository.retrieveById(id)
             .then((result) => {
             if (result.length == 0) {
-                res.status(500).end();
+                res.status(404).end();
                 return;
             }
             res.json((0, order_2.makeOrderView)(result));

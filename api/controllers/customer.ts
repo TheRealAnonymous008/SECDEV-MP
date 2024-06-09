@@ -7,10 +7,6 @@ import { validateEmail, validateInteger, validateMobileNumber, validateName, val
 const all = async (req: express.Request, res: express.Response) => {
     CustomerRepository.retrieveAll()
         .then((result) => {
-            if (result.length == 0){
-                res.status(500).end();
-                return
-            }
             res.json({
                 data: makeCustomerArrayView(result),
                 count : result.length 
@@ -31,7 +27,7 @@ const id = async (req: express.Request, res: express.Response) => {
         CustomerRepository.retrieveById(id)
             .then((result) => {
                 if (result.length == 0){
-                    res.status(500).end();
+                    res.status(404).end();
                     return
                 }
                 res.json(makeCustomerView(result));

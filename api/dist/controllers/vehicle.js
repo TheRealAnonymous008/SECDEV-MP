@@ -15,10 +15,6 @@ const inputValidation_1 = require("../middleware/inputValidation");
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     vehicle_2.VehicleRepository.retrieveAll()
         .then((result) => {
-        if (result.length == 0) {
-            res.status(500).end();
-            return;
-        }
         res.json({
             data: (0, vehicle_1.makeVehicleArrayView)(result),
             count: result.length
@@ -36,7 +32,7 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         vehicle_2.VehicleRepository.retrieveById(id)
             .then((result) => {
             if (result.length == 0) {
-                res.status(500).end();
+                res.status(404).end();
                 return;
             }
             res.json((0, vehicle_1.makeVehicleView)(result));

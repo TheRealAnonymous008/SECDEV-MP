@@ -5,22 +5,22 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema usersmydb
+-- Schema autoworks
 -- -----------------------------------------------------
-DROP SCHEMA IF EXISTS `mydb` ;
+DROP SCHEMA IF EXISTS `autoworks` ;
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema autoworks
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
-USE `mydb` ;
+CREATE SCHEMA IF NOT EXISTS `autoworks` DEFAULT CHARACTER SET utf8 ;
+USE `autoworks` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`RoleEnum`
+-- Table `autoworks`.`RoleEnum`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`RoleEnum` ;
+DROP TABLE IF EXISTS `autoworks`.`RoleEnum` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`RoleEnum` (
+CREATE TABLE IF NOT EXISTS `autoworks`.`RoleEnum` (
   `Id` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`Id`, `Name`),
@@ -29,11 +29,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Picture`
+-- Table `autoworks`.`Picture`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Picture` ;
+DROP TABLE IF EXISTS `autoworks`.`Picture` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`Picture` (
+CREATE TABLE IF NOT EXISTS `autoworks`.`Picture` (
   `Id` INT NOT NULL,
   `Picture` LONGBLOB NOT NULL,
   PRIMARY KEY (`Id`))
@@ -41,11 +41,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Users`
+-- Table `autoworks`.`Users`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Users` ;
+DROP TABLE IF EXISTS `autoworks`.`Users` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`Users` (
+CREATE TABLE IF NOT EXISTS `autoworks`.`Users` (
   `Id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `FirstName` VARCHAR(45) NOT NULL,
   `LastName` VARCHAR(45) NOT NULL,
@@ -63,23 +63,23 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Users` (
   INDEX `fk_Users_Picture1_idx` (`PictureId` ASC) VISIBLE,
   CONSTRAINT `fk_Users_RoleEnum1`
     FOREIGN KEY (`Role`)
-    REFERENCES `mydb`.`RoleEnum` (`Id`)
+    REFERENCES `autoworks`.`RoleEnum` (`Id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Users_Picture1`
     FOREIGN KEY (`PictureId`)
-    REFERENCES `mydb`.`Picture` (`Id`)
+    REFERENCES `autoworks`.`Picture` (`Id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Customer`
+-- Table `autoworks`.`Customer`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Customer` ;
+DROP TABLE IF EXISTS `autoworks`.`Customer` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`Customer` (
+CREATE TABLE IF NOT EXISTS `autoworks`.`Customer` (
   `Id` INT NOT NULL AUTO_INCREMENT,
   `FirstName` VARCHAR(45) NULL,
   `LastName` VARCHAR(45) NULL,
@@ -94,11 +94,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Vehicle`
+-- Table `autoworks`.`Vehicle`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Vehicle` ;
+DROP TABLE IF EXISTS `autoworks`.`Vehicle` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`Vehicle` (
+CREATE TABLE IF NOT EXISTS `autoworks`.`Vehicle` (
   `Id` INT NOT NULL AUTO_INCREMENT,
   `LicensePlate` VARCHAR(8) NULL,
   `Manufacturer` VARCHAR(45) NULL,
@@ -113,11 +113,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`TypeEnum`
+-- Table `autoworks`.`TypeEnum`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`TypeEnum` ;
+DROP TABLE IF EXISTS `autoworks`.`TypeEnum` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`TypeEnum` (
+CREATE TABLE IF NOT EXISTS `autoworks`.`TypeEnum` (
   `Id` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`Id`, `Name`),
@@ -126,11 +126,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`StatusEnum`
+-- Table `autoworks`.`StatusEnum`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`StatusEnum` ;
+DROP TABLE IF EXISTS `autoworks`.`StatusEnum` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`StatusEnum` (
+CREATE TABLE IF NOT EXISTS `autoworks`.`StatusEnum` (
   `Id` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`Id`, `Name`),
@@ -139,11 +139,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Order`
+-- Table `autoworks`.`Order`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mydb`.`Order` ;
+DROP TABLE IF EXISTS `autoworks`.`Order` ;
 
-CREATE TABLE IF NOT EXISTS `mydb`.`Order` (
+CREATE TABLE IF NOT EXISTS `autoworks`.`Order` (
   `ID` INT NOT NULL AUTO_INCREMENT,
   `Status` INT NOT NULL,
   `TimeIn` DATETIME NULL,
@@ -160,64 +160,64 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Order` (
   INDEX `fk_Order_TypeEnum1_idx` (`TypeId` ASC) VISIBLE,
   CONSTRAINT `fk_Order_Customer`
     FOREIGN KEY (`CustomerId`)
-    REFERENCES `mydb`.`Customer` (`Id`)
+    REFERENCES `autoworks`.`Customer` (`Id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Order_Vehicle1`
     FOREIGN KEY (`VehicleId`)
-    REFERENCES `mydb`.`Vehicle` (`Id`)
+    REFERENCES `autoworks`.`Vehicle` (`Id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Order_TypeEnum1`
     FOREIGN KEY (`TypeId`)
-    REFERENCES `mydb`.`TypeEnum` (`Id`)
+    REFERENCES `autoworks`.`TypeEnum` (`Id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Order_StatusEnum1`
     FOREIGN KEY (`Status`)
-    REFERENCES `mydb`.`StatusEnum` (`Id`)
+    REFERENCES `autoworks`.`StatusEnum` (`Id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Data for table `mydb`.`RoleEnum`
+-- Data for table `autoworks`.`RoleEnum`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `mydb`;
-INSERT INTO `mydb`.`RoleEnum` (`Id`, `Name`) VALUES (1, 'ADMIN');
-INSERT INTO `mydb`.`RoleEnum` (`Id`, `Name`) VALUES (2, 'VIEW EDIT');
-INSERT INTO `mydb`.`RoleEnum` (`Id`, `Name`) VALUES (3, 'VIEW');
+USE `autoworks`;
+INSERT INTO `autoworks`.`RoleEnum` (`Id`, `Name`) VALUES (1, 'ADMIN');
+INSERT INTO `autoworks`.`RoleEnum` (`Id`, `Name`) VALUES (2, 'VIEW EDIT');
+INSERT INTO `autoworks`.`RoleEnum` (`Id`, `Name`) VALUES (3, 'VIEW');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `mydb`.`TypeEnum`
+-- Data for table `autoworks`.`TypeEnum`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `mydb`;
-INSERT INTO `mydb`.`TypeEnum` (`Id`, `Name`) VALUES (1, 'PERSONAL');
-INSERT INTO `mydb`.`TypeEnum` (`Id`, `Name`) VALUES (2, 'WALK IN');
-INSERT INTO `mydb`.`TypeEnum` (`Id`, `Name`) VALUES (3, 'FLEET');
-INSERT INTO `mydb`.`TypeEnum` (`Id`, `Name`) VALUES (4, 'INSURANCE');
+USE `autoworks`;
+INSERT INTO `autoworks`.`TypeEnum` (`Id`, `Name`) VALUES (1, 'PERSONAL');
+INSERT INTO `autoworks`.`TypeEnum` (`Id`, `Name`) VALUES (2, 'WALK IN');
+INSERT INTO `autoworks`.`TypeEnum` (`Id`, `Name`) VALUES (3, 'FLEET');
+INSERT INTO `autoworks`.`TypeEnum` (`Id`, `Name`) VALUES (4, 'INSURANCE');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `mydb`.`StatusEnum`
+-- Data for table `autoworks`.`StatusEnum`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `mydb`;
-INSERT INTO `mydb`.`StatusEnum` (`Id`, `Name`) VALUES (1, 'PAID');
-INSERT INTO `mydb`.`StatusEnum` (`Id`, `Name`) VALUES (2, 'UNPAID');
-INSERT INTO `mydb`.`StatusEnum` (`Id`, `Name`) VALUES (3, 'OK');
-INSERT INTO `mydb`.`StatusEnum` (`Id`, `Name`) VALUES (4, 'PENDING');
-INSERT INTO `mydb`.`StatusEnum` (`Id`, `Name`) VALUES (5, 'WITH BALANCE');
-INSERT INTO `mydb`.`StatusEnum` (`Id`, `Name`) VALUES (6, 'QUOTE OR CHJECK');
-INSERT INTO `mydb`.`StatusEnum` (`Id`, `Name`) VALUES (7, 'FOR LOA OR INVOICE');
+USE `autoworks`;
+INSERT INTO `autoworks`.`StatusEnum` (`Id`, `Name`) VALUES (1, 'PAID');
+INSERT INTO `autoworks`.`StatusEnum` (`Id`, `Name`) VALUES (2, 'UNPAID');
+INSERT INTO `autoworks`.`StatusEnum` (`Id`, `Name`) VALUES (3, 'OK');
+INSERT INTO `autoworks`.`StatusEnum` (`Id`, `Name`) VALUES (4, 'PENDING');
+INSERT INTO `autoworks`.`StatusEnum` (`Id`, `Name`) VALUES (5, 'WITH BALANCE');
+INSERT INTO `autoworks`.`StatusEnum` (`Id`, `Name`) VALUES (6, 'QUOTE OR CHJECK');
+INSERT INTO `autoworks`.`StatusEnum` (`Id`, `Name`) VALUES (7, 'FOR LOA OR INVOICE');
 
 COMMIT;
 

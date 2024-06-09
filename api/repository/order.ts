@@ -3,11 +3,14 @@ import connection from "../config/connection";
 import Customer, { CustomerRow } from "../models/customer";
 import IRepository from "./IRepository";
 import Order, { OrderRow } from "../models/order";
+import dbConfig from "../config/dbConfig";
 
+
+const ORDER_TABLE_NAME = dbConfig.database + ".order";
 
 export const OrderRespository : IRepository<Order> = {
     retrieveAll(limit? : number, offset? : number) : Promise<Order[]> {
-        let query = "SELECT * FROM order";
+        let query = `SELECT * FROM ${ORDER_TABLE_NAME}`;
         if (limit){
             query += ` LIMIT ${limit}`
         }
@@ -29,10 +32,10 @@ export const OrderRespository : IRepository<Order> = {
     },
 
     retrieveById(id :  number) : Promise<Order | undefined> {
-        let query = `SELECT * FROM order WHERE Id = ${id}`
+        let query = `SELECT * FROM ${ORDER_TABLE_NAME} WHERE Id = ${id}`
 
         return new Promise((resolve, reject) => {
-            connection.execute<Customer[]>(
+            connection.execute<Order[]>(
                 query,
                 (err, res) => {
                     if (err) reject(err);

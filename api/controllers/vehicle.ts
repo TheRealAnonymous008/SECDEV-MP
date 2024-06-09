@@ -10,10 +10,6 @@ import { validateInteger, validateLicensePlate, validateWord } from '../middlewa
 const all = async (req: express.Request, res: express.Response) => {
     VehicleRepository.retrieveAll()
     .then((result) => {
-        if (result.length == 0){
-            res.status(500).end();
-            return
-        }
         res.json({
             data: makeVehicleArrayView(result),
             count : result.length 
@@ -32,7 +28,7 @@ const id = async (req: express.Request, res: express.Response) => {
         VehicleRepository.retrieveById(id)
         .then((result) => {
             if (result.length == 0){
-                res.status(500).end();
+                res.status(404).end();
                 return
             }
             res.json(makeVehicleView(result));
