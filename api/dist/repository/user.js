@@ -83,6 +83,24 @@ exports.UserRepository = {
             });
         });
     },
+    upload(id, image) {
+        let query = `INSERT INTO picture(Picture) VALUES(?)`;
+        return new Promise((resolve, reject) => {
+            connection_1.default.execute(query, [image], (err, res) => {
+                if (err)
+                    reject(err);
+                else {
+                    const fk = res.insertId;
+                    let q2 = `UPDATE users SET PictureId =${fk} WHERE Id = ${id}`;
+                    connection_1.default.execute(q2, (err, res) => {
+                        if (err)
+                            reject(err);
+                        resolve(fk);
+                    });
+                }
+            });
+        });
+    },
     update(id, object) {
         let values = [
             object.FirstName,

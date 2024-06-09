@@ -2,6 +2,7 @@ import User, { UserRow } from "../models/user";
 import { ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
 import IRepository from "./IRepository";
+import { Multer } from "multer";
 
 export const UserRepository = {
     register (user : UserRow) : Promise<number> {
@@ -101,6 +102,31 @@ export const UserRepository = {
         })
     },
     
+    upload(id : number, image : Express.Multer.File) : Promise<number>{
+        let query = `INSERT INTO picture(Picture) VALUES(?)`
+
+        return new Promise((resolve, reject) => {
+            connection.execute<ResultSetHeader>(
+                query,
+                [image],
+                (err, res) => {
+                    if (err) reject(err);
+                    else{
+                        const fk = res.insertId;
+                        let q2 = `UPDATE users SET PictureId =${fk} WHERE Id = ${id}`
+                        connection.execute<ResultSetHeader>(
+                            q2,
+                            (err, res) => {
+                                if(err) reject(err);
+                                resolve(fk)
+                            }
+                        )
+                    }
+                }
+            )
+        })
+    },
+
     update(id : number, object : UserRow) : Promise<number> {
         let values = [
             object.FirstName,

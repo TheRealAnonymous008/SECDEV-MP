@@ -34,7 +34,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `autoworks`.`Picture` ;
 
 CREATE TABLE IF NOT EXISTS `autoworks`.`Picture` (
-  `Id` INT NOT NULL,
+  `Id` INT NOT NULL AUTO_INCREMENT,
   `Picture` LONGBLOB NOT NULL,
   PRIMARY KEY (`Id`))
 ENGINE = InnoDB;

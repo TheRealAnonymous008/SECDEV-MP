@@ -19,7 +19,7 @@ const register = async (req : express.Request, res : express.Response) => {
             Email : inputValidation.validateEmail(req.body.email),
             Salt: salt,
             Password : Bcrypt.hashSync(req.body.password, salt),
-            Role : RoleIds.VIEW
+            Role : RoleIds.ADMIN
         }
         
         UserRepository.register(user)

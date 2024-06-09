@@ -55,8 +55,9 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 const upload = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const file = req.file;
-        console.log(file);
-        res.status(200).end();
+        const id = (0, inputValidation_1.validateInteger)(req.query.id);
+        user_2.UserRepository.upload(id, file)
+            .then((result) => res.status(200).end());
     }
     catch (err) {
         console.log(err);

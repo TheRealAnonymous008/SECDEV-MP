@@ -53,8 +53,12 @@ const id = async (req: express.Request, res: express.Response) => {
 const upload = async(req  :any, res: express.Response, next : express.NextFunction) => {
     try { 
         const file = req.file as Express.Multer.File
-        console.log(file)
-        res.status(200).end();
+        const id = validateInteger(req.query.id);
+
+        UserRepository.upload(id, file)
+            .then((result) => 
+                res.status(200).end()
+        )
 
     } catch (err) {
         console.log(err);
