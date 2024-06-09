@@ -5,9 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderRespository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
+const dbConfig_1 = __importDefault(require("../config/dbConfig"));
+const ORDER_TABLE_NAME = dbConfig_1.default.database + ".order";
 exports.OrderRespository = {
     retrieveAll(limit, offset) {
-        let query = "SELECT * FROM autoworks.order";
+        let query = `SELECT * FROM ${ORDER_TABLE_NAME}`;
         if (limit) {
             query += ` LIMIT ${limit}`;
         }
@@ -25,7 +27,7 @@ exports.OrderRespository = {
         });
     },
     retrieveById(id) {
-        let query = `SELECT * FROM autoworks.order WHERE Id = ${id}`;
+        let query = `SELECT * FROM ${ORDER_TABLE_NAME} WHERE Id = ${id}`;
         return new Promise((resolve, reject) => {
             connection_1.default.execute(query, (err, res) => {
                 if (err)

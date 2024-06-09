@@ -1,5 +1,5 @@
 export interface User {
-    id: string,
+    id: number,
     firstName: string,
     lastName: string,
     username: string,
@@ -9,7 +9,7 @@ export interface User {
 }
 
 export interface UserRequest {
-    id: string,
+    id: number,
     firstName: string,
     lastName: string,
     username: string,

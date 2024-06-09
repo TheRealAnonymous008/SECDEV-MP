@@ -5,7 +5,7 @@ import { RequestCustomer } from "../customers/RequestCustomer";
 import { ModalWrapper } from "../base/ModalBase";
 import { ENDPOINTS } from "../../api/endpoints";
 
-export const CustomerSubform = (props: {observer: Function, default?: {id: string, name: string}}) => {
+export const CustomerSubform = (props: {observer: Function, default?: {id: number, name: string}}) => {
     const [query, setQuery] = useState<string>("");
     const [options, setOptions] = useState<Array<Customer>>([]);
     const [customer, setCustomer] = useState<CustomerRequest>();

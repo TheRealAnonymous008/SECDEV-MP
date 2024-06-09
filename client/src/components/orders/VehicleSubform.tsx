@@ -5,7 +5,7 @@ import { ModalWrapper } from "../base/ModalBase";
 import { RequestVehicle } from "../vehicles/RequestVehicle";
 import { Vehicle, VehicleRequest } from "../vehicles/VehicleDetails";
 
-export const VehicleSubform = (props: {observer: Function, default?: {id: string, licensePlate: string}}) => {
+export const VehicleSubform = (props: {observer: Function, default?: {id: number, licensePlate: string}}) => {
     const [query, setQuery] = useState<string>("");
     const [options, setOptions] = useState<Array<Vehicle>>([]);
     const [vehicle, setVehicle] = useState<VehicleRequest>();
