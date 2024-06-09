@@ -5,17 +5,18 @@ import { randomUUID } from 'crypto';
 import { RoleIds, Roles } from '../models/enum';
 import { UserRepository } from '../repository/user';
 import { UserRow } from '../models/user';
+import * as inputValidation from '../middleware/inputValidation';
 
 const SALT_ROUNDS = 10
 
 const register = async (req : express.Request, res : express.Response) => {
     const salt = Bcrypt.genSaltSync(SALT_ROUNDS)
     const user : UserRow= {
-        FirstName : req.body.firstName,
-        LastName : req.body.lastName,
-        Username : req.body.username,
-        MobileNumber : req.body.mobileNumber,
-        Email : req.body.email,
+        FirstName : inputValidation.validateName(req.body.firstName),
+        LastName : inputValidation.validateName(req.body.lastName),
+        Username : inputValidation.validateUsername(req.body.username),
+        MobileNumber : inputValidation.validateMobileNumber(req.body.mobileNumber),
+        Email : inputValidation.validateEmail(req.body.email),
         Salt: salt,
         Password : Bcrypt.hashSync(req.body.password, salt),
         Role : RoleIds.VIEW
@@ -42,10 +43,12 @@ const register = async (req : express.Request, res : express.Response) => {
 
 }
 
-
 const verify = async (req : express.Request, res : express.Response) => {
     try {
-        UserRepository.verifyRole(req.body.username, req.body.role)
+        let username = inputValidation.validateUsername(req.query.username)
+        let role = inputValidation.validateRole(req.body.role)
+
+        UserRepository.verifyRole(username, role)
             .then((result) => {
                 if (result == undefined){
                     res.status(500).end();
@@ -65,7 +68,9 @@ const verify = async (req : express.Request, res : express.Response) => {
 }
 
 const login = async (req : express.Request, res : express.Response) => {
-    UserRepository.retrieveByUsername(req.body.username)
+    let username = inputValidation.validateUsername(req.body.username)
+
+    UserRepository.retrieveByUsername(username)
     .then((user) => {
         if (user) {
             Bcrypt.compare(req.body.password, user.Password, (error, result) => {

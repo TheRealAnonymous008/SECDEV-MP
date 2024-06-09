@@ -30,9 +30,8 @@ const all = async (req: express.Request, res: express.Response) => {
 }
 
 const id = async (req: express.Request, res: express.Response) => {
-
     try {
-        let id = parseInt(req.query.id.toString())
+        let id = inputValidation.validateInteger(req.query.id.toString());
         UserRepository.retrieveById(id)
             .then((result) => {
                 if (result.length == 0){
@@ -55,22 +54,14 @@ const id = async (req: express.Request, res: express.Response) => {
 
 const register = async (req : express.Request, res : express.Response, next: express.NextFunction) => {
     try {
-        inputValidation.validateRegistrationInput(
-            req.body.firstName, 
-            req.body.lastName, 
-            req.body.username, 
-            req.body.password, 
-            req.body.mobileNumber, 
-            req.body.email
-        );
         next();
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
         const user : UserRow= {
-            FirstName : req.body.firstName,
-            LastName : req.body.lastName,
-            Username : req.body.username,
-            MobileNumber : req.body.mobileNumber,
-            Email : req.body.email,
+            FirstName : inputValidation.validateName(req.body.firstName),
+            LastName : inputValidation.validateName(req.body.lastName),
+            Username : inputValidation.validateUsername(req.body.username),
+            MobileNumber : inputValidation.validateMobileNumber(req.body.mobileNumber),
+            Email : inputValidation.validateEmail(req.body.email),
             Salt: salt,
             Password : Bcrypt.hashSync(req.body.password, salt),
             Role : RoleIds.VIEW
@@ -95,11 +86,11 @@ const register = async (req : express.Request, res : express.Response, next: exp
 
 const update = async (req: express.Request, res: express.Response) => {
     const user : UserRow= {
-        FirstName : req.body.firstName,
-        LastName : req.body.lastName,
-        Username : req.body.username,
-        MobileNumber : req.body.mobileNumber,
-        Email : req.body.email,
+        FirstName : inputValidation.validateName(req.body.firstName),
+        LastName : inputValidation.validateName(req.body.lastName),
+        Username : inputValidation.validateUsername(req.body.username),
+        MobileNumber : inputValidation.validateMobileNumber(req.body.mobileNumber),
+        Email : inputValidation.validateEmail(req.body.email),
         Role : req.body.role
     }
 
@@ -127,7 +118,8 @@ const update = async (req: express.Request, res: express.Response) => {
 
 const remove = async (req: express.Request, res: express.Response) => {
     try {
-        UserRepository.delete(parseInt(req.query.id.toString()))
+        let id = inputValidation.validateInteger(req.query.id.toString());
+        UserRepository.delete(id)
             .then((result) => {
                 if (result == undefined){
                     res.status(500).end();
