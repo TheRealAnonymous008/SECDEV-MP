@@ -5,6 +5,7 @@ import { ALL_ROLES, Roles } from '../models/enum';
 import { makeCustomerArrayView, makeCustomerView } from '../projections/customer';
 import { CustomerRepository } from '../repository/customer';
 import Customer, { CustomerRow } from '../models/customer';
+import { validateEmail, validateInteger, validateMobileNumber, validateName, validateWord } from '../middleware/inputValidation';
 
 const all = async (req: express.Request, res: express.Response) => {
     CustomerRepository.retrieveAll()
@@ -29,7 +30,7 @@ const all = async (req: express.Request, res: express.Response) => {
 const id = async (req: express.Request, res: express.Response) => {
 
     try {
-        let id = parseInt(req.query.id.toString())
+        let id = validateInteger(req.query.id.toString())
         CustomerRepository.retrieveById(id)
             .then((result) => {
                 if (result.length == 0){
@@ -51,17 +52,17 @@ const id = async (req: express.Request, res: express.Response) => {
 }
 
 const create = async (req: express.Request, res: express.Response) => {
-    const customer : CustomerRow = {
-        FirstName: req.body.firstName,
-        LastName: req.body.lastName,
-        MobileNumber: req.body.mobileNumber,
-        Email: req.body.email,
-        Company: req.body.company,
-        Insurance: req.body.insurance,
-        Remarks: req.body.remarks
-    };
-
     try {
+        const customer : CustomerRow = {
+            FirstName: validateName(req.body.firstName),
+            LastName: validateName(req.body.lastName),
+            MobileNumber: validateMobileNumber(req.body.mobileNumber),
+            Email: validateEmail(req.body.email),
+            Company: validateWord(req.body.company),
+            Insurance: validateWord(req.body.insurance),
+            Remarks: req.body.remarks               // This is a free field. SQL injection is prevented via prepared statements. XSS prevented by not accepting HTML
+        };
+
         CustomerRepository.insert(customer)
             .then((result) => {
                 if (result == undefined){
@@ -84,18 +85,19 @@ const create = async (req: express.Request, res: express.Response) => {
 }
 
 const update = async (req: express.Request, res: express.Response) => {
-    const customer : CustomerRow = {
-        FirstName: req.body.firstName,
-        LastName: req.body.lastName,
-        MobileNumber: req.body.mobileNumber,
-        Email: req.body.email,
-        Company: req.body.company,
-        Insurance: req.body.insurance,
-        Remarks: req.body.remarks
-    };
-
     try {
-        CustomerRepository.update(parseInt(req.query.id.toString()), customer)
+        const customer : CustomerRow = {
+            FirstName: validateName(req.body.firstName),
+            LastName: validateName(req.body.lastName),
+            MobileNumber: validateMobileNumber(req.body.mobileNumber),
+            Email: validateEmail(req.body.email),
+            Company: validateWord(req.body.company),
+            Insurance: validateWord(req.body.insurance),
+            Remarks: req.body.remarks
+        };
+        let id = validateInteger(req.query.id.toString())
+        
+        CustomerRepository.update(id, customer)
             .then((result) => {
                 if (result == undefined){
                     res.status(500).end();
@@ -118,7 +120,9 @@ const update = async (req: express.Request, res: express.Response) => {
 
 const remove = async (req: express.Request, res: express.Response) => {
     try {
-        CustomerRepository.delete(parseInt(req.query.id.toString()))
+        let id = validateInteger(req.query.id.toString())
+
+        CustomerRepository.delete(id)
             .then((result) => {
                 if (result == undefined){
                     res.status(500).end();

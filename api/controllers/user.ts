@@ -6,7 +6,7 @@ import { UserRow } from '../models/user';
 import { makeUserArrayView, makeUserView } from '../projections/user';
 import { UserRepository } from '../repository/user';
 import { RoleIds, Roles } from '../models/enum';
-import * as inputValidation from '../middleware/inputValidation';
+import { validateName, validateUsername, validateMobileNumber, validateEmail, validateInteger } from '../middleware/inputValidation';
 
 const SALT_ROUNDS = 10
 const all = async (req: express.Request, res: express.Response) => {
@@ -31,7 +31,7 @@ const all = async (req: express.Request, res: express.Response) => {
 
 const id = async (req: express.Request, res: express.Response) => {
     try {
-        let id = inputValidation.validateInteger(req.query.id.toString());
+        let id = validateInteger(req.query.id.toString());
         UserRepository.retrieveById(id)
             .then((result) => {
                 if (result.length == 0){
@@ -57,11 +57,11 @@ const register = async (req : express.Request, res : express.Response, next: exp
         next();
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
         const user : UserRow= {
-            FirstName : inputValidation.validateName(req.body.firstName),
-            LastName : inputValidation.validateName(req.body.lastName),
-            Username : inputValidation.validateUsername(req.body.username),
-            MobileNumber : inputValidation.validateMobileNumber(req.body.mobileNumber),
-            Email : inputValidation.validateEmail(req.body.email),
+            FirstName : validateName(req.body.firstName),
+            LastName : validateName(req.body.lastName),
+            Username : validateUsername(req.body.username),
+            MobileNumber : validateMobileNumber(req.body.mobileNumber),
+            Email : validateEmail(req.body.email),
             Salt: salt,
             Password : Bcrypt.hashSync(req.body.password, salt),
             Role : RoleIds.VIEW
@@ -85,17 +85,18 @@ const register = async (req : express.Request, res : express.Response, next: exp
 }
 
 const update = async (req: express.Request, res: express.Response) => {
-    const user : UserRow= {
-        FirstName : inputValidation.validateName(req.body.firstName),
-        LastName : inputValidation.validateName(req.body.lastName),
-        Username : inputValidation.validateUsername(req.body.username),
-        MobileNumber : inputValidation.validateMobileNumber(req.body.mobileNumber),
-        Email : inputValidation.validateEmail(req.body.email),
-        Role : req.body.role
-    }
-
     try {
-        UserRepository.update(parseInt(req.query.id.toString()), user)
+        const user : UserRow= {
+            FirstName : validateName(req.body.firstName),
+            LastName: validateName(req.body.lastName),
+            Username : validateUsername(req.body.username),
+            MobileNumber : validateMobileNumber(req.body.mobileNumber),
+            Email : validateEmail(req.body.email),
+            Role : req.body.role
+        }
+        let id = validateInteger(req.query.id.toString())
+
+        UserRepository.update(id, user)
             .then((result) => {
                 if (result == undefined){
                     res.status(500).end();
@@ -118,7 +119,7 @@ const update = async (req: express.Request, res: express.Response) => {
 
 const remove = async (req: express.Request, res: express.Response) => {
     try {
-        let id = inputValidation.validateInteger(req.query.id.toString());
+        let id = validateInteger(req.query.id.toString());
         UserRepository.delete(id)
             .then((result) => {
                 if (result == undefined){

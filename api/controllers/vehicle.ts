@@ -5,6 +5,7 @@ import { ALL_ROLES, Roles } from '../models/enum';
 import { makeVehicleArrayView, makeVehicleView } from '../projections/vehicle';
 import { VehicleRepository } from '../repository/vehicle';
 import Vehicle, { VehicleRow } from '../models/vehicle';
+import { validateInteger, validateLicensePlate, validateWord } from '../middleware/inputValidation';
 
 const all = async (req: express.Request, res: express.Response) => {
     VehicleRepository.retrieveAll()
@@ -27,7 +28,7 @@ const all = async (req: express.Request, res: express.Response) => {
 
 const id = async (req: express.Request, res: express.Response) => {
     try {
-        let id = parseInt(req.query.id.toString())
+        let id = validateInteger(req.query.id.toString())
         VehicleRepository.retrieveById(id)
         .then((result) => {
             if (result.length == 0){
@@ -48,17 +49,17 @@ const id = async (req: express.Request, res: express.Response) => {
 }
 
 const create = async (req: express.Request, res: express.Response) => {
-    const vehicle : VehicleRow = {
-        LicensePlate: req.body.licensePlate,
-        Model: req.body.model,
-        Manufacturer: req.body.manufacturer,
-        YearManufactured: req.body.yearManufactured,
-        Color: req.body.color,
-        Engine: req.body.engine,
-        Remarks: req.body.remarks
-    };
-
     try {
+        const vehicle : VehicleRow = {
+            LicensePlate: validateLicensePlate(req.body.licensePlate),
+            Model: validateWord(req.body.model),
+            Manufacturer: validateWord(req.body.manufacturer),
+            YearManufactured: req.body.yearManufactured,
+            Color: validateWord(req.body.color),
+            Engine: validateWord(req.body.engine),
+            Remarks: req.body.remarks
+        };
+        
         VehicleRepository.insert(vehicle)
             .then((result) => {
                 if (result == undefined){
@@ -79,18 +80,19 @@ const create = async (req: express.Request, res: express.Response) => {
 }
 
 const update = async (req: express.Request, res: express.Response) => {
-    const vehicle : VehicleRow = {
-        LicensePlate: req.body.licensePlate,
-        Model: req.body.model,
-        Manufacturer: req.body.manufacturer,
-        YearManufactured: req.body.yearManufactured,
-        Color: req.body.color,
-        Engine: req.body.engine,
-        Remarks: req.body.remarks
-    };
-
     try {
-        VehicleRepository.update(parseInt(req.query.id.toString()), vehicle)
+        const vehicle : VehicleRow = {
+            LicensePlate: validateLicensePlate(req.body.licensePlate),
+            Model: validateWord(req.body.model),
+            Manufacturer: validateWord(req.body.manufacturer),
+            YearManufactured: req.body.yearManufactured,
+            Color: validateWord(req.body.color),
+            Engine: validateWord(req.body.engine),
+            Remarks: req.body.remarks
+        };
+        let id = validateInteger(req.query.id.toString())
+
+        VehicleRepository.update(id, vehicle)
             .then((result) => {
                 if (result == undefined){
                     res.status(500).end();
@@ -111,7 +113,8 @@ const update = async (req: express.Request, res: express.Response) => {
 
 const remove = (req: express.Request, res: express.Response) => {
     try {
-        VehicleRepository.delete(parseInt(req.query.id.toString()))
+        let id = validateInteger(req.query.id.toString())
+        VehicleRepository.delete(id)
             .then((result) => {
                 if (result == undefined){
                     res.status(500).end();

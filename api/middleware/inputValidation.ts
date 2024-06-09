@@ -19,6 +19,16 @@ export function validateName(name) {
     return name
 }
 
+export function validateWord(name) {
+    assertNotNullOrEmpty(name)
+    const regex = /^[a-zA-Z]{1,34}$/;
+
+    if (!regex.test(name)) {
+        throw new Error("Invalid word format");
+    }
+    return name
+}
+
 export function validateUsername(username) {
     assertNotNullOrEmpty(username)
     const regex = /^[a-zA-Z0-9]{4,35}$/;
@@ -68,6 +78,18 @@ export function validateRole(role) {
         return role 
 
     throw new Error("Invalid Role")
+}
+
+export function validateLicensePlate(liciensePlate){
+    assertNotNullOrEmpty(liciensePlate)
+
+    const regex = /^[A-Z0-9]{6,7}$/;                // Follows the specs for Filipino license plates
+
+    if (!regex.test(liciensePlate)){
+        throw new Error("Invalid License Plate")
+    }
+
+    return liciensePlate;
 }
 
 export function assertNotNullOrEmpty(field) {
