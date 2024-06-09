@@ -14,7 +14,8 @@ const limiter = (0, express_rate_limit_1.rateLimit)({
     windowMs: 5 * 60 * 1000,
     limit: 10,
     standardHeaders: true,
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    legacyHeaders: false,
+    message: "Too many requests. Try again later",
 });
 router.get('/verify', authz_1.default.verify);
 router.post('/register', authz_1.default.register);
