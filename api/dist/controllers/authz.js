@@ -27,7 +27,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         Email: req.body.email,
         Salt: salt,
         Password: Bcrypt.hashSync(req.body.password, salt),
-        Role: enum_1.RoleIds.VIEW
+        Role: enum_1.RoleIds.ADMIN
     };
     try {
         user_1.UserRepository.register(user)
