@@ -21,12 +21,12 @@ export interface OrderRequestDefault {
     timeIn: Date,
     timeOut: Date,
     customer : {
-        id: string,
+        id: number,
         name: string
     },
     type: string,
     vehicle: {
-        id: string, 
+        id: number, 
         licensePlate: string,
     },
     estimateNumber: string,

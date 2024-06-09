@@ -1,10 +1,7 @@
-import { randomInt, randomUUID } from 'crypto';
 import express = require('express');
-import Bcrypt = require('bcryptjs');
-import { ALL_ROLES, Roles } from '../models/enum';
 import { makeCustomerArrayView, makeCustomerView } from '../projections/customer';
 import { CustomerRepository } from '../repository/customer';
-import Customer, { CustomerRow } from '../models/customer';
+import { CustomerRow } from '../models/customer';
 import { validateEmail, validateInteger, validateMobileNumber, validateName, validateWord } from '../middleware/inputValidation';
 
 const all = async (req: express.Request, res: express.Response) => {

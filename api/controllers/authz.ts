@@ -1,7 +1,6 @@
 import express = require('express');
 import Bcrypt = require('bcryptjs');
 import signToken from '../utils/signToken';
-import { randomUUID } from 'crypto';
 import { RoleIds, Roles } from '../models/enum';
 import { UserRepository } from '../repository/user';
 import { UserRow } from '../models/user';
