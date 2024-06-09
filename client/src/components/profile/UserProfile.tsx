@@ -20,7 +20,7 @@ const UserProfile = () => {
         if (selectedFile) {
             const formData = new FormData();
             formData.append('image', selectedFile);
-            createAPIEndpoint(ENDPOINTS.uploadImage).upload(formData, {"id": 1})
+            createAPIEndpoint(ENDPOINTS.uploadImage).upload(formData)
         }
         navigate("/orders")
     };
