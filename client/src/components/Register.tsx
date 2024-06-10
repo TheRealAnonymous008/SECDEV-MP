@@ -45,7 +45,7 @@ const Register = () => {
         }
 
         if (!formState.username ||!formState.firstName ||!formState.lastName ||!formState.password ||!formState.email ||!formState.mobileNumber) {
-            setError("All fields are required.");
+            setError("Missing fields. Please fill out all fields.");
             return;
         }
 
@@ -68,7 +68,6 @@ const Register = () => {
                 <div className='RegistLogo'/>
                 <RegisterDiv>
                     <form autoComplete="off">
-                        {error && <p style={{ color: 'red' }}>{error}</p>}
                         <span>
                             <input type="text"
                                 name="firstName"
@@ -111,6 +110,8 @@ const Register = () => {
                             placeholder="Confirm Password"
                             onChange={(e) => { onInputChange("new_password", e.target.value); }} />
                         <br />
+
+                        {error && <p style={{ color: 'red', marginLeft: '0.5rem', marginTop: '-0.1rem'}}>{error}</p>}
 
                         <input type='button'
                             name="submit"

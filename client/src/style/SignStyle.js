@@ -47,14 +47,14 @@ const SignBox = styles.div`
     }
 
     > .RegistLogo {
-        padding-top: 7.5rem;
+        padding-top: 5rem;
         height: 10%;
         width: 100%;
         background: url(${logo});
         background-position: right;
-        background-position-x: 52rem;
+        background-position-x: 54rem;
         background-repeat: no-repeat;
-        background-size: 17.5rem 5rem;
+        background-size: 13rem 4rem;
         position: absolute;
     }
 `
@@ -143,7 +143,7 @@ const RegisterDiv = styles.div`
         width: 85rem;
         border: none;
         justify-content: center;
-        padding-top: 7rem;
+        padding-top: 5rem;
         padding-left: 45rem;
     }
     
