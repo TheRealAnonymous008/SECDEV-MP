@@ -5,8 +5,6 @@ import { ROUTES } from '../api/routes';
 import { SignBox, LoginDiv, SignPage, RightImage, SignUp } from '../style/SignStyle';
 import { RedDialogue } from '../style/Dialogue';
 import { ENDPOINTS } from '../api/endpoints';
-import { set } from 'react-hook-form';
-
 
 type LoginState = {
     username: string

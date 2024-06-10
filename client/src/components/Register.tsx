@@ -11,7 +11,9 @@ interface RegistrationState {
     password: string,
     new_password: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    email: string,
+    mobileNumber: string,
 }
 
 
@@ -21,29 +23,41 @@ const Register = () => {
         password: "",
         new_password: "",
         firstName: "",
-        lastName: ""
+        lastName: "",
+        email: "",
+        mobileNumber: "",
     });
 
+    const [error, setError] = useState("");
+
     const navigation = useNavigate();
+
     const onInputChange = (name: string, value: any) => {
         setFormState(values => ({ ...values, [name]: value }));
     }
 
-
     const onSubmit = (event: React.SyntheticEvent<HTMLInputElement>) => {
-        if(formState.password !== formState.new_password)
-            return;
-        
-        if (formState.username === "" || formState.firstName === ""  || formState.lastName === "" || formState.password === "")
-            return;
-            
         event.preventDefault();
+
+        if (formState.password!== formState.new_password) {
+            setError("Passwords do not match.");
+            return;
+        }
+
+        if (!formState.username ||!formState.firstName ||!formState.lastName ||!formState.password ||!formState.email ||!formState.mobileNumber) {
+            setError("All fields are required.");
+            return;
+        }
+
+        setError("");
+            
         createAPIEndpoint(ENDPOINTS.register).post(formState)
             .then(function (response) {
                 navigation(ROUTES.login);
             })
             .catch(function (error) {
                 console.log(error);
+                setError("An error occurred. Please try again.");
             })
     };
 
@@ -54,6 +68,7 @@ const Register = () => {
                 <div className='RegistLogo'/>
                 <RegisterDiv>
                     <form autoComplete="off">
+                        {error && <p style={{ color: 'red' }}>{error}</p>}
                         <span>
                             <input type="text"
                                 name="firstName"
