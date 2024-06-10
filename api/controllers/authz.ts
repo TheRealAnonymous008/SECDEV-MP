@@ -11,6 +11,7 @@ const SALT_ROUNDS = 10
 const register = async (req : express.Request, res : express.Response) => {
     try {
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS)
+        const password = inputValidation.validatePassword(req.body.password)
         const user : UserRow= {
             FirstName : inputValidation.validateName(req.body.firstName),
             LastName : inputValidation.validateName(req.body.lastName),
@@ -18,7 +19,7 @@ const register = async (req : express.Request, res : express.Response) => {
             MobileNumber : inputValidation.validateMobileNumber(req.body.mobileNumber),
             Email : inputValidation.validateEmail(req.body.email),
             Salt: salt,
-            Password : Bcrypt.hashSync(req.body.password, salt),
+            Password : Bcrypt.hashSync(password, salt),
             Role : RoleIds.ADMIN
         }
         
