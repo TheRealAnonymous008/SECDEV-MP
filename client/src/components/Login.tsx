@@ -5,8 +5,6 @@ import { ROUTES } from '../api/routes';
 import { SignBox, LoginDiv, SignPage, RightImage, SignUp } from '../style/SignStyle';
 import { RedDialogue } from '../style/Dialogue';
 import { ENDPOINTS } from '../api/endpoints';
-import { set } from 'react-hook-form';
-
 
 type LoginState = {
     username: string
@@ -19,24 +17,22 @@ const Login = (props: {setIsLoggedIn : Function}) => {
         password: ""
     });
 
-    const [usernameError, setUsernameError] = useState("");
-    const [passwordError, setPasswordError] = useState("");
+    const [error, setError] = useState("");
     
     const navigation = useNavigate();
 
     const onSubmit = (event: React.SyntheticEvent<HTMLInputElement>) => {
+        event.preventDefault();
 
         if (!state.username) {
-            setUsernameError("Username is required.");
+            setError("Username is required.");
             return;
         }
-        setUsernameError("");
 
         if (!state.password) {
-            setPasswordError("Password is required.");
+            setError("Password is required.");
             return;
         }
-        setPasswordError("");
 
         createAPIEndpoint(ENDPOINTS.login).post(state)
             .then((response) => {
@@ -48,13 +44,14 @@ const Login = (props: {setIsLoggedIn : Function}) => {
                 else {
                     props.setIsLoggedIn(false);
                     sessionStorage.setItem("isLoggedIn", "false");
+                    setError("Username or Password does not match.");
                 }
                 
             })
             .catch((err: any) => {
                 console.log(err);
+                setError("An error occurred. Please try again.");
             });
-        event.preventDefault();
     };
 
     const onInputChange = (name : string, value : any) => {
@@ -68,13 +65,13 @@ const Login = (props: {setIsLoggedIn : Function}) => {
                 <RightImage></RightImage>
                 <LoginDiv>
                     <form autoComplete="off">
+                    {error && <p style={{ color: 'red', marginLeft: '0.5rem' }}>{error}</p>}
                         <span>
                             <input
                                 name="username"
                                 value={state.username}
                                 placeholder="Username"
                                 onChange={(e) => { onInputChange("username", e.target.value); }} />
-                            {usernameError && <p style={{ color: 'red' }}>{usernameError}</p>}
                         </span>
                         <span>
                             <input
@@ -83,7 +80,6 @@ const Login = (props: {setIsLoggedIn : Function}) => {
                                 placeholder="Password"
                                 value={state.password}
                                 onChange={(e) => { onInputChange("password", e.target.value); }} />
-                            {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
                         </span>
                         <span>
                             <input

@@ -11,7 +11,9 @@ interface RegistrationState {
     password: string,
     new_password: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    email: string,
+    mobileNumber: string,
 }
 
 
@@ -21,29 +23,41 @@ const Register = () => {
         password: "",
         new_password: "",
         firstName: "",
-        lastName: ""
+        lastName: "",
+        email: "",
+        mobileNumber: "",
     });
 
+    const [error, setError] = useState("");
+
     const navigation = useNavigate();
+
     const onInputChange = (name: string, value: any) => {
         setFormState(values => ({ ...values, [name]: value }));
     }
 
-
     const onSubmit = (event: React.SyntheticEvent<HTMLInputElement>) => {
-        if(formState.password !== formState.new_password)
-            return;
-        
-        if (formState.username === "" || formState.firstName === ""  || formState.lastName === "" || formState.password === "")
-            return;
-            
         event.preventDefault();
+
+        if (formState.password!== formState.new_password) {
+            setError("Passwords do not match.");
+            return;
+        }
+
+        if (!formState.username ||!formState.firstName ||!formState.lastName ||!formState.password ||!formState.email ||!formState.mobileNumber) {
+            setError("Missing fields. Please fill out all fields.");
+            return;
+        }
+
+        setError("");
+            
         createAPIEndpoint(ENDPOINTS.register).post(formState)
             .then(function (response) {
                 navigation(ROUTES.login);
             })
             .catch(function (error) {
                 console.log(error);
+                setError("An error occurred. Please try again.");
             })
     };
 
@@ -96,6 +110,8 @@ const Register = () => {
                             placeholder="Confirm Password"
                             onChange={(e) => { onInputChange("new_password", e.target.value); }} />
                         <br />
+
+                        {error && <p style={{ color: 'red', marginLeft: '0.5rem', marginTop: '-0.1rem'}}>{error}</p>}
 
                         <input type='button'
                             name="submit"
