@@ -5,14 +5,15 @@ import { ENDPOINTS } from "../../api/endpoints";
 import { FormDivStyle } from "../../style/FormStyle";
 import { isAlphabetic } from "../../utils/Regex";
 import { UserRequest } from "./UserDetails";
+import * as regexes from "./InputValidation";
 
 export const DEFAULT = "DEFAULT";
 
 export const RequestUser = (props : {setResponse : Function, default? : UserRequest}) => {
     
-    const {register, watch, handleSubmit, formState: {errors}, setValue} = useForm<UserRequest>();
-    const [roles, setRoles] = useState<Array<string>>([]);
-    
+    const {register, watch, handleSubmit, formState: {errors}, setValue} = useForm<UserRequest>({mode: "onBlur"});
+    const [roles, setRoles] = useState<Array<string>>(["Employee"]);
+
     useEffect(() => {
         createAPIEndpoint(ENDPOINTS.userRoles).fetch()
             .then((response) => {
@@ -51,51 +52,58 @@ export const RequestUser = (props : {setResponse : Function, default? : UserRequ
             <p><u>-- User --</u></p>
             <br />
             <br />
-            <form onSubmit={onSubmit}>
+            <form onSubmit={onSubmit} autoComplete="Off">
                 <div>
                     <label htmlFor="firstName"> First Name </label>
-                    <input {... register("firstName", {required : true, pattern: isAlphabetic })} 
+                    <input {... register("firstName", {required : true, pattern: regexes.nameRegex })}
                     type="text" name = "firstName" defaultValue={props.default?.firstName}/>
                     {errors.firstName && <p>User First Name is required</p>}
                 </div>
                 <div>
                     <label htmlFor="lastName"> Last Name </label>
-                    <input {... register("lastName", {required : true, pattern: isAlphabetic })} 
+                    <input {... register("lastName", {required : true, pattern: regexes.nameRegex })}
                     type="text" name = "lastName" defaultValue={props.default?.lastName}/>
                     {errors.lastName && <p>User Last Name is required</p>}
                 </div>
                 <div>
                     <label htmlFor="username"> Username </label>
-                    <input {... register("username", {required : true })} 
+                    <input {... register("username", {required : true, pattern: regexes.usernameRegex })}
                     type="text" name = "username" defaultValue={props.default?.username}/>
                     {errors.username && <p>Username is required</p>}
                 </div>
                 <div>
                     <label htmlFor="email">Email</label>
-                    <input {...register("email", {required: true, pattern: /^\S+@\S+$/i})} 
+                    <input {...register("email", {required : true, pattern: regexes.emailRegex })}
                         type="email" name="email" defaultValue={props.default?.email}/>
                     {errors.email && <p>Email is required</p>}
                 </div>
                 <div>
                     <label htmlFor="mobile">Mobile Number</label>
-                    <input {...register("mobileNumber", {required: true, pattern: /^[0-9]{11}$/})} 
-                        type="tel" name="mobile" defaultValue={props.default?.mobileNumber}/>
+                    <input {...register("mobileNumber", {required : true })}
+                        type="text" name="mobileNumber" defaultValue={props.default?.mobileNumber}/>
                     {errors.mobileNumber && <p>Mobile number is required and must be 11 digits</p>}
                 </div>
                 <div>
                     <label htmlFor="password">Password</label>
-                    <input {...register('password', {required: true})} type="password" name="password"/>
+                    <input {...register("password", {required : true, pattern: regexes.passwordRegex })} type="password" name="password"/>
                     {errors.password && <p>Password is required</p>}
                 </div>
                 <div>
                     <label htmlFor="confirmPassword">Confirm Password</label>
-                    <input {...register("confirmPassword", {required: true, validate: (value) => value === watch("password") || "Passwords do not match"})} 
-                        type="password" name="confirmPassword"/>
+                    <input {...register("confirmPassword", {required : true, 
+                        validate: {
+                            matchesPreviousPassword: (value) => {
+                                const { password } = watch();
+                                return password === value || "Passwords should match";
+                            }
+                        }
+                    })}
+                        type="password" name="password"/>
                     {errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
                 </div>
                 <div>
                     <label>User Role</label>
-                    <select {...register('role', {required: true, validate: {
+                    <select {...register('role', {required: false, validate: {
                         isNotDefault: (v) => {return v !== DEFAULT} 
                     }})} value={watch("role") ? watch("role") : DEFAULT}>
                         <option value={DEFAULT} disabled>-- Select Role --</option>
