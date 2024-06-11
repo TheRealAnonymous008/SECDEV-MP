@@ -71,8 +71,10 @@ exports.UserRepository = {
                 else {
                     if (res.length == 0)
                         resolve(undefined);
-                    const x = yield exports.UserRepository.retrieveById(res[0].UserId);
-                    resolve(x);
+                    else {
+                        const x = yield exports.UserRepository.retrieveById(res[0].UserId);
+                        resolve(x);
+                    }
                 }
             }));
         });
@@ -84,7 +86,10 @@ exports.UserRepository = {
                 if (err)
                     reject(err);
                 else {
-                    resolve(res[0]);
+                    if (res.length == 0)
+                        resolve(undefined);
+                    else
+                        resolve(res[0]);
                 }
             });
         });
@@ -114,7 +119,10 @@ exports.UserRepository = {
                 if (err)
                     reject(err);
                 else {
-                    resolve(res[0]);
+                    if (res.length == 0)
+                        resolve(undefined);
+                    else
+                        resolve(res[0]);
                 }
             });
         });
@@ -188,10 +196,10 @@ exports.UserRepository = {
             });
         });
     },
-    deleteSessiion(id) {
-        let query = `DELETE FROM sessions WHERE SessionId = ${id}`;
+    deleteSession(id) {
+        let query = `DELETE FROM sessions WHERE SessionId = ?`;
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
+            connection_1.default.execute(query, [id], (err, res) => {
                 if (err)
                     reject(err);
                 else {

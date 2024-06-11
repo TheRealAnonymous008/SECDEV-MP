@@ -66,38 +66,6 @@ const upload = async(req  :any, res: express.Response, next : express.NextFuncti
     }
 }
 
-const register = async (req : express.Request, res : express.Response, next: express.NextFunction) => {
-    try {
-        next();
-        const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
-        const user : UserRow= {
-            FirstName : validateName(req.body.firstName),
-            LastName : validateName(req.body.lastName),
-            Username : validateUsername(req.body.username),
-            MobileNumber : validateMobileNumber(req.body.mobileNumber),
-            Email : validateEmail(req.body.email),
-            Salt: salt,
-            Password : Bcrypt.hashSync(req.body.password, salt),
-            Role : RoleIds.VIEW
-        };
-
-        try {
-            const result = UserRepository.register(user);
-            if (result === undefined) {
-                throw new Error("Failed to register user");
-            }
-            res.status(200).end();
-        } catch (err) {
-            console.log(err);
-            res.status(500).send({message: "Error registering user"});
-        }
-    } catch (err) {
-        console.log(err);
-        res.status(400).json({ message: err.message });
-    }
-
-}
-
 const update = async (req: express.Request, res: express.Response) => {
     try {
         const user : UserRow= {
@@ -154,4 +122,4 @@ const remove = async (req: express.Request, res: express.Response) => {
     }
 }
 
-export default {all, id, register, upload, update, remove};
+export default {all, id, upload, update, remove};

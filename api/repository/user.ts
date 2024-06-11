@@ -77,9 +77,10 @@ export const UserRepository = {
                     else {
                         if (res.length == 0)
                             resolve(undefined)
-
-                        const x = await UserRepository.retrieveById(res[0].UserId);
-                        resolve(x);
+                        else {
+                            const x = await UserRepository.retrieveById(res[0].UserId);
+                            resolve(x);
+                        }
                     }
                 }
             )
@@ -95,7 +96,10 @@ export const UserRepository = {
                 (err, res) => {
                     if (err) reject(err);
                     else{
-                        resolve(res[0])
+                        if(res.length == 0)
+                            resolve(undefined)
+                        else 
+                            resolve(res[0])
                     }
                 }
             )
@@ -133,7 +137,10 @@ export const UserRepository = {
                 (err, res) => {
                     if (err) reject(err);
                     else{
-                        resolve(res[0])
+                        if (res.length == 0)
+                            resolve(undefined)
+                        else 
+                            resolve(res[0])
                     }
                 }
             )
@@ -231,11 +238,12 @@ export const UserRepository = {
         })
     },
 
-    deleteSessiion(id : string) : Promise<number> {
-        let query = `DELETE FROM sessions WHERE SessionId = ${id}`
+    deleteSession(id : string) : Promise<number> {
+        let query = `DELETE FROM sessions WHERE SessionId = ?`
             return new Promise((resolve, reject) => {
                 connection.execute<ResultSetHeader>(
                     query,
+                    [id],
                     (err, res) => {
                         if (err) reject(err);
                         else{

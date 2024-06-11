@@ -145,7 +145,7 @@ const handshake = (req : express.Request, res : express.Response) => {
 const logout = async (req : express.Request, res : express.Response) => {
     const token = req.cookies.jwt
     const sessionId : any = jwtDecode(token)["id"]
-    await UserRepository.deleteSessiion(sessionId);
+    await UserRepository.deleteSession(sessionId);
     
     res.clearCookie("jwt").clearCookie("jwtacc").end();
 }
