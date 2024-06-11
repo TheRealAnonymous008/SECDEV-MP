@@ -33,6 +33,7 @@ export const Main = () => {
     useAsync(async () => {
         await createAPIEndpoint(ENDPOINTS.handshake).fetch()
             .then((response) => {
+                console.log(response)
                 if (response.status != 403){
                     setIsLoggedIn(true)
                     setIsAdmin(response.data.Role == "ADMIN")
@@ -46,6 +47,9 @@ export const Main = () => {
                 }
             })
             .catch((err) => {
+                console.log(err)
+                setIsLoggedIn(false)
+                setIsAdmin(false)
                 navigate(ROUTES.login)
             })
         }, []
@@ -54,6 +58,10 @@ export const Main = () => {
     return (    
         <Routes>
                 <>
+                    <Route
+                        path={"/"}
+                        element={<Login setIsLoggedIn={setIsLoggedIn} setIsAdmin={setIsAdmin}/> }
+                    />
                     <Route
                         path={ROUTES.login}
                         element={<Login setIsLoggedIn={setIsLoggedIn} setIsAdmin={setIsAdmin}/> }
