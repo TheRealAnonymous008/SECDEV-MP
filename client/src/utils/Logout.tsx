@@ -15,7 +15,7 @@ export const Logout = (props: {setIsLoggedIn : Function}) => {
 
     createAPIEndpoint(ENDPOINTS.logout).post({})
     .then((response) => {
-        sessionStorage.setItem("isLoggedIn", "false")
+        
     })
     .then(() => {
         props.setIsLoggedIn(false);
