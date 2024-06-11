@@ -177,13 +177,25 @@ exports.UserRepository = {
         });
     },
     delete(id) {
-        let query = `DELETE FROM users WHERE id = ${id}`;
+        let query = `DELETE FROM sessions WHERE UserId = ?; DELETE FROM users WHERE id = ?; `;
+        return new Promise((resolve, reject) => {
+            connection_1.default.execute(query, [id, id], (err, res) => {
+                if (err)
+                    reject(err);
+                else {
+                    resolve(id);
+                }
+            });
+        });
+    },
+    deleteSessiion(id) {
+        let query = `DELETE FROM sessions WHERE SessionId = ${id}`;
         return new Promise((resolve, reject) => {
             connection_1.default.execute(query, (err, res) => {
                 if (err)
                     reject(err);
                 else {
-                    resolve(id);
+                    resolve(1);
                 }
             });
         });

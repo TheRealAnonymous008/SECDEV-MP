@@ -215,11 +215,12 @@ export const UserRepository = {
     },
 
     delete(id : number) : Promise<number> {
-        let query =`DELETE FROM users WHERE id = ${id}`
+        let query =`DELETE FROM sessions WHERE UserId = ?; DELETE FROM users WHERE id = ?; `
         
         return new Promise((resolve, reject) => {
             connection.execute<ResultSetHeader>(
                 query,
+                [id, id],
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -228,5 +229,20 @@ export const UserRepository = {
                 }
             )
         })
-    }
+    },
+
+    deleteSessiion(id : string) : Promise<number> {
+        let query = `DELETE FROM sessions WHERE SessionId = ${id}`
+            return new Promise((resolve, reject) => {
+                connection.execute<ResultSetHeader>(
+                    query,
+                    (err, res) => {
+                        if (err) reject(err);
+                        else{
+                            resolve(1)
+                        }
+                    }
+                )
+            })
+        }
 }
