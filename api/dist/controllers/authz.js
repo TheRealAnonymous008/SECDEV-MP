@@ -44,6 +44,7 @@ const SALT_ROUNDS = 10;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
+        const password = inputValidation.validatePassword(req.body.password);
         const user = {
             FirstName: inputValidation.validateName(req.body.firstName),
             LastName: inputValidation.validateName(req.body.lastName),
@@ -51,7 +52,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             MobileNumber: inputValidation.validateMobileNumber(req.body.mobileNumber),
             Email: inputValidation.validateEmail(req.body.email),
             Salt: salt,
-            Password: Bcrypt.hashSync(req.body.password, salt),
+            Password: Bcrypt.hashSync(password, salt),
             Role: enum_1.RoleIds.ADMIN
         };
         user_1.UserRepository.register(user)
