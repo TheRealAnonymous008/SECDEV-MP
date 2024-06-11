@@ -14,6 +14,7 @@ import { WithNav } from "./WithNav";
 import UserProfile from "./components/profile/UserProfile";
 import { createAPIEndpoint } from "./api";
 import { ENDPOINTS } from "./api/endpoints";
+import { useAsync } from "react-async";
 
 
 
@@ -29,28 +30,28 @@ export const Main = () => {
     const [isAdmin, setIsAdmin] = useState<boolean>(false) 
     const navigate = useNavigate()
 
-    useEffect(() => {
-    createAPIEndpoint(ENDPOINTS.handshake).fetch()
-        .then((response) => {
-            if (response.data !== undefined){
-                setIsLoggedIn(true)
-                setIsAdmin(response.data.Role == "ADMIN")
-                navigate(ROUTES.orders)
-            }
-        })
-    });
+    useAsync(async () => {
+        await createAPIEndpoint(ENDPOINTS.handshake).fetch()
+            .then((response) => {
+                if (response.data !== undefined){
+                    setIsLoggedIn(true)
+                    setIsAdmin(response.data.Role == "ADMIN")
+                    navigate(ROUTES.orders)
+                }
+                else {
+                    console.log("This ran")
+                    navigate(ROUTES.login)
+                }
+            })
+            .catch((err) => {
+                navigate(ROUTES.login)
+            })
+        }, []
+    );
     
     return (    
         <Routes>
                 <>
-                    {
-                        ! isLoggedIn &&
-                        <Route
-                        path="/"
-                        element={<Login setIsLoggedIn={setIsLoggedIn} setIsAdmin={setIsAdmin}/> }
-                        />
-                    }
-
                     <Route
                         path={ROUTES.login}
                         element={<Login setIsLoggedIn={setIsLoggedIn} setIsAdmin={setIsAdmin}/> }
