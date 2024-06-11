@@ -23,19 +23,25 @@ const ProtectedRoute = (props : { isLoggedIn : boolean}) => {
 };
 
 export const Main = () => {
-    const [isLoggedIn ,setIsLoggedIn] = useState<boolean>(sessionStorage.getItem("isLoggedIn") === "true")
+    const [isLoggedIn ,setIsLoggedIn] = useState<boolean>(false)
+    const [isAdmin, setIsAdmin] = useState<boolean>(false) 
+
+    useEffect(() => {
+        // Check if we are logged in    
+    })
+
     
     return (    
         <Routes>
                 <>
                     <Route
                     path="/"
-                    element={<Login setIsLoggedIn={setIsLoggedIn}/> }
+                    element={<Login setIsLoggedIn={setIsLoggedIn} setIsAdmin={setIsAdmin}/> }
                     />
 
                     <Route
                         path={ROUTES.login}
-                        element={<Login setIsLoggedIn={setIsLoggedIn}/> }
+                        element={<Login setIsLoggedIn={setIsLoggedIn} setIsAdmin={setIsAdmin}/> }
                     />
 
                     <Route
@@ -65,7 +71,7 @@ export const Main = () => {
                         />
                     </Route>
 
-                    <Route path={ROUTES.users} element={<ProtectedRoute isLoggedIn={isLoggedIn}/>}>
+                    <Route path={ROUTES.users} element={<ProtectedRoute isLoggedIn={isLoggedIn && isAdmin}/>}>
                         <Route
                             path={ROUTES.users }
                             element={<UsersView/> }

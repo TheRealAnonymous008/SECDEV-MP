@@ -5,13 +5,14 @@ import { ROUTES } from '../api/routes';
 import { SignBox, LoginDiv, SignPage, RightImage, SignUp } from '../style/SignStyle';
 import { RedDialogue } from '../style/Dialogue';
 import { ENDPOINTS } from '../api/endpoints';
+import jwtDecode from 'jwt-decode';
 
 type LoginState = {
     username: string
     password: string
 };
 
-const Login = (props: {setIsLoggedIn : Function}) => {
+const Login = (props: {setIsLoggedIn : Function, setIsAdmin : Function}) => {
     const [state, setState] = useState<LoginState>({
         username: "",
         password: ""
@@ -38,12 +39,13 @@ const Login = (props: {setIsLoggedIn : Function}) => {
             .then((response) => {
                 if(response.data.auth) {
                     props.setIsLoggedIn(true);
-                    sessionStorage.setItem("isLoggedIn", "true");
+                    const decoded : any = jwtDecode(response.data.token)
+                    props.setIsAdmin(decoded.role === "1")
                     navigation(ROUTES.orders);
                 }
                 else {
                     props.setIsLoggedIn(false);
-                    sessionStorage.setItem("isLoggedIn", "false");
+                    props.setIsAdmin(false)
                     setError("Username or Password does not match.");
                 }
                 
