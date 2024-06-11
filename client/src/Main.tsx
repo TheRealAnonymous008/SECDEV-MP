@@ -1,4 +1,4 @@
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import ViewCustomers from "./components/customers/ViewCustomers";
 import Home from "./components/Home";
 import Login from "./components/Login";
@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 import {Logout} from "./utils/Logout";  
 import { WithNav } from "./WithNav";
 import UserProfile from "./components/profile/UserProfile";
+import { createAPIEndpoint } from "./api";
+import { ENDPOINTS } from "./api/endpoints";
 
 
 
@@ -25,19 +27,28 @@ const ProtectedRoute = (props : { isLoggedIn : boolean}) => {
 export const Main = () => {
     const [isLoggedIn ,setIsLoggedIn] = useState<boolean>(false)
     const [isAdmin, setIsAdmin] = useState<boolean>(false) 
+    const navigate = useNavigate()
 
-    useEffect(() => {
-        // Check if we are logged in    
-    })
+    createAPIEndpoint(ENDPOINTS.handshake).fetch()
+        .then((response) => {
+            if (response.data !== undefined){
+                setIsLoggedIn(true)
+                setIsAdmin(response.data.Role == "ADMIN")
+                navigate(ROUTES.orders)
+            }
+        })
 
     
     return (    
         <Routes>
                 <>
-                    <Route
-                    path="/"
-                    element={<Login setIsLoggedIn={setIsLoggedIn} setIsAdmin={setIsAdmin}/> }
-                    />
+                    {
+                        ! isLoggedIn &&
+                        <Route
+                        path="/"
+                        element={<Login setIsLoggedIn={setIsLoggedIn} setIsAdmin={setIsAdmin}/> }
+                        />
+                    }
 
                     <Route
                         path={ROUTES.login}

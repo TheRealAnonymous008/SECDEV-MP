@@ -14,9 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const jwt = require("jsonwebtoken");
 const authConfig_1 = __importDefault(require("../config/authConfig"));
-const makeRefreshToken = (user, token, callback) => __awaiter(void 0, void 0, void 0, function* () {
+const crypto_1 = require("crypto");
+const user_1 = require("../repository/user");
+const makeRefreshToken = (user, token, sessionId, callback) => __awaiter(void 0, void 0, void 0, function* () {
     yield jwt.sign({
-        id: user.Id,
+        id: sessionId,
         role: user.Role,
         accessIssuer: authConfig_1.default.token.issuer,
     }, authConfig_1.default.refreshToken.secret, {
@@ -34,9 +36,11 @@ const makeRefreshToken = (user, token, callback) => __awaiter(void 0, void 0, vo
 const signToken = (user, callback) => __awaiter(void 0, void 0, void 0, function* () {
     const timeSinceEpoch = new Date().getTime();
     const expirationTime = timeSinceEpoch + Number(authConfig_1.default.token.expireTime) * 10000;
+    const sessionId = (0, crypto_1.randomUUID)();
     try {
+        yield user_1.UserRepository.addSession(user.Id, sessionId);
         yield jwt.sign({
-            id: user.Id.toString(),
+            id: sessionId,
             role: user.Role.toString(),
         }, authConfig_1.default.token.secret, {
             expiresIn: authConfig_1.default.token.expireTime,
@@ -46,7 +50,7 @@ const signToken = (user, callback) => __awaiter(void 0, void 0, void 0, function
                 callback(error, null, null);
             }
             else if (token) {
-                yield makeRefreshToken(user, token, callback);
+                yield makeRefreshToken(user, token, sessionId, callback);
             }
         }));
     }

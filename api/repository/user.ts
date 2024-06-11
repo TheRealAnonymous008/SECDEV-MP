@@ -1,5 +1,5 @@
-import User, { UserRow } from "../models/user";
-import { ResultSetHeader } from "mysql2";
+import User, { SessionEntry, UserRow } from "../models/user";
+import { QueryResult, ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
 import IRepository from "./IRepository";
 import { Multer } from "multer";
@@ -48,6 +48,44 @@ export const UserRepository = {
         })
     },
 
+    addSession(id : number, sessionId : string) : Promise<boolean>{
+        let query = `INSERT INTO sessions(SessionId, UserId) VALUES (?, ?)`;
+        
+        return new Promise((resolve, reject) => { 
+            connection.execute<ResultSetHeader>(
+                query,
+                [sessionId, id], 
+                (err, res) => {
+                    if (err) reject(err); 
+                    else { 
+                        resolve(true);
+                    }
+                }
+            )
+        })
+    },
+
+    getUserFromSession(sessionId : string) : Promise<User | undefined> {
+        let query = `SELECT UserId FROM sessions WHERE SessionId = ?`;
+
+        return new Promise((resolve, reject) => {
+            connection.execute<SessionEntry[]>(
+                query, 
+                [sessionId],
+                async (err, res) => {
+                    if (err) reject(err);
+                    else {
+                        if (res.length == 0)
+                            resolve(undefined)
+
+                        const x = await UserRepository.retrieveById(res[0].UserId);
+                        resolve(x);
+                    }
+                }
+            )
+        })
+    },
+
     retrieveByUsername(username : string) : Promise<User | undefined> {
         let query = `SELECT * FROM users WHERE Username = "${username}"`
 
@@ -65,7 +103,7 @@ export const UserRepository = {
     },
 
     retrieveAll(limit? : number, offset? : number) : Promise<User[]> {
-        let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id;`;
+        let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id`;
         if (limit){
             query += ` LIMIT ${limit}`
         }
@@ -87,7 +125,7 @@ export const UserRepository = {
     },
 
     retrieveById(id :  number) : Promise<User | undefined> {
-        let query =  `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id; WHERE u.Id = ${id}`
+        let query =  `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id WHERE u.Id = ${id}`
 
         return new Promise((resolve, reject) => {
             connection.execute<User[]>(
@@ -102,7 +140,10 @@ export const UserRepository = {
         })
     },
     
-    upload(id : number, image : Express.Multer.File) : Promise<number>{
+    // The provided id is the session ID so first we must obtain the actual user ID
+    async upload(sessid : string, image : Express.Multer.File) : Promise<number>{
+        let user = await  UserRepository.getUserFromSession(sessid)
+        const id = user.Id;
         let query = `INSERT INTO picture(Picture) VALUES(?)`
 
         return new Promise((resolve, reject) => {

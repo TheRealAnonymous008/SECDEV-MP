@@ -24,3 +24,8 @@ export interface UserRow {
     Role?: number
     PictureId? : number,
 } 
+
+export interface SessionEntry extends RowDataPacket {
+    SessionId : string,
+    UserId: number 
+}

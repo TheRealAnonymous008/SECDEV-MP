@@ -40,6 +40,7 @@ const signToken_1 = __importDefault(require("../utils/signToken"));
 const enum_1 = require("../models/enum");
 const user_1 = require("../repository/user");
 const inputValidation = __importStar(require("../middleware/inputValidation"));
+const jwt_decode_1 = __importDefault(require("jwt-decode"));
 const SALT_ROUNDS = 10;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -53,31 +54,9 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             Email: inputValidation.validateEmail(req.body.email),
             Salt: salt,
             Password: Bcrypt.hashSync(password, salt),
-            Role: enum_1.RoleIds.VIEW
+            Role: enum_1.RoleIds.ADMIN
         };
         user_1.UserRepository.register(user)
-            .then((result) => {
-            if (result == undefined) {
-                res.status(500).end();
-                return;
-            }
-            res.status(200).end();
-        })
-            .catch((err) => {
-            console.log(err);
-            res.status(500).end();
-        });
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500).end();
-    }
-});
-const verify = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        let username = inputValidation.validateUsername(req.query.username);
-        let role = inputValidation.validateRole(req.body.role);
-        user_1.UserRepository.verifyRole(username, role)
             .then((result) => {
             if (result == undefined) {
                 res.status(500).end();
@@ -169,7 +148,25 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).end();
     }
 });
+const handshake = (req, res) => {
+    try {
+        const token = req.cookies.jwt;
+        const sessionId = (0, jwt_decode_1.default)(token)["id"];
+        user_1.UserRepository.getUserFromSession(sessionId)
+            .then((value) => {
+            res.json(value).status(200).end();
+        })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
+};
 const logout = (req, res) => {
     res.clearCookie("jwt").clearCookie("jwtacc").end();
 };
-exports.default = { register, login, logout, verify };
+exports.default = { register, login, logout, handshake };

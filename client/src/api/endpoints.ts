@@ -1,9 +1,9 @@
 export const ENDPOINTS = {
+    handshake: 'authz/handshake',
     login: 'authz/login',
     register: 'authz/register',
     refreshToken: 'authz/refresh',
     logout: 'authz/logout',
-    verify : 'authz/verify',
 
     orderTypes: 'order/types',
     orderStatuses: 'order/statuses',

@@ -3,6 +3,7 @@ import controller from "../controllers/authz";
 import * as inputValidation from '../middleware/inputValidation';
 const router = express.Router();
 import { rateLimit } from 'express-rate-limit';
+import validateToken from '../middleware/authValidation';
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
@@ -17,7 +18,7 @@ const limiter = rateLimit({
 });
 
 
-router.get('/verify', controller.verify)
+router.get('/handshake', validateToken, controller.handshake)
 router.post('/register', controller.register) 
 router.post('/login', limiter, controller.login)       
 router.post('/logout', controller.logout)

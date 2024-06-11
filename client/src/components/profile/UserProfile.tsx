@@ -22,7 +22,6 @@ const UserProfile = () => {
             formData.append('image', selectedFile);
             createAPIEndpoint(ENDPOINTS.uploadImage).upload(formData)
         }
-        navigate("/orders")
     };
 
     return (

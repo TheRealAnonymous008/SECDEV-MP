@@ -2,7 +2,7 @@
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+SET @sessionsOLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
 -- Schema autoworks
@@ -176,6 +176,24 @@ CREATE TABLE IF NOT EXISTS `autoworks`.`Order` (
   CONSTRAINT `fk_Order_StatusEnum1`
     FOREIGN KEY (`Status`)
     REFERENCES `autoworks`.`StatusEnum` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `autoworks`.`Sessions`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `autoworks`.`Sessions` ;
+
+CREATE TABLE IF NOT EXISTS `autoworks`.`Sessions` (
+  `SessionId` VARCHAR(128) NOT NULL,
+  `UserId` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`SessionId`, `UserId`),
+  INDEX `fk_user_session_idx` (`UserId` ASC) VISIBLE,
+  CONSTRAINT `fk_user_session`
+    FOREIGN KEY (`UserId`)
+    REFERENCES `autoworks`.`Users` (`Id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

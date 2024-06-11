@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -41,6 +50,33 @@ exports.UserRepository = {
             });
         });
     },
+    addSession(id, sessionId) {
+        let query = `INSERT INTO sessions(SessionId, UserId) VALUES (?, ?)`;
+        return new Promise((resolve, reject) => {
+            connection_1.default.execute(query, [sessionId, id], (err, res) => {
+                if (err)
+                    reject(err);
+                else {
+                    resolve(true);
+                }
+            });
+        });
+    },
+    getUserFromSession(sessionId) {
+        let query = `SELECT UserId FROM sessions WHERE SessionId = ?`;
+        return new Promise((resolve, reject) => {
+            connection_1.default.execute(query, [sessionId], (err, res) => __awaiter(this, void 0, void 0, function* () {
+                if (err)
+                    reject(err);
+                else {
+                    if (res.length == 0)
+                        resolve(undefined);
+                    const x = yield exports.UserRepository.retrieveById(res[0].UserId);
+                    resolve(x);
+                }
+            }));
+        });
+    },
     retrieveByUsername(username) {
         let query = `SELECT * FROM users WHERE Username = "${username}"`;
         return new Promise((resolve, reject) => {
@@ -54,7 +90,7 @@ exports.UserRepository = {
         });
     },
     retrieveAll(limit, offset) {
-        let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id;`;
+        let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id`;
         if (limit) {
             query += ` LIMIT ${limit}`;
         }
@@ -72,7 +108,7 @@ exports.UserRepository = {
         });
     },
     retrieveById(id) {
-        let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id; WHERE u.Id = ${id}`;
+        let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id WHERE u.Id = ${id}`;
         return new Promise((resolve, reject) => {
             connection_1.default.execute(query, (err, res) => {
                 if (err)
@@ -83,34 +119,39 @@ exports.UserRepository = {
             });
         });
     },
-    upload(id, image) {
-        let query = `INSERT INTO picture(Picture) VALUES(?)`;
-        return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, [image], (err, res) => {
-                if (err)
-                    reject(err);
-                else {
-                    const fk = res.insertId;
-                    // Cleanup a bit by removing the old BLOB if the user had this 
-                    query = `SELECT PictureId from users WHERE Id = ${id}`;
-                    connection_1.default.execute(query, (err, res) => {
-                        if (err)
-                            reject(err);
-                        if (res.length > 0) {
-                            query = `DELETE FROM picture WHERE Id = ${res[0].PictureId}`;
-                            connection_1.default.execute(query, (err, res) => {
-                                if (err)
-                                    reject(err);
-                            });
-                        }
-                    });
-                    query = `UPDATE users SET PictureId =${fk} WHERE Id = ${id}`;
-                    connection_1.default.execute(query, (err, res) => {
-                        if (err)
-                            reject(err);
-                        resolve(fk);
-                    });
-                }
+    // The provided id is the session ID so first we must obtain the actual user ID
+    upload(sessid, image) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let user = yield exports.UserRepository.getUserFromSession(sessid);
+            const id = user.Id;
+            let query = `INSERT INTO picture(Picture) VALUES(?)`;
+            return new Promise((resolve, reject) => {
+                connection_1.default.execute(query, [image], (err, res) => {
+                    if (err)
+                        reject(err);
+                    else {
+                        const fk = res.insertId;
+                        // Cleanup a bit by removing the old BLOB if the user had this 
+                        query = `SELECT PictureId from users WHERE Id = ${id}`;
+                        connection_1.default.execute(query, (err, res) => {
+                            if (err)
+                                reject(err);
+                            if (res.length > 0) {
+                                query = `DELETE FROM picture WHERE Id = ${res[0].PictureId}`;
+                                connection_1.default.execute(query, (err, res) => {
+                                    if (err)
+                                        reject(err);
+                                });
+                            }
+                        });
+                        query = `UPDATE users SET PictureId =${fk} WHERE Id = ${id}`;
+                        connection_1.default.execute(query, (err, res) => {
+                            if (err)
+                                reject(err);
+                            resolve(fk);
+                        });
+                    }
+                });
             });
         });
     },

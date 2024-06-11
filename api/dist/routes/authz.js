@@ -17,7 +17,7 @@ const limiter = (0, express_rate_limit_1.rateLimit)({
     legacyHeaders: false,
     message: "Too many requests. Try again later",
 });
-router.get('/verify', authz_1.default.verify);
+router.get('/handshake', authz_1.default.handshake);
 router.post('/register', authz_1.default.register);
 router.post('/login', limiter, authz_1.default.login);
 router.post('/logout', authz_1.default.logout);

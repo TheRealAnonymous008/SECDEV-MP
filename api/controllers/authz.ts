@@ -5,6 +5,7 @@ import { RoleIds, Roles } from '../models/enum';
 import { UserRepository } from '../repository/user';
 import { UserRow } from '../models/user';
 import * as inputValidation from '../middleware/inputValidation';
+import jwtDecode from 'jwt-decode';
 
 const SALT_ROUNDS = 10
 
@@ -20,7 +21,7 @@ const register = async (req : express.Request, res : express.Response) => {
             Email : inputValidation.validateEmail(req.body.email),
             Salt: salt,
             Password : Bcrypt.hashSync(password, salt),
-            Role : RoleIds.VIEW
+            Role : RoleIds.ADMIN
         }
         
         UserRepository.register(user)
@@ -41,30 +42,6 @@ const register = async (req : express.Request, res : express.Response) => {
         res.status(500).end();
     }
 
-}
-
-const verify = async (req : express.Request, res : express.Response) => {
-    try {
-        let username = inputValidation.validateUsername(req.query.username)
-        let role = inputValidation.validateRole(req.body.role)
-
-        UserRepository.verifyRole(username, role)
-            .then((result) => {
-                if (result == undefined){
-                    res.status(500).end();
-                    return
-                }
-                res.status(200).end();
-            })
-            .catch((err) => {
-                console.log(err);
-                res.status(500).end();
-            })
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500).end();
-    }
 }
 
 const login = async (req : express.Request, res : express.Response) => {
@@ -145,10 +122,29 @@ const login = async (req : express.Request, res : express.Response) => {
     }
 }
 
+const handshake = (req : express.Request, res : express.Response) => {
+    try {
+        const token = req.cookies.jwt
+        const sessionId : any = jwtDecode(token)["id"]
+
+        UserRepository.getUserFromSession(sessionId)
+            .then((value) => {
+                res.json(value).status(200).end();
+            })
+            .catch((err) => {
+                console.log(err)
+                res.status(500).end();
+            })
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).end();
+    }
+}
 
 const logout = (req : express.Request, res : express.Response) => {
     res.clearCookie("jwt").clearCookie("jwtacc").end();
 }
 
 
-export default {register, login, logout, verify}
+export default {register, login, logout, handshake}

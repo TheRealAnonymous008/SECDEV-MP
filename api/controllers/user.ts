@@ -53,7 +53,7 @@ const id = async (req: express.Request, res: express.Response) => {
 const upload = async(req  :any, res: express.Response, next : express.NextFunction) => {
     try { 
         const file = req.file as Express.Multer.File
-        const id = validateInteger(res.locals.jwt.id);
+        const id = res.locals.jwt.id
 
         UserRepository.upload(id, file)
             .then((result) => 
