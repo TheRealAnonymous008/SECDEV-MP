@@ -13,5 +13,7 @@ export interface UserRequest {
     firstName: string,
     lastName: string,
     username: string,
+    email : string,
+    mobileNumber : string,
     role: string
 }

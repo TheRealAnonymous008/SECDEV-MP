@@ -32,7 +32,9 @@ export const RequestUser = (props : {setResponse : Function, default? : UserRequ
             setValue("lastName", props.default.lastName)
             setValue("id", props.default.id)
             setValue("role", props.default.role)
-            setValue("username", props.default.username);
+            setValue("username", props.default.username)
+            setValue("email", props.default.email)
+            setValue("mobileNumber", props.default.mobileNumber);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.default])
@@ -67,6 +69,18 @@ export const RequestUser = (props : {setResponse : Function, default? : UserRequ
                     {errors.username && <p>Username is required</p>}
                 </div>
                 <div>
+                    <label htmlFor="email">Email</label>
+                    <input {...register("email", {required: true, pattern: /^\S+@\S+$/i})} 
+                        type="email" name="email" defaultValue={props.default?.email}/>
+                    {errors.email && <p>Email is required</p>}
+                </div>
+                <div>
+                    <label htmlFor="mobile">Mobile Number</label>
+                    <input {...register("mobileNumber", {required: true, pattern: /^[0-9]{11}$/})} 
+                        type="tel" name="mobile" defaultValue={props.default?.mobileNumber}/>
+                    {errors.mobileNumber && <p>Mobile number is required and must be 11 digits</p>}
+                </div>
+                <div>
                     <label>User Role</label>
                     <select {...register('role', {required: true, validate: {
                         isNotDefault: (v) => {return v !== DEFAULT} 
@@ -83,8 +97,9 @@ export const RequestUser = (props : {setResponse : Function, default? : UserRequ
                     </select>
                     {errors.role && <p> Role is required </p>}
                 </div>
-                <br />
-                <br />
+
+                <br /><br />
+
                 <input type='button' name="submit" onClick={onSubmit}value={"SUBMIT"} />
             </form>
         </FormDivStyle> 
