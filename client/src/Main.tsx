@@ -50,7 +50,7 @@ export const Main = () => {
                     />
                 </>
             
-                <Route element={<WithNav/>}>
+                <Route element={<WithNav isAdmin = {isAdmin}/>}>
                     <Route path={ROUTES.customers} element={<ProtectedRoute isLoggedIn={isLoggedIn}/>}>
                         <Route
                             path={ROUTES.customers }
@@ -71,12 +71,17 @@ export const Main = () => {
                         />
                     </Route>
 
-                    <Route path={ROUTES.users} element={<ProtectedRoute isLoggedIn={isLoggedIn && isAdmin}/>}>
-                        <Route
-                            path={ROUTES.users }
-                            element={<UsersView/> }
-                        />
-                    </Route>
+                    {
+                        isAdmin &&
+                        <Route path={ROUTES.users} element={<ProtectedRoute isLoggedIn={isLoggedIn}/>}>
+                            {
+                                <Route
+                                    path={ROUTES.users }
+                                    element={<UsersView/> }
+                                />
+                            }
+                        </Route>
+                    }
 
                     <Route path={ROUTES.home} element={<ProtectedRoute isLoggedIn={isLoggedIn}/>}>
                         <Route

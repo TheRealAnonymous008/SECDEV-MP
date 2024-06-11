@@ -12,7 +12,7 @@ const Button = (props: {buttonName : string, to: string}) => {
     )
 }
 
-const Navbar = () => {
+const Navbar = (props : {isAdmin : boolean}) => {
     return (
         <Nav>
             <nav>
@@ -21,7 +21,7 @@ const Navbar = () => {
                     <Button buttonName={"Orders"} to={ROUTES.orders}/>
                     <Button buttonName={"Customers"} to={ROUTES.customers}/>
                     <Button buttonName={"Vehicles"} to={ROUTES.vehicles}/>
-                    <Button buttonName={"Users"} to={ROUTES.users}/>
+                    { props.isAdmin && <Button buttonName={"Users"} to={ROUTES.users}/> }
                     <Button buttonName={"Profile"} to={ROUTES.profile}/>
                     <Button buttonName={"Logout"} to={ROUTES.logout}/>
                 </NavButtons>

@@ -2,10 +2,10 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from './components/Navbar';
 
-export const WithNav = () => {
+export const WithNav = (props : {isAdmin : boolean}) => {
     return (
       <div>
-        <Navbar/>
+        <Navbar isAdmin = {props.isAdmin}/>
         <Outlet/>
       </div>
     );
