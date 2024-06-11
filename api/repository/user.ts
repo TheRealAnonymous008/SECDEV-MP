@@ -78,7 +78,7 @@ export const UserRepository = {
         return new Promise((resolve, reject) => {
             connection.execute<User[]>(
                 query,
-                username,
+                [username],
                 (err, res) => {
                     if (err) reject(err);
                     else{

@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const user_1 = __importDefault(require("../controllers/user"));
+const authz_1 = __importDefault(require("../controllers/authz"));
 const roleValidation_1 = __importDefault(require("../middleware/roleValidation"));
 const authValidation_1 = __importDefault(require("../middleware/authValidation"));
 const enum_1 = require("../models/enum");
@@ -13,7 +14,7 @@ const multer = require('multer');
 const uploadHandler = multer();
 router.get('/all', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN]), user_1.default.all);
 router.get('/id', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN]), user_1.default.id);
-router.post('/create', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN]), user_1.default.register);
+router.post('/create', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN]), authz_1.default.register);
 router.post('/update', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN]), user_1.default.update);
 router.delete('/delete', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN]), user_1.default.remove);
 router.post('/upload', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN, enum_1.RoleIds.VIEW, enum_1.RoleIds.VIEW_EDIT]), uploadHandler.single("image"), user_1.default.upload);

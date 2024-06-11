@@ -10,14 +10,17 @@ const ORDER_TABLE_NAME = dbConfig_1.default.database + ".order";
 exports.OrderRespository = {
     retrieveAll(limit, offset) {
         let query = `SELECT * FROM ${ORDER_TABLE_NAME}`;
+        let values = [];
         if (limit) {
-            query += ` LIMIT ${limit}`;
+            query += ` LIMIT ?`;
+            values.push(limit);
         }
         if (offset) {
-            query += ` OFFST ${offset}`;
+            query += ` OFFSET ?`;
+            values.push(offset);
         }
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
+            connection_1.default.execute(query, values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -27,9 +30,9 @@ exports.OrderRespository = {
         });
     },
     retrieveById(id) {
-        let query = `SELECT * FROM ${ORDER_TABLE_NAME} WHERE Id = ${id}`;
+        let query = `SELECT * FROM ${ORDER_TABLE_NAME} WHERE Id = ?`;
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
+            connection_1.default.execute(query, [id], (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -85,9 +88,9 @@ exports.OrderRespository = {
         });
     },
     delete(id) {
-        let query = `DELETE FROM order WHERE id = ${id}`;
+        let query = `DELETE FROM order WHERE id = ?`;
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
+            connection_1.default.execute(query, [id], (err, res) => {
                 if (err)
                     reject(err);
                 else {

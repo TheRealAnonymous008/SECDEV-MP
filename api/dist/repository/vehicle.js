@@ -8,14 +8,17 @@ const connection_1 = __importDefault(require("../config/connection"));
 exports.VehicleRepository = {
     retrieveAll(limit, offset) {
         let query = "SELECT * FROM vehicle";
+        let values = [];
         if (limit) {
-            query += ` LIMIT ${limit}`;
+            query += ` LIMIT ?`;
+            values.push(limit);
         }
         if (offset) {
-            query += ` OFFST ${offset}`;
+            query += ` OFFSET ?`;
+            values.push(offset);
         }
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
+            connection_1.default.execute(query, values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -25,9 +28,9 @@ exports.VehicleRepository = {
         });
     },
     retrieveById(id) {
-        let query = `SELECT * FROM vehicle WHERE Id = ${id}`;
+        let query = `SELECT * FROM vehicle WHERE Id = ?`;
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
+            connection_1.default.execute(query, [id], (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -81,9 +84,9 @@ exports.VehicleRepository = {
         });
     },
     delete(id) {
-        let query = `DELETE FROM vehicle WHERE id = ${id}`;
+        let query = `DELETE FROM vehicle WHERE id = ?`;
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
+            connection_1.default.execute(query, [id], (err, res) => {
                 if (err)
                     reject(err);
                 else {

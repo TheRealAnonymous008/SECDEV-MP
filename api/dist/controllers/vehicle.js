@@ -54,7 +54,7 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             LicensePlate: (0, inputValidation_1.validateLicensePlate)(req.body.licensePlate),
             Model: (0, inputValidation_1.validateWord)(req.body.model),
             Manufacturer: (0, inputValidation_1.validateWord)(req.body.manufacturer),
-            YearManufactured: req.body.yearManufactured,
+            YearManufactured: (0, inputValidation_1.validateInteger)(req.body.yearManufactured),
             Color: (0, inputValidation_1.validateWord)(req.body.color),
             Engine: (0, inputValidation_1.validateWord)(req.body.engine),
             Remarks: req.body.remarks
@@ -84,7 +84,7 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             LicensePlate: (0, inputValidation_1.validateLicensePlate)(req.body.licensePlate),
             Model: (0, inputValidation_1.validateWord)(req.body.model),
             Manufacturer: (0, inputValidation_1.validateWord)(req.body.manufacturer),
-            YearManufactured: req.body.yearManufactured,
+            YearManufactured: (0, inputValidation_1.validateInteger)(req.body.yearManufactured),
             Color: (0, inputValidation_1.validateWord)(req.body.color),
             Engine: (0, inputValidation_1.validateWord)(req.body.engine),
             Remarks: req.body.remarks

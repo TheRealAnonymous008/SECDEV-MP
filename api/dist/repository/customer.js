@@ -8,14 +8,17 @@ const connection_1 = __importDefault(require("../config/connection"));
 exports.CustomerRepository = {
     retrieveAll(limit, offset) {
         let query = "SELECT * FROM customer";
+        let values = [];
         if (limit) {
-            query += ` LIMIT ${limit}`;
+            query += ` LIMIT ?`;
+            values.push(limit);
         }
         if (offset) {
-            query += ` OFFST ${offset}`;
+            query += ` OFFSET ?`;
+            values.push(offset);
         }
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
+            connection_1.default.execute(query, values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -25,9 +28,9 @@ exports.CustomerRepository = {
         });
     },
     retrieveById(id) {
-        let query = `SELECT * FROM customer WHERE Id = ${id}`;
+        let query = `SELECT * FROM customer WHERE Id = ?`;
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
+            connection_1.default.execute(query, [id], (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -81,9 +84,9 @@ exports.CustomerRepository = {
         });
     },
     delete(id) {
-        let query = `DELETE FROM customer WHERE id = ${id}`;
+        let query = `DELETE FROM customer WHERE id = ?`;
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
+            connection_1.default.execute(query, [id], (err, res) => {
                 if (err)
                     reject(err);
                 else {

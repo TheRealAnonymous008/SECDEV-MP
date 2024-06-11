@@ -38,18 +38,6 @@ exports.UserRepository = {
             });
         });
     },
-    verifyRole(username, role) {
-        let query = `SELECT * FROM users JOIN roleenum ON users.Role = roleenum.Id WHERE Username = "${username}" AND Name = "${role.toUpperCase()}"`;
-        return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
-                if (err)
-                    reject(err);
-                else {
-                    resolve(res.length > 0);
-                }
-            });
-        });
-    },
     addSession(id, sessionId) {
         let query = `INSERT INTO sessions(SessionId, UserId) VALUES (?, ?)`;
         return new Promise((resolve, reject) => {
@@ -80,9 +68,9 @@ exports.UserRepository = {
         });
     },
     retrieveByUsername(username) {
-        let query = `SELECT * FROM users WHERE Username = "${username}"`;
+        let query = `SELECT * FROM users WHERE Username = ?`;
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
+            connection_1.default.execute(query, [username], (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -96,11 +84,14 @@ exports.UserRepository = {
     },
     retrieveAll(limit, offset) {
         let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id`;
+        let values = [];
         if (limit) {
-            query += ` LIMIT ${limit}`;
+            query += ` LIMIT ?`;
+            values.push(limit);
         }
         if (offset) {
-            query += ` OFFST ${offset}`;
+            query += ` OFFSET ?`;
+            values.push(offset);
         }
         return new Promise((resolve, reject) => {
             connection_1.default.execute(query, (err, res) => {
@@ -113,9 +104,9 @@ exports.UserRepository = {
         });
     },
     retrieveById(id) {
-        let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id WHERE u.Id = ${id}`;
+        let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id WHERE u.Id = ?`;
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
+            connection_1.default.execute(query, [id], (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -140,24 +131,25 @@ exports.UserRepository = {
                     else {
                         const fk = res.insertId;
                         // Cleanup a bit by removing the old BLOB if the user had this 
-                        query = `SELECT PictureId from users WHERE Id = ${id}`;
-                        connection_1.default.execute(query, (err, res) => {
+                        query = `SELECT PictureId from users WHERE Id = ?`;
+                        connection_1.default.execute(query, [id], (err, res) => {
                             if (err)
                                 reject(err);
                             if (res.length > 0) {
-                                query = `DELETE FROM picture WHERE Id = ${res[0].PictureId}`;
+                                query = `DELETE FROM picture WHERE Id = ?`,
+                                    [res[0].PictureId];
                                 connection_1.default.execute(query, (err, res) => {
                                     if (err)
                                         reject(err);
                                 });
                             }
                         });
-                        query = `UPDATE users SET PictureId =${fk} WHERE Id = ${id}`;
-                        connection_1.default.execute(query, (err, res) => {
-                            if (err)
-                                reject(err);
-                            resolve(fk);
-                        });
+                        query = `UPDATE users SET PictureId = ? WHERE Id = ?`,
+                            connection_1.default.execute(query, [fk, id], (err, res) => {
+                                if (err)
+                                    reject(err);
+                                resolve(fk);
+                            });
                     }
                 });
             });
