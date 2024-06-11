@@ -22,7 +22,9 @@ const makeRefreshToken = async (user, token, sessionId, callback) => {
             else if(refreshToken) {
                 callback(null, token, refreshToken);
             }
-            callback(error, null, null);  
+            else{
+                callback(error, null, null);  
+            }
         }
     )
 }
