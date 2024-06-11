@@ -50,7 +50,7 @@ const create = async (req: express.Request, res: express.Response) => {
             LicensePlate: validateLicensePlate(req.body.licensePlate),
             Model: validateWord(req.body.model),
             Manufacturer: validateWord(req.body.manufacturer),
-            YearManufactured: req.body.yearManufactured,
+            YearManufactured: validateInteger(req.body.yearManufactured),
             Color: validateWord(req.body.color),
             Engine: validateWord(req.body.engine),
             Remarks: req.body.remarks
@@ -81,7 +81,7 @@ const update = async (req: express.Request, res: express.Response) => {
             LicensePlate: validateLicensePlate(req.body.licensePlate),
             Model: validateWord(req.body.model),
             Manufacturer: validateWord(req.body.manufacturer),
-            YearManufactured: req.body.yearManufactured,
+            YearManufactured: validateInteger(req.body.yearManufactured),
             Color: validateWord(req.body.color),
             Engine: validateWord(req.body.engine),
             Remarks: req.body.remarks

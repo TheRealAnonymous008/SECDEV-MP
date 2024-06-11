@@ -7,16 +7,20 @@ import IRepository from "./IRepository";
 export const VehicleRepository : IRepository<Vehicle> = {
     retrieveAll(limit? : number, offset? : number) : Promise<Vehicle[]> {
         let query = "SELECT * FROM vehicle";
+        let values = []
         if (limit){
-            query += ` LIMIT ${limit}`
+            query += ` LIMIT ?`
+            values.push(limit)
         }
         if (offset){
-            query += ` OFFST ${offset}`
+            query += ` OFFSET ?`
+            values.push(offset)
         }
 
         return new Promise((resolve, reject) => {
             connection.execute<Vehicle[]>(
                 query,
+                values,
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -28,11 +32,12 @@ export const VehicleRepository : IRepository<Vehicle> = {
     },
 
     retrieveById(id :  number) : Promise<Vehicle | undefined> {
-        let query = `SELECT * FROM vehicle WHERE Id = ${id}`
+        let query = `SELECT * FROM vehicle WHERE Id = ?`
 
         return new Promise((resolve, reject) => {
             connection.execute<Vehicle[]>(
                 query,
+                [id],
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -100,11 +105,12 @@ export const VehicleRepository : IRepository<Vehicle> = {
     },
 
     delete(id : number) : Promise<number> {
-        let query =`DELETE FROM vehicle WHERE id = ${id}`
+        let query =`DELETE FROM vehicle WHERE id = ?`
         
         return new Promise((resolve, reject) => {
             connection.execute<ResultSetHeader>(
                 query,
+                [id],
                 (err, res) => {
                     if (err) reject(err);
                     else{

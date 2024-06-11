@@ -7,16 +7,20 @@ import IRepository from "./IRepository";
 export const CustomerRepository : IRepository<Customer> = {
     retrieveAll(limit? : number, offset? : number) : Promise<Customer[]> {
         let query = "SELECT * FROM customer";
+        let values = []
         if (limit){
-            query += ` LIMIT ${limit}`
+            query += ` LIMIT ?`
+            values.push(limit)
         }
         if (offset){
-            query += ` OFFST ${offset}`
+            query += ` OFFSET ?`
+            values.push(offset)
         }
 
         return new Promise((resolve, reject) => {
             connection.execute<Customer[]>(
                 query,
+                values,
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -28,11 +32,12 @@ export const CustomerRepository : IRepository<Customer> = {
     },
 
     retrieveById(id :  number) : Promise<Customer | undefined> {
-        let query = `SELECT * FROM customer WHERE Id = ${id}`
+        let query = `SELECT * FROM customer WHERE Id = ?`
 
         return new Promise((resolve, reject) => {
             connection.execute<Customer[]>(
                 query,
+                [id],
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -100,11 +105,12 @@ export const CustomerRepository : IRepository<Customer> = {
     },
 
     delete(id : number) : Promise<number> {
-        let query =`DELETE FROM customer WHERE id = ${id}`
+        let query =`DELETE FROM customer WHERE id = ?`
         
         return new Promise((resolve, reject) => {
             connection.execute<ResultSetHeader>(
                 query,
+                [id],
                 (err, res) => {
                     if (err) reject(err);
                     else{

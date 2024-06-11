@@ -11,16 +11,20 @@ const ORDER_TABLE_NAME = dbConfig.database + ".order";
 export const OrderRespository : IRepository<Order> = {
     retrieveAll(limit? : number, offset? : number) : Promise<Order[]> {
         let query = `SELECT * FROM ${ORDER_TABLE_NAME}`;
+        let values = []
         if (limit){
-            query += ` LIMIT ${limit}`
+            query += ` LIMIT ?`
+            values.push(limit)
         }
         if (offset){
-            query += ` OFFST ${offset}`
+            query += ` OFFSET ?`
+            values.push(offset)
         }
 
         return new Promise((resolve, reject) => {
             connection.execute<Order[]>(
                 query,
+                values,
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -32,11 +36,12 @@ export const OrderRespository : IRepository<Order> = {
     },
 
     retrieveById(id :  number) : Promise<Order | undefined> {
-        let query = `SELECT * FROM ${ORDER_TABLE_NAME} WHERE Id = ${id}`
+        let query = `SELECT * FROM ${ORDER_TABLE_NAME} WHERE Id = ?`
 
         return new Promise((resolve, reject) => {
             connection.execute<Order[]>(
                 query,
+                [id],
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -106,11 +111,12 @@ export const OrderRespository : IRepository<Order> = {
     },
 
     delete(id : number) : Promise<number> {
-        let query =`DELETE FROM order WHERE id = ${id}`
+        let query =`DELETE FROM order WHERE id = ?`
         
         return new Promise((resolve, reject) => {
             connection.execute<ResultSetHeader>(
                 query,
+                [id],
                 (err, res) => {
                     if (err) reject(err);
                     else{

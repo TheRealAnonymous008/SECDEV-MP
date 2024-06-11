@@ -33,21 +33,6 @@ export const UserRepository = {
         })
     },
 
-    verifyRole(username : string, role : string ) : Promise<boolean> {
-        let query = `SELECT * FROM users JOIN roleenum ON users.Role = roleenum.Id WHERE Username = "${username}" AND Name = "${role.toUpperCase()}"`;
-        return new Promise((resolve, reject) => {
-            connection.execute<ResultSetHeader[]>(
-                query, 
-                (err, res) => {
-                    if (err) reject(err);
-                    else {
-                        resolve(res.length > 0)
-                    }
-                }
-            )
-        })
-    },
-
     addSession(id : number, sessionId : string) : Promise<boolean>{
         let query = `INSERT INTO sessions(SessionId, UserId) VALUES (?, ?)`;
         
@@ -88,11 +73,12 @@ export const UserRepository = {
     },
 
     retrieveByUsername(username : string) : Promise<User | undefined> {
-        let query = `SELECT * FROM users WHERE Username = "${username}"`
+        let query = `SELECT * FROM users WHERE Username = ?`
 
         return new Promise((resolve, reject) => {
             connection.execute<User[]>(
                 query,
+                username,
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -108,11 +94,14 @@ export const UserRepository = {
 
     retrieveAll(limit? : number, offset? : number) : Promise<User[]> {
         let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id`;
+        let values = []
         if (limit){
-            query += ` LIMIT ${limit}`
+            query += ` LIMIT ?`
+            values.push(limit)
         }
         if (offset){
-            query += ` OFFST ${offset}`
+            query += ` OFFSET ?`
+            values.push(offset)
         }
 
         return new Promise((resolve, reject) => {
@@ -129,11 +118,12 @@ export const UserRepository = {
     },
 
     retrieveById(id :  number) : Promise<User | undefined> {
-        let query =  `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id WHERE u.Id = ${id}`
+        let query =  `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id WHERE u.Id = ?`
 
         return new Promise((resolve, reject) => {
             connection.execute<User[]>(
                 query,
+                [id],
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -162,13 +152,15 @@ export const UserRepository = {
                     else{
                         const fk = res.insertId;
                         // Cleanup a bit by removing the old BLOB if the user had this 
-                        query = `SELECT PictureId from users WHERE Id = ${id}`
+                        query = `SELECT PictureId from users WHERE Id = ?`
                         connection.execute<User[]>(
                             query, 
+                            [id],
                             (err, res) => {
                                 if (err) reject(err);
                                 if (res.length > 0) {
-                                    query = `DELETE FROM picture WHERE Id = ${res[0].PictureId}`
+                                    query = `DELETE FROM picture WHERE Id = ?`,
+                                    [res[0].PictureId]
                                     connection.execute<ResultSetHeader>(
                                         query, 
                                         (err, res) => {
@@ -179,9 +171,10 @@ export const UserRepository = {
                             }
                         )
 
-                        query = `UPDATE users SET PictureId =${fk} WHERE Id = ${id}`
+                        query = `UPDATE users SET PictureId = ? WHERE Id = ?`,
                         connection.execute<ResultSetHeader>(
                             query,
+                            [fk, id],
                             (err, res) => {
                                 if(err) reject(err);
                                 resolve(fk)
