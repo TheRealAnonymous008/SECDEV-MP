@@ -13,11 +13,11 @@ const clearAccessToken = (res : Response) => {
 
 const handleRefreshTokenExpired = (res : Response, error: any) => {
     clearRefreshToken(res);
-    return res.json({
+    res.json({
         message: "Refresh token expired, please log in again",
         error,
         auth: false,
-    }).end();
+    });
 }
 
 const handleAccessTokenExpired = (res: Response, token : any ) => {
@@ -34,9 +34,8 @@ const handleAccessTokenExpired = (res: Response, token : any ) => {
 
 const validateToken = (req : Request, res : Response, next : NextFunction) => {
     const refToken = req.cookies.jwt;
-
     let token = req.headers.authorization?.split(' ')[1]; // remove bearer
-    if(token) {
+    if(token && refToken) {
         jwt.verify(token, config.token.secret,  {issuer: config.token.issuer}, (error, decoded) => {
             // verify access token
             if (error) {
@@ -68,10 +67,7 @@ const validateToken = (req : Request, res : Response, next : NextFunction) => {
     } else {
         clearAccessToken(res);
         clearRefreshToken(res);
-        return res.json({
-            message: 'Unauthorized',
-            auth: false,
-        }).end()
+        res.status(403)
     }
 };
 

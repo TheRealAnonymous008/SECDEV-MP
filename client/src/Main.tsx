@@ -33,12 +33,14 @@ export const Main = () => {
     useAsync(async () => {
         await createAPIEndpoint(ENDPOINTS.handshake).fetch()
             .then((response) => {
-                if (response.data !== undefined){
+                if (response.status != 403){
                     setIsLoggedIn(true)
                     setIsAdmin(response.data.Role == "ADMIN")
                     navigate(ROUTES.orders)
                 }
                 else {
+                    setIsLoggedIn(false)
+                    setIsAdmin(false)
                     console.log("This ran")
                     navigate(ROUTES.login)
                 }
