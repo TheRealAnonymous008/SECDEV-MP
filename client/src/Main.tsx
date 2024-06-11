@@ -29,6 +29,7 @@ export const Main = () => {
     const [isAdmin, setIsAdmin] = useState<boolean>(false) 
     const navigate = useNavigate()
 
+    useEffect(() => {
     createAPIEndpoint(ENDPOINTS.handshake).fetch()
         .then((response) => {
             if (response.data !== undefined){
@@ -37,7 +38,7 @@ export const Main = () => {
                 navigate(ROUTES.orders)
             }
         })
-
+    });
     
     return (    
         <Routes>
