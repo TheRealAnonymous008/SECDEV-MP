@@ -4,6 +4,8 @@ import User from '../models/user';
 import { randomUUID } from 'crypto';
 import { UserRepository } from '../repository/user';
 
+var uid = require('uid-safe')
+
 const makeRefreshToken = async (user, token, sessionId, callback) => {
     await jwt.sign(
         {
@@ -22,7 +24,9 @@ const makeRefreshToken = async (user, token, sessionId, callback) => {
             else if(refreshToken) {
                 callback(null, token, refreshToken);
             }
-            callback(error, null, null);  
+            else {
+                callback(error, null, null); 
+            } 
         }
     )
 }
@@ -30,7 +34,7 @@ const makeRefreshToken = async (user, token, sessionId, callback) => {
 const signToken = async (user : User,  callback: (error: Error | null, token: string | null, refreshToken: string | null) => void): Promise<void> => {
     const timeSinceEpoch = new Date().getTime();
     const expirationTime = timeSinceEpoch + Number(config.token.expireTime) * 10000;
-    const sessionId = randomUUID()
+    const sessionId = uid.sync(24)
 
     try {
         await UserRepository.addSession(user.Id, sessionId);
