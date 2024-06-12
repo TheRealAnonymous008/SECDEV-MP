@@ -13,7 +13,7 @@ router.use(express.urlencoded({ extended: true }));
 // Rate limiter for login capping
 const limiter = (0, express_rate_limit_1.rateLimit)({
     windowMs: 1 * 60 * 1000,
-    limit: 10,
+    limit: 5,
     standardHeaders: true,
     legacyHeaders: false,
     message: "Too many requests. Try again later",

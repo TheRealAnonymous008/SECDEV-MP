@@ -30,7 +30,9 @@ const makeRefreshToken = (user, token, sessionId, callback) => __awaiter(void 0,
         else if (refreshToken) {
             callback(null, token, refreshToken);
         }
-        callback(error, null, null);
+        else {
+            callback(error, null, null);
+        }
     });
 });
 const signToken = (user, callback) => __awaiter(void 0, void 0, void 0, function* () {
