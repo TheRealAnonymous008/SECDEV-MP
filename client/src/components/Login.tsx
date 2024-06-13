@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createAPIEndpoint} from '../api';
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../api/routes';
@@ -12,7 +12,7 @@ type LoginState = {
     password: string
 };
 
-const Login = (props: {setIsLoggedIn : Function, setIsAdmin : Function}) => {
+const Login = (props: {isLoggedIn : boolean, setIsLoggedIn : Function, setIsAdmin : Function}) => {
     const [state, setState] = useState<LoginState>({
         username: "",
         password: ""
@@ -21,6 +21,11 @@ const Login = (props: {setIsLoggedIn : Function, setIsAdmin : Function}) => {
     const [error, setError] = useState("");
     
     const navigation = useNavigate();
+
+    useEffect(() => {
+        if (props.isLoggedIn)
+            navigation(ROUTES.orders)
+    })
 
     const onSubmit = (event: React.SyntheticEvent<HTMLInputElement>) => {
         event.preventDefault();

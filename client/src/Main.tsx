@@ -60,13 +60,14 @@ export const Main = () => {
                 <>
                     <Route
                         path={"/"}
-                        element={<Login setIsLoggedIn={setIsLoggedIn} setIsAdmin={setIsAdmin}/> }
-                    />
-                    <Route
-                        path={ROUTES.login}
-                        element={<Login setIsLoggedIn={setIsLoggedIn} setIsAdmin={setIsAdmin}/> }
+                        element={<Home/> }
                     />
 
+                    <Route
+                        path={ROUTES.login}
+                        element={<Login isLoggedIn = {isLoggedIn} setIsLoggedIn={setIsLoggedIn} setIsAdmin={setIsAdmin}/> }
+                    />
+                    s
                     <Route
                         path={ROUTES.register }
                         element={<Register/> }
