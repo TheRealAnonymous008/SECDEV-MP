@@ -7,7 +7,7 @@ import { UserRow } from '../models/user';
 import * as inputValidation from '../middleware/inputValidation';
 import jwtDecode from 'jwt-decode';
 
-const SALT_ROUNDS = 10
+const SALT_ROUNDS = 15
 
 const register = async (req : express.Request, res : express.Response) => {
     try {
