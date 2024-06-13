@@ -126,30 +126,32 @@ export function assertNotNullOrEmpty(field) {
     }
 }
 
-
-const maxSize = 1024 * 1024;
+const minSize = 5 * 1024; // 5 KB
+const maxSize = 1024 * 1024; // 1 MB
 const allowedMimeTypes = ['image/jpeg', 'image/png'];
 const MAGIC_NUMBERS = {
-    jpg: 'ffd8ffe0',
-    png: '89504e47',
+    jpg: ['ffd8ffe0', 'ffd8ffe1', 'ffd8ffe2', 'ffd8ffe3', 'ffd8ffe8'],
+    png: '89504e470d0a1a0a',
 };
 
 function checkMagicNumbers(buffer) {
-    const magic = buffer.toString('hex', 0, 4);
-    return MAGIC_NUMBERS.jpg === magic || MAGIC_NUMBERS.png === magic;
+    const jpgMagic = buffer.toString('hex', 0, 4);
+    const pngMagic = buffer.toString('hex', 0, 8);
+    return MAGIC_NUMBERS.jpg.includes(jpgMagic) || pngMagic === MAGIC_NUMBERS.png;
 }
 
-export function validateImage(image : Express.Multer.File){
-    if (image == null)
-        throw new Error("Invalid Image")
+export function validateImage(image) {
+    if (image == null || image.size < minSize)
+        throw new Error("Invalid Image");
 
     if (!allowedMimeTypes.includes(image.mimetype) || !checkMagicNumbers(image.buffer)) {
-        throw new Error("Invalid File FOrmat");
+        throw new Error("Invalid File Format");
     }
 
     if (image.size > maxSize) {
-        throw new Error("Image is too large")
+        throw new Error("Image is too large");
     }
 
-    return image   
+    return image;   
 }
+
