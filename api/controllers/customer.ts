@@ -2,7 +2,7 @@ import express = require('express');
 import { makeCustomerArrayView, makeCustomerView } from '../projections/customer';
 import { CustomerRepository } from '../repository/customer';
 import { CustomerRow } from '../models/customer';
-import { validateEmail, validateInteger, validateMobileNumber, validateName, validateWord } from '../middleware/inputValidation';
+import { baseValidation, validateEmail, validateInteger, validateMobileNumber, validateName, validateNoHTML, validateWord } from '../middleware/inputValidation';
 
 const all = async (req: express.Request, res: express.Response) => {
     CustomerRepository.retrieveAll()
@@ -53,7 +53,7 @@ const create = async (req: express.Request, res: express.Response) => {
             Email: validateEmail(req.body.email),
             Company: validateWord(req.body.company),
             Insurance: validateWord(req.body.insurance),
-            Remarks: req.body.remarks               // This is a free field. SQL injection is prevented via prepared statements. XSS prevented by not accepting HTML
+            Remarks: baseValidation(req.body.remarks)               // This is a free field. SQL injection is prevented via prepared statements. XSS prevented by not accepting HTML
         };
 
         CustomerRepository.insert(customer)
@@ -86,7 +86,7 @@ const update = async (req: express.Request, res: express.Response) => {
             Email: validateEmail(req.body.email),
             Company: validateWord(req.body.company),
             Insurance: validateWord(req.body.insurance),
-            Remarks: req.body.remarks
+            Remarks: baseValidation(req.body.remarks)
         };
         let id = validateInteger(req.query.id.toString())
         

@@ -6,7 +6,7 @@ import { UserRow } from '../models/user';
 import { makeUserArrayView, makeUserView } from '../projections/user';
 import { UserRepository } from '../repository/user';
 import { RoleIds, Roles } from '../models/enum';
-import { validateName, validateUsername, validateMobileNumber, validateEmail, validateInteger, validateImage } from '../middleware/inputValidation';
+import { validateName, validateUsername, validateMobileNumber, validateEmail, validateInteger, validateImage, validateRole } from '../middleware/inputValidation';
 import { Multer } from 'multer';
 
 const SALT_ROUNDS = 10
@@ -74,7 +74,7 @@ const update = async (req: express.Request, res: express.Response) => {
             Username : validateUsername(req.body.username),
             MobileNumber : validateMobileNumber(req.body.mobileNumber),
             Email : validateEmail(req.body.email),
-            Role : req.body.role
+            Role : validateRole(req.body.role)
         }
         let id = validateInteger(req.query.id.toString())
 

@@ -34,6 +34,8 @@ var corsOptions = {
   }
 app.use(cors(corsOptions));
 
+// ALl routes must be input validated with the html sanitizer. No HTML must be accepted
+
 // route imports
 
 import indexRoute from './routes/index';
@@ -52,6 +54,10 @@ app.use('/api/order', orderRoutes);
 app.use('/api/customer', customerRoutes);
 // app.use('/api', enumRoutes);
 // app.use('/', indexRoute);
+
+
+
+
 
 app.use((err, req, res, next) => {
     if (err.status === 400) {

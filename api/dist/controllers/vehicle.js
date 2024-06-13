@@ -57,7 +57,7 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             YearManufactured: (0, inputValidation_1.validateInteger)(req.body.yearManufactured),
             Color: (0, inputValidation_1.validateWord)(req.body.color),
             Engine: (0, inputValidation_1.validateWord)(req.body.engine),
-            Remarks: req.body.remarks
+            Remarks: (0, inputValidation_1.baseValidation)(req.body.remarks)
         };
         vehicle_2.VehicleRepository.insert(vehicle)
             .then((result) => {
@@ -87,7 +87,7 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             YearManufactured: (0, inputValidation_1.validateInteger)(req.body.yearManufactured),
             Color: (0, inputValidation_1.validateWord)(req.body.color),
             Engine: (0, inputValidation_1.validateWord)(req.body.engine),
-            Remarks: req.body.remarks
+            Remarks: (0, inputValidation_1.baseValidation)(req.body.remarks)
         };
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         vehicle_2.VehicleRepository.update(id, vehicle)

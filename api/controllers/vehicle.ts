@@ -5,7 +5,7 @@ import { ALL_ROLES, Roles } from '../models/enum';
 import { makeVehicleArrayView, makeVehicleView } from '../projections/vehicle';
 import { VehicleRepository } from '../repository/vehicle';
 import Vehicle, { VehicleRow } from '../models/vehicle';
-import { validateInteger, validateLicensePlate, validateWord } from '../middleware/inputValidation';
+import { baseValidation, validateInteger, validateLicensePlate, validateWord } from '../middleware/inputValidation';
 
 const all = async (req: express.Request, res: express.Response) => {
     VehicleRepository.retrieveAll()
@@ -53,7 +53,7 @@ const create = async (req: express.Request, res: express.Response) => {
             YearManufactured: validateInteger(req.body.yearManufactured),
             Color: validateWord(req.body.color),
             Engine: validateWord(req.body.engine),
-            Remarks: req.body.remarks
+            Remarks: baseValidation(req.body.remarks)
         };
         
         VehicleRepository.insert(vehicle)
@@ -84,7 +84,7 @@ const update = async (req: express.Request, res: express.Response) => {
             YearManufactured: validateInteger(req.body.yearManufactured),
             Color: validateWord(req.body.color),
             Engine: validateWord(req.body.engine),
-            Remarks: req.body.remarks
+            Remarks: baseValidation(req.body.remarks)
         };
         let id = validateInteger(req.query.id.toString())
 

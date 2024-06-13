@@ -1,8 +1,26 @@
 import { assert } from "console";
 import { ALL_ROLES, Roles } from "../models/enum";
 
+import sanitizeHtml from 'sanitize-html';
+
+
+export function validateNoHTML(text) {
+    const clean = sanitizeHtml(text, {
+        allowedTags: [],
+        allowedAttributes: {}
+      });
+    return clean
+}
+
+export function baseValidation(text) {
+    text = validateNoHTML(text)
+    return text 
+}
+
 export function validateEmail(email) {
     assertNotNullOrEmpty(email)
+    email = validateNoHTML(email)
+
     const regex = /^(?!.*[-_.](?![a-zA-Z0-9]))[a-zA-Z0-9][a-zA-Z0-9._-]*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
     if (!regex.test(email)) {
         throw new Error("Invalid email format");
@@ -13,6 +31,7 @@ export function validateEmail(email) {
 
 export function validateName(name) {
     assertNotNullOrEmpty(name)
+    name = validateNoHTML(name)
     const regex = /^[A-Z][a-zA-Z]{1,34}$/;
 
     if (!regex.test(name)) {
@@ -23,6 +42,7 @@ export function validateName(name) {
 
 export function validateWord(name) {
     assertNotNullOrEmpty(name)
+    name = validateNoHTML(name)
     const regex = /^[a-zA-Z]{1,34}$/;
 
     if (!regex.test(name)) {
@@ -33,6 +53,7 @@ export function validateWord(name) {
 
 export function validateUsername(username) {
     assertNotNullOrEmpty(username)
+    username = validateNoHTML(username)
     const regex = /^[a-zA-Z0-9]{4,35}$/;
 
     if (!regex.test(username)) {
@@ -43,6 +64,7 @@ export function validateUsername(username) {
 
 export function validateMobileNumber(mobileNumber) {
     assertNotNullOrEmpty(mobileNumber)
+    mobileNumber = validateNoHTML(mobileNumber)
     const regex = /^09\d{9}$/;
 
     if (!regex.test(mobileNumber)) {
@@ -53,6 +75,7 @@ export function validateMobileNumber(mobileNumber) {
 
 export function validateInteger(number : string) {
     assertNotNullOrEmpty(number)
+    number = validateNoHTML(number)
 
     const regex = /\d+$/;
 
@@ -65,6 +88,7 @@ export function validateInteger(number : string) {
 
 export function validatePassword(password) {
     assertNotNullOrEmpty(password)
+    password = validateNoHTML(password)
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{8,32}$/;
 
     if (!regex.test(password)) {
@@ -75,6 +99,7 @@ export function validatePassword(password) {
 
 export function validateRole(role) {
     assertNotNullOrEmpty(role)
+    role = validateNoHTML(role)
 
     if (ALL_ROLES.includes(role))
         return role 
@@ -82,16 +107,17 @@ export function validateRole(role) {
     throw new Error("Invalid Role")
 }
 
-export function validateLicensePlate(liciensePlate){
-    assertNotNullOrEmpty(liciensePlate)
+export function validateLicensePlate(licensePlate){
+    assertNotNullOrEmpty(licensePlate)
+    licensePlate = validateNoHTML(licensePlate)
 
     const regex = /^[A-Z0-9]{6,7}$/;                // Follows the specs for Filipino license plates
 
-    if (!regex.test(liciensePlate)){
+    if (!regex.test(licensePlate)){
         throw new Error("Invalid License Plate")
     }
 
-    return liciensePlate;
+    return licensePlate;
 }
 
 export function assertNotNullOrEmpty(field) {

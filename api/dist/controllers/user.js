@@ -70,7 +70,7 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             Username: (0, inputValidation_1.validateUsername)(req.body.username),
             MobileNumber: (0, inputValidation_1.validateMobileNumber)(req.body.mobileNumber),
             Email: (0, inputValidation_1.validateEmail)(req.body.email),
-            Role: req.body.role
+            Role: (0, inputValidation_1.validateRole)(req.body.role)
         };
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         user_2.UserRepository.update(id, user)
