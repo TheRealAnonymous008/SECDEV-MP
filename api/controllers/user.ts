@@ -6,7 +6,7 @@ import { UserRow } from '../models/user';
 import { makeUserArrayView, makeUserView } from '../projections/user';
 import { UserRepository } from '../repository/user';
 import { RoleIds, Roles } from '../models/enum';
-import { validateName, validateUsername, validateMobileNumber, validateEmail, validateInteger } from '../middleware/inputValidation';
+import { validateName, validateUsername, validateMobileNumber, validateEmail, validateInteger, validateImage } from '../middleware/inputValidation';
 import { Multer } from 'multer';
 
 const SALT_ROUNDS = 10
@@ -52,7 +52,7 @@ const id = async (req: express.Request, res: express.Response) => {
 // req is any so thatwe can get all the files
 const upload = async(req  :any, res: express.Response, next : express.NextFunction) => {
     try { 
-        const file = req.file as Express.Multer.File
+        const file = validateImage(req.file as Express.Multer.File)
         const id = res.locals.jwt.id
 
         UserRepository.upload(id, file)

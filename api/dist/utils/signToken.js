@@ -14,8 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const jwt = require("jsonwebtoken");
 const authConfig_1 = __importDefault(require("../config/authConfig"));
-const crypto_1 = require("crypto");
 const user_1 = require("../repository/user");
+var uid = require('uid-safe');
 const makeRefreshToken = (user, token, sessionId, callback) => __awaiter(void 0, void 0, void 0, function* () {
     yield jwt.sign({
         id: sessionId,
@@ -38,7 +38,7 @@ const makeRefreshToken = (user, token, sessionId, callback) => __awaiter(void 0,
 const signToken = (user, callback) => __awaiter(void 0, void 0, void 0, function* () {
     const timeSinceEpoch = new Date().getTime();
     const expirationTime = timeSinceEpoch + Number(authConfig_1.default.token.expireTime) * 10000;
-    const sessionId = (0, crypto_1.randomUUID)();
+    const sessionId = uid.sync(24);
     try {
         yield user_1.UserRepository.addSession(user.Id, sessionId);
         yield jwt.sign({

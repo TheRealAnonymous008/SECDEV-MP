@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.assertNotNullOrEmpty = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = void 0;
+exports.validateImage = exports.assertNotNullOrEmpty = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = void 0;
 const enum_1 = require("../models/enum");
 function validateEmail(email) {
     assertNotNullOrEmpty(email);
@@ -87,3 +87,25 @@ function assertNotNullOrEmpty(field) {
     }
 }
 exports.assertNotNullOrEmpty = assertNotNullOrEmpty;
+const maxSize = 1024 * 1024;
+const allowedMimeTypes = ['image/jpeg', 'image/png'];
+const MAGIC_NUMBERS = {
+    jpg: 'ffd8ffe0',
+    png: '89504e47',
+};
+function checkMagicNumbers(buffer) {
+    const magic = buffer.toString('hex', 0, 4);
+    return MAGIC_NUMBERS.jpg === magic || MAGIC_NUMBERS.png === magic;
+}
+function validateImage(image) {
+    if (image == null)
+        throw new Error("Invalid Image");
+    if (!allowedMimeTypes.includes(image.mimetype) || !checkMagicNumbers(image.buffer)) {
+        throw new Error("Invalid File FOrmat");
+    }
+    if (image.size > maxSize) {
+        throw new Error("Image is too large");
+    }
+    return image;
+}
+exports.validateImage = validateImage;

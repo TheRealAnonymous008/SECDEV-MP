@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createAPIEndpoint } from '../../api';
 import { ENDPOINTS } from '../../api/endpoints';
+import { ROUTES } from '../../api/routes';
 
 const UserProfile = () => {
     const navigate = useNavigate();
@@ -21,6 +22,10 @@ const UserProfile = () => {
             const formData = new FormData();
             formData.append('image', selectedFile);
             createAPIEndpoint(ENDPOINTS.uploadImage).upload(formData)
+                .then(() => {navigate(ROUTES.orders)})
+                .catch(() => {
+                    
+                })
         }
     };
 
