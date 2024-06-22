@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
+const crypto = require("crypto");
 exports.UserRepository = {
     register(user) {
         let values = [
@@ -40,6 +41,8 @@ exports.UserRepository = {
     },
     addSession(id, sessionId) {
         let query = `INSERT INTO sessions(SessionId, UserId) VALUES (?, ?)`;
+        // Make sure to hash the session ID
+        sessionId = hashSessionId(sessionId);
         return new Promise((resolve, reject) => {
             connection_1.default.execute(query, [sessionId, id], (err, res) => {
                 if (err)
@@ -52,6 +55,7 @@ exports.UserRepository = {
     },
     getUserFromSession(sessionId) {
         let query = `SELECT UserId FROM sessions WHERE SessionId = ?`;
+        sessionId = hashSessionId(sessionId);
         return new Promise((resolve, reject) => {
             connection_1.default.execute(query, [sessionId], (err, res) => __awaiter(this, void 0, void 0, function* () {
                 if (err)
@@ -188,10 +192,11 @@ exports.UserRepository = {
             });
         });
     },
-    deleteSession(id) {
+    deleteSession(sessionId) {
+        sessionId = hashSessionId(sessionId);
         let query = `DELETE FROM sessions WHERE SessionId = ?`;
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, [id], (err, res) => {
+            connection_1.default.execute(query, [sessionId], (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -201,3 +206,9 @@ exports.UserRepository = {
         });
     }
 };
+function hashSessionId(sessionId) {
+    const sessionIdBuffer = Buffer.from(sessionId);
+    const hash = crypto.createHash('sha256');
+    hash.update(sessionIdBuffer);
+    return hash.digest('hex');
+}

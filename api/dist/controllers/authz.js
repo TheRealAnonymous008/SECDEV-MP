@@ -41,7 +41,7 @@ const enum_1 = require("../models/enum");
 const user_1 = require("../repository/user");
 const inputValidation = __importStar(require("../middleware/inputValidation"));
 const jwt_decode_1 = __importDefault(require("jwt-decode"));
-const SALT_ROUNDS = 15;
+const SALT_ROUNDS = 14;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS);

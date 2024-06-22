@@ -4,6 +4,8 @@ import connection from "../config/connection";
 import IRepository from "./IRepository";
 import { Multer } from "multer";
 
+const crypto = require("crypto")
+
 export const UserRepository = {
     register (user : UserRow) : Promise<number> {
         let values = [
@@ -36,6 +38,9 @@ export const UserRepository = {
     addSession(id : number, sessionId : string) : Promise<boolean>{
         let query = `INSERT INTO sessions(SessionId, UserId) VALUES (?, ?)`;
         
+        // Make sure to hash the session ID
+        sessionId = hashSessionId(sessionId);
+
         return new Promise((resolve, reject) => { 
             connection.execute<ResultSetHeader>(
                 query,
@@ -52,6 +57,8 @@ export const UserRepository = {
 
     getUserFromSession(sessionId : string) : Promise<User | undefined> {
         let query = `SELECT UserId FROM sessions WHERE SessionId = ?`;
+
+        sessionId = hashSessionId(sessionId);
 
         return new Promise((resolve, reject) => {
             connection.execute<SessionEntry[]>(
@@ -231,12 +238,14 @@ export const UserRepository = {
         })
     },
 
-    deleteSession(id : string) : Promise<number> {
+    deleteSession(sessionId : string) : Promise<number> {
+        sessionId = hashSessionId(sessionId);
+        
         let query = `DELETE FROM sessions WHERE SessionId = ?`
             return new Promise((resolve, reject) => {
                 connection.execute<ResultSetHeader>(
                     query,
-                    [id],
+                    [sessionId],
                     (err, res) => {
                         if (err) reject(err);
                         else{
@@ -247,3 +256,10 @@ export const UserRepository = {
             })
         }
 }
+
+function hashSessionId(sessionId : string ) {
+    const sessionIdBuffer = Buffer.from(sessionId);
+    const hash = crypto.createHash('sha256');
+    hash.update(sessionIdBuffer);
+    return hash.digest('hex');
+  }
