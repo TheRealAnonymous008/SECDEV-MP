@@ -3,9 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateImage = exports.assertNotNullOrEmpty = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoHTML = void 0;
+exports.validateImage = exports.assertNotNullOrEmpty = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
 const enum_1 = require("../models/enum");
 const sanitize_html_1 = __importDefault(require("sanitize-html"));
+var sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 function validateNoHTML(text) {
     const clean = (0, sanitize_html_1.default)(text, {
         allowedTags: [],
@@ -14,14 +15,19 @@ function validateNoHTML(text) {
     return clean;
 }
 exports.validateNoHTML = validateNoHTML;
+function validateNoURL(text) {
+    return sanitizeUrl(text);
+}
+exports.validateNoURL = validateNoURL;
 function baseValidation(text) {
     text = validateNoHTML(text);
+    text = validateNoURL(text);
     return text;
 }
 exports.baseValidation = baseValidation;
 function validateEmail(email) {
     assertNotNullOrEmpty(email);
-    email = validateNoHTML(email);
+    email = baseValidation(email);
     const regex = /^(?!.*[-_.](?![a-zA-Z0-9]))[a-zA-Z0-9][a-zA-Z0-9._-]*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
     if (!regex.test(email)) {
         throw new Error("Invalid email format");
@@ -31,7 +37,7 @@ function validateEmail(email) {
 exports.validateEmail = validateEmail;
 function validateName(name) {
     assertNotNullOrEmpty(name);
-    name = validateNoHTML(name);
+    name = baseValidation(name);
     const regex = /^[A-Z][a-zA-Z]{1,34}$/;
     if (!regex.test(name)) {
         throw new Error("Invalid name format");
@@ -41,7 +47,7 @@ function validateName(name) {
 exports.validateName = validateName;
 function validateWord(name) {
     assertNotNullOrEmpty(name);
-    name = validateNoHTML(name);
+    name = baseValidation(name);
     const regex = /^[a-zA-Z]{1,34}$/;
     if (!regex.test(name)) {
         throw new Error("Invalid word format");
@@ -51,7 +57,7 @@ function validateWord(name) {
 exports.validateWord = validateWord;
 function validateUsername(username) {
     assertNotNullOrEmpty(username);
-    username = validateNoHTML(username);
+    username = baseValidation(username);
     const regex = /^[a-zA-Z0-9]{4,35}$/;
     if (!regex.test(username)) {
         throw new Error("Invalid username format");
@@ -61,7 +67,7 @@ function validateUsername(username) {
 exports.validateUsername = validateUsername;
 function validateMobileNumber(mobileNumber) {
     assertNotNullOrEmpty(mobileNumber);
-    mobileNumber = validateNoHTML(mobileNumber);
+    mobileNumber = baseValidation(mobileNumber);
     const regex = /^09\d{9}$/;
     if (!regex.test(mobileNumber)) {
         throw new Error("Invalid mobile number format.");
@@ -71,7 +77,7 @@ function validateMobileNumber(mobileNumber) {
 exports.validateMobileNumber = validateMobileNumber;
 function validateInteger(number) {
     assertNotNullOrEmpty(number);
-    number = validateNoHTML(number);
+    number = baseValidation(number);
     const regex = /\d+$/;
     if (!regex.test(number)) {
         throw new Error("Invalid number format.");
@@ -81,7 +87,7 @@ function validateInteger(number) {
 exports.validateInteger = validateInteger;
 function validatePassword(password) {
     assertNotNullOrEmpty(password);
-    password = validateNoHTML(password);
+    password = baseValidation(password);
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{8,32}$/;
     if (!regex.test(password)) {
         throw new Error("Invalid password format.");
@@ -91,7 +97,7 @@ function validatePassword(password) {
 exports.validatePassword = validatePassword;
 function validateRole(role) {
     assertNotNullOrEmpty(role);
-    role = validateNoHTML(role);
+    role = baseValidation(role);
     if (enum_1.ALL_ROLES.includes(role))
         return role;
     throw new Error("Invalid Role");
@@ -99,7 +105,7 @@ function validateRole(role) {
 exports.validateRole = validateRole;
 function validateLicensePlate(licensePlate) {
     assertNotNullOrEmpty(licensePlate);
-    licensePlate = validateNoHTML(licensePlate);
+    licensePlate = baseValidation(licensePlate);
     const regex = /^[A-Z0-9]{6,7}$/; // Follows the specs for Filipino license plates
     if (!regex.test(licensePlate)) {
         throw new Error("Invalid License Plate");

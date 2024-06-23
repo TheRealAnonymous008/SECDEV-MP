@@ -2,6 +2,7 @@ import { assert } from "console";
 import { ALL_ROLES, Roles } from "../models/enum";
 
 import sanitizeHtml from 'sanitize-html';
+var sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 
 
 export function validateNoHTML(text) {
@@ -12,14 +13,19 @@ export function validateNoHTML(text) {
     return clean
 }
 
+export function validateNoURL(text) {
+    return sanitizeUrl(text)
+}
+
 export function baseValidation(text) {
     text = validateNoHTML(text)
+    text = validateNoURL(text)
     return text 
 }
 
 export function validateEmail(email) {
     assertNotNullOrEmpty(email)
-    email = validateNoHTML(email)
+    email = baseValidation(email)
 
     const regex = /^(?!.*[-_.](?![a-zA-Z0-9]))[a-zA-Z0-9][a-zA-Z0-9._-]*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
     if (!regex.test(email)) {
@@ -31,7 +37,7 @@ export function validateEmail(email) {
 
 export function validateName(name) {
     assertNotNullOrEmpty(name)
-    name = validateNoHTML(name)
+    name = baseValidation(name)
     const regex = /^[A-Z][a-zA-Z]{1,34}$/;
 
     if (!regex.test(name)) {
@@ -42,7 +48,7 @@ export function validateName(name) {
 
 export function validateWord(name) {
     assertNotNullOrEmpty(name)
-    name = validateNoHTML(name)
+    name = baseValidation(name)
     const regex = /^[a-zA-Z]{1,34}$/;
 
     if (!regex.test(name)) {
@@ -53,7 +59,7 @@ export function validateWord(name) {
 
 export function validateUsername(username) {
     assertNotNullOrEmpty(username)
-    username = validateNoHTML(username)
+    username = baseValidation(username)
     const regex = /^[a-zA-Z0-9]{4,35}$/;
 
     if (!regex.test(username)) {
@@ -64,7 +70,7 @@ export function validateUsername(username) {
 
 export function validateMobileNumber(mobileNumber) {
     assertNotNullOrEmpty(mobileNumber)
-    mobileNumber = validateNoHTML(mobileNumber)
+    mobileNumber = baseValidation(mobileNumber)
     const regex = /^09\d{9}$/;
 
     if (!regex.test(mobileNumber)) {
@@ -75,7 +81,7 @@ export function validateMobileNumber(mobileNumber) {
 
 export function validateInteger(number : string) {
     assertNotNullOrEmpty(number)
-    number = validateNoHTML(number)
+    number = baseValidation(number)
 
     const regex = /\d+$/;
 
@@ -88,7 +94,7 @@ export function validateInteger(number : string) {
 
 export function validatePassword(password) {
     assertNotNullOrEmpty(password)
-    password = validateNoHTML(password)
+    password = baseValidation(password)
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{8,32}$/;
 
     if (!regex.test(password)) {
@@ -99,7 +105,7 @@ export function validatePassword(password) {
 
 export function validateRole(role) {
     assertNotNullOrEmpty(role)
-    role = validateNoHTML(role)
+    role = baseValidation(role)
 
     if (ALL_ROLES.includes(role))
         return role 
@@ -109,7 +115,7 @@ export function validateRole(role) {
 
 export function validateLicensePlate(licensePlate){
     assertNotNullOrEmpty(licensePlate)
-    licensePlate = validateNoHTML(licensePlate)
+    licensePlate = baseValidation(licensePlate)
 
     const regex = /^[A-Z0-9]{6,7}$/;                // Follows the specs for Filipino license plates
 
