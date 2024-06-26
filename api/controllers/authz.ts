@@ -6,7 +6,6 @@ import { UserRepository } from '../repository/user';
 import { UserRow } from '../models/user';
 import * as inputValidation from '../middleware/inputValidation';
 import jwtDecode from 'jwt-decode';
-import { CookieOptions } from 'express-serve-static-core';
 
 const SALT_ROUNDS = 14
 
@@ -62,14 +61,11 @@ const login = async (req : express.Request, res : express.Response) => {
                     else if (result) {
                         req.session.regenerate((err) => {
                             if (err) throw err
-
-                            const session : any = req.session
-                            session.uid = user.Id
-                            session.save()
                         })
-                        
 
-                        // res.cookie("autoworks_s", req.session.id, req.session.cookie as CookieOptions)
+                        req.session["uid"] = user.Id
+                        req.session.save()
+
                         res.json({
                             auth: true, 
                         }).status(200).end()
@@ -139,7 +135,6 @@ const login = async (req : express.Request, res : express.Response) => {
 
 const handshake = (req : express.Request, res : express.Response) => {
     try {
-        console.log("Shake hands" ,req.session)
         const uid = req.session["uid"]
         if (uid == null){
             res.status(500).end()
