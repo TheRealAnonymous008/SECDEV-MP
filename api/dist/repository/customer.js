@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CustomerRepository = void 0;
+exports.makeSQLQuery = exports.CustomerRepository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
 exports.CustomerRepository = {
     retrieveAll(limit, offset) {
@@ -106,5 +106,60 @@ exports.CustomerRepository = {
                 }
             });
         });
+    },
+    filter(query) {
+        let qv = (0, exports.makeSQLQuery)(query);
+        console.log("Query", qv.query, qv.values);
+        return new Promise((resolve, reject) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
+                if (err)
+                    reject(err);
+                else {
+                    resolve(res);
+                }
+            });
+        });
     }
 };
+const makeSQLQuery = (query) => {
+    let q = `SELECT * FROM customer`;
+    let whereClauses = [];
+    let values = [];
+    if (query.name) {
+        whereClauses.push(`CONCAT(FirstName, LastName) LIKE ?`);
+        values.push("%" + query.name + "%");
+    }
+    if (query.email) {
+        whereClauses.push(`Email LIKE ?`);
+        values.push(query.email);
+    }
+    if (query.mobileNumber) {
+        whereClauses.push(`MobileNumber LIKE ?`);
+        values.push(query.mobileNumber);
+    }
+    if (query.company) {
+        whereClauses.push(`Company LIKE ?`);
+        values.push(query.company);
+    }
+    if (query.insurance) {
+        whereClauses.push(`Insurance LIKE ?`);
+        values.push(query.insurance);
+    }
+    if (query.remarks) {
+        whereClauses.push(`Remarks LIKE ?`);
+        values.push(query.remarks);
+    }
+    if (whereClauses.length > 0) {
+        q += " WHERE " + whereClauses.join(" AND ");
+    }
+    if (query.limit) {
+        q += ` LIMIT ?`;
+        values.push(query.limit);
+    }
+    if (query.skip) {
+        q += ` OFFSET ?`;
+        values.push(query.skip);
+    }
+    return { query: q, values: values };
+};
+exports.makeSQLQuery = makeSQLQuery;

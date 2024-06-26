@@ -135,5 +135,22 @@ export const VehicleRepository : IRepository<Vehicle> = {
                 }
             )
         })
+    },
+
+    filter(query : any) : Promise<Vehicle[]> {
+        // Placeholder
+        let values = []
+        return new Promise((resolve, reject) => {
+            connection.execute<Vehicle[]>(
+                query,
+                values,
+                (err, res) => {
+                    if (err) reject(err);
+                    else{
+                        resolve(res)
+                    }
+                }
+            )
+        })
     }
 }

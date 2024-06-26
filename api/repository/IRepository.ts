@@ -4,5 +4,6 @@ export default interface IRepository<T> {
     insert : (object) => Promise<number>;
     update(id : number, object) : Promise<number>, 
     delete(id : number) : Promise<number>,
-    count() : Promise<number>
+    count() : Promise<number>,
+    filter(query) : Promise<T[]>
 };

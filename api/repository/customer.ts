@@ -135,5 +135,81 @@ export const CustomerRepository : IRepository<Customer> = {
                 }
             )
         })
+    },
+
+    filter(query : CustomerQuery) : Promise<Customer[]> {
+        let qv = makeSQLQuery(query)
+        console.log("Query", qv.query, qv.values)
+
+        return new Promise((resolve, reject) => {
+            connection.execute<Customer[]>(
+                qv.query,
+                qv.values,
+                (err, res) => {
+                    if (err) reject(err);
+                    else{
+                        resolve(res)
+                    }
+                }
+            )
+        })
     }
+}
+
+
+export interface CustomerQuery {
+    name : string,
+    email: string,
+    mobileNumber: string,
+    company: string,
+    insurance: string,
+    remarks: string,
+    limit : number, 
+    skip : number,
+}
+
+export const makeSQLQuery = (query: CustomerQuery): { query: string, values: any[] } => {
+    let q = `SELECT * FROM customer`;
+    let whereClauses: string[] = [];
+    let values: any[] = [];
+
+    if (query.name) {
+        whereClauses.push(`CONCAT(FirstName, LastName) LIKE ?`);
+        values.push("%" + query.name + "%");
+    }
+    if (query.email) {
+        whereClauses.push(`Email LIKE ?`);
+        values.push(query.email);
+    }
+    if (query.mobileNumber) {
+        whereClauses.push(`MobileNumber LIKE ?`);
+        values.push(query.mobileNumber);
+    }
+    if (query.company) {
+        whereClauses.push(`Company LIKE ?`);
+        values.push(query.company);
+    }
+    if (query.insurance) {
+        whereClauses.push(`Insurance LIKE ?`);
+        values.push(query.insurance);
+    }
+    if (query.remarks) {
+        whereClauses.push(`Remarks LIKE ?`);
+        values.push(query.remarks);
+    }
+
+    if (whereClauses.length > 0) {
+        q += " WHERE " + whereClauses.join(" AND ");
+    }
+
+    if (query.limit) {
+        q += ` LIMIT ?`;
+        values.push(query.limit);
+    }
+    if (query.skip) {
+        q += ` OFFSET ?`;
+        values.push(query.skip);
+    }
+
+    return { query: q, values: values };
 }

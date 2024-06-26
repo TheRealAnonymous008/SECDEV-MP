@@ -106,5 +106,18 @@ exports.VehicleRepository = {
                 }
             });
         });
+    },
+    filter(query) {
+        // Placeholder
+        let values = [];
+        return new Promise((resolve, reject) => {
+            connection_1.default.execute(query, values, (err, res) => {
+                if (err)
+                    reject(err);
+                else {
+                    resolve(res);
+                }
+            });
+        });
     }
 };

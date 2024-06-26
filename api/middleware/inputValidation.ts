@@ -18,6 +18,12 @@ export function validateNoURL(text) {
 }
 
 export function baseValidation(text) {
+    if (text == null)
+        return text;
+
+    if (text.length == 0)
+        return null
+    
     text = validateNoHTML(text)
     text = validateNoURL(text)
     return text 

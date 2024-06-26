@@ -141,5 +141,22 @@ export const OrderRespository : IRepository<Order> = {
                 }
             )
         })
+    },
+
+    filter(query : any) : Promise<Order[]> {
+        // Placeholder
+        let values = []
+        return new Promise((resolve, reject) => {
+            connection.execute<Order[]>(
+                query,
+                values,
+                (err, res) => {
+                    if (err) reject(err);
+                    else{
+                        resolve(res)
+                    }
+                }
+            )
+        })
     }
 }
