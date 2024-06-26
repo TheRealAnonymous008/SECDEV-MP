@@ -1,5 +1,5 @@
 import jwt = require('jsonwebtoken');
-import config from "../config/authConfig";
+import config, { ACCESS_SECRETS, getRandomAccessSecret, getRandomRefreshSecret } from "../config/authConfig";
 import User from '../models/user';
 import { randomUUID } from 'crypto';
 import { UserRepository } from '../repository/user';
@@ -12,8 +12,8 @@ const makeRefreshToken = async (user, token, sessionId, callback) => {
             id : sessionId,
             role: user.Role,
             accessIssuer: config.token.issuer,
-        }
-        , config.refreshToken.secret,
+        },
+        getRandomRefreshSecret(),
         {
             expiresIn: config.refreshToken.expireTime
         },
@@ -36,15 +36,17 @@ const signToken = async (user : User,  callback: (error: Error | null, token: st
     const expirationTime = timeSinceEpoch + Number(config.token.expireTime) * 10000;
     const sessionId = uid.sync(24)
 
+
     try {
         await UserRepository.addSession(user.Id, sessionId);
+        const secret = getRandomAccessSecret()
 
         await jwt.sign(
             {
                 id : sessionId,
                 role: user.Role.toString(),
             },
-            config.token.secret,
+            secret,
             {
                 expiresIn: config.token.expireTime,
                 issuer: config.token.issuer,

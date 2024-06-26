@@ -1,10 +1,34 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.checkRefreshToken = exports.checkAccessToken = void 0;
 const jwt = require("jsonwebtoken");
-const authConfig_1 = __importDefault(require("../config/authConfig"));
+const authConfig_1 = __importStar(require("../config/authConfig"));
 const refreshToken_1 = __importDefault(require("../utils/refreshToken"));
 const clearRefreshToken = (res) => {
     res.clearCookie("jwt");
@@ -27,39 +51,41 @@ const handleAccessTokenExpired = (res, token) => {
         secure: true,
         sameSite: "none",
     });
-    res.locals.jwt = jwt.verify(token, authConfig_1.default.token.secret, { issuer: authConfig_1.default.token.issuer });
+    res.locals.jwt = (0, exports.checkAccessToken)(token);
 };
 const validateToken = (req, res, next) => {
-    var _a;
     const refToken = req.cookies.jwt;
-    let token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(' ')[1]; // remove bearer
+    let token = req.cookies.jwtacc;
     if (token && refToken) {
-        jwt.verify(token, authConfig_1.default.token.secret, { issuer: authConfig_1.default.token.issuer }, (error, decoded) => {
-            // verify access token
-            if (error) {
-                jwt.verify(refToken, authConfig_1.default.refreshToken.secret, (error, refreshDecoded) => {
-                    // refresh token
-                    if (error) {
-                        handleRefreshTokenExpired(res, error);
-                    }
-                    token = (0, refreshToken_1.default)(refToken);
-                    if (token) {
-                        handleAccessTokenExpired(res, token);
-                        next();
-                    }
-                    else {
-                        return res.json({
-                            message: 'Reassigning token failure in authValidation middleware',
-                            auth: false
-                        }).end();
-                    }
-                });
+        try {
+            const decoded = (0, exports.checkAccessToken)(token);
+            if (decoded == null) {
+                throw Error("JWT not decoded properly");
             }
-            else {
-                res.locals.jwt = decoded;
-                next();
+            res.locals.jwt = decoded;
+            console.log(res.locals.jwt);
+            next();
+        }
+        catch (error) {
+            console.log("Error", error);
+            try {
+                (0, exports.checkRefreshToken)(refToken);
             }
-        });
+            catch (error) {
+                handleRefreshTokenExpired(res, error);
+                token = (0, refreshToken_1.default)(refToken);
+                if (token) {
+                    handleAccessTokenExpired(res, token);
+                    next();
+                }
+                else {
+                    return res.json({
+                        message: 'Reassigning token failure in authValidation middleware',
+                        auth: false
+                    }).end();
+                }
+            }
+        }
     }
     else {
         clearAccessToken(res);
@@ -68,3 +94,33 @@ const validateToken = (req, res, next) => {
     }
 };
 exports.default = validateToken;
+const checkAccessToken = (token) => {
+    let decoded = null;
+    for (let i = 0; i < authConfig_1.ACCESS_SECRETS.length; ++i) {
+        try {
+            decoded = jwt.verify(token, authConfig_1.ACCESS_SECRETS[i], { issuer: authConfig_1.default.token.issuer });
+        }
+        catch (err) {
+            // Do nothing
+        }
+        if (decoded != null)
+            break;
+    }
+    return decoded;
+};
+exports.checkAccessToken = checkAccessToken;
+const checkRefreshToken = (token) => {
+    let decoded = null;
+    for (let i = 0; i < authConfig_1.REFRESH_SECRETS.length; ++i) {
+        try {
+            decoded = jwt.verify(token, authConfig_1.REFRESH_SECRETS[i], { issuer: authConfig_1.default.token.issuer });
+        }
+        catch (err) {
+            // Do nothing
+        }
+        if (decoded != null)
+            break;
+    }
+    return decoded;
+};
+exports.checkRefreshToken = checkRefreshToken;

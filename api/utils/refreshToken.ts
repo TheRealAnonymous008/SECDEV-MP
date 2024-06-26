@@ -1,9 +1,10 @@
 import jwt = require('jsonwebtoken');
-import config from "../config/authConfig";
+import config, { getRandomRefreshSecret } from "../config/authConfig";
+import { checkRefreshToken } from '../middleware/authValidation';
 
 const refreshToken = (refreshjwt : string) : string => {
 
-    const decoded = jwt.verify(refreshjwt, config.refreshToken.secret);
+    const decoded = checkRefreshToken(refreshjwt);
 
     if(decoded) {
         return jwt.sign(
@@ -11,7 +12,7 @@ const refreshToken = (refreshjwt : string) : string => {
                 id : decoded.id,
                 role: decoded.role,
             },
-            config.token.secret,
+            getRandomRefreshSecret(),
             {
                 expiresIn: config.token.expireTime,
                 issuer: decoded.accessIssuer,
