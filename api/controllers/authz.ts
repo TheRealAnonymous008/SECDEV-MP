@@ -6,6 +6,8 @@ import { UserRepository } from '../repository/user';
 import { UserRow } from '../models/user';
 import * as inputValidation from '../middleware/inputValidation';
 import jwtDecode from 'jwt-decode';
+import logger from '../logging/logger';
+import { LogLevel } from '../config/logConfig';
 
 const SALT_ROUNDS = 14
 
@@ -45,6 +47,7 @@ const register = async (req : express.Request, res : express.Response) => {
 }
 
 const login = async (req : express.Request, res : express.Response) => {
+    logger.log(LogLevel.AUDIT, "Hello")
     try {
         let username = inputValidation.validateUsername(req.body.username)
 

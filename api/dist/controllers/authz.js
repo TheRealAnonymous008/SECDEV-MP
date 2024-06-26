@@ -41,6 +41,8 @@ const enum_1 = require("../models/enum");
 const user_1 = require("../repository/user");
 const inputValidation = __importStar(require("../middleware/inputValidation"));
 const jwt_decode_1 = __importDefault(require("jwt-decode"));
+const logger_1 = __importDefault(require("../logging/logger"));
+const logConfig_1 = require("../config/logConfig");
 const SALT_ROUNDS = 14;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -75,6 +77,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    logger_1.default.log(logConfig_1.LogLevel.AUDIT, "Hello");
     try {
         let username = inputValidation.validateUsername(req.body.username);
         user_1.UserRepository.retrieveByUsername(username)

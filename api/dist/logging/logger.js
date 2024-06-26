@@ -1,35 +1,32 @@
-import { LOG_LEVEL, LogLevel } from "../config/logConfig";
-
-const log = (level : LogLevel, what : string) => {
-    if (LOG_LEVEL >= level) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const logConfig_1 = require("../config/logConfig");
+const log = (level, what) => {
+    if (logConfig_1.LOG_LEVEL >= level) {
         const timestamp = new Date().toISOString().replace('T', ' ').replace('Z', '');
         const greenTimestamp = `\x1b[32m[${timestamp}]\x1b[0m`;
-
         let levelStr = '';
         let colorCode = '';
-
-        switch(level) {
-            case LogLevel.STACK_TRACE:
+        switch (level) {
+            case logConfig_1.LogLevel.STACK_TRACE:
                 levelStr = 'STACK_TRACE';
                 colorCode = '\x1b[35m'; // Magenta
                 break;
-            case LogLevel.ERRORS:
+            case logConfig_1.LogLevel.ERRORS:
                 levelStr = 'ERROR';
                 colorCode = '\x1b[31m'; // Red
                 break;
-            case LogLevel.DEBUG:
+            case logConfig_1.LogLevel.DEBUG:
                 levelStr = 'DEBUG';
                 colorCode = '\x1b[34m'; // Blue
                 break;
-            case LogLevel.AUDIT:
+            case logConfig_1.LogLevel.AUDIT:
                 levelStr = 'AUDIT';
                 colorCode = '\x1b[33m'; // Yellow
                 break;
         }
-
         const coloredLevel = `${colorCode}${levelStr}\x1b[0m`;
         console.log(`${coloredLevel} ${greenTimestamp} ${what}`);
     }
-}
-
-export default { log };
+};
+exports.default = { log };
