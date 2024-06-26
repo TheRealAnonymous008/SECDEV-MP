@@ -28,7 +28,7 @@ const log = (level : LogLevel, what : string) => {
         }
 
         const coloredLevel = `${colorCode}${levelStr}\x1b[0m`;
-        console.log(`${coloredLevel} ${greenTimestamp} ${what}`);
+        console.log(`${greenTimestamp} ${coloredLevel} ${what}`);
     }
 }
 
