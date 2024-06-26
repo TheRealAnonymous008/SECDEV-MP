@@ -5,7 +5,6 @@ import { ROUTES } from '../api/routes';
 import { SignBox, LoginDiv, SignPage, RightImage, SignUp } from '../style/SignStyle';
 import { RedDialogue } from '../style/Dialogue';
 import { ENDPOINTS } from '../api/endpoints';
-import jwtDecode from 'jwt-decode';
 
 type LoginState = {
     username: string
@@ -44,8 +43,7 @@ const Login = (props: {isLoggedIn : boolean, setIsLoggedIn : Function, setIsAdmi
             .then((response) => {
                 if(response.data.auth) {
                     props.setIsLoggedIn(true);
-                    const decoded : any = jwtDecode(response.data.token)
-                    props.setIsAdmin(decoded.role === "1")
+                    props.setIsAdmin(true) // TODO: Use the  verify route to get if they are an admin or not.
                     navigation(ROUTES.orders);
                 }
                 else {

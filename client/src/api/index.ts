@@ -10,7 +10,7 @@ export const createAPIEndpoint = (endpoint : string) => {
     axios.defaults.withCredentials = true
     let url = BASE_URL + 'api/' + endpoint ;
 
-    let token = Cookies.get("jwtacc")
+    let token = Cookies.get("autoworks_s")
 
     return {
         fetch: (params?: any, headers:any = 

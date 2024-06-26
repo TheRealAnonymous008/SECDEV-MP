@@ -30,6 +30,7 @@ require('dotenv').config();
 const express_1 = __importDefault(require("express"));
 const path = __importStar(require("path"));
 const cookieparser = require("cookie-parser");
+const session = require("express-session");
 const bodyParser = require('body-parser');
 const debug = require('debug')('my express app');
 const app = (0, express_1.default)();
@@ -40,6 +41,8 @@ app.set('view engine', 'pug');
 app.use(cookieparser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+const sessConfig_1 = __importDefault(require("./config/sessConfig"));
+app.use(session(sessConfig_1.default));
 app.use(express_1.default.static(path.join(__dirname, 'public')));
 // Enable cors
 var corsOptions = {

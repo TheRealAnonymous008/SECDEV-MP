@@ -51,7 +51,7 @@ const login = async (req : express.Request, res : express.Response) => {
         UserRepository.retrieveByUsername(username)
         .then((user) => {
             if (user) {
-                Bcrypt.compare(req.body.password, user.Password, async (error, result) => {
+                Bcrypt.compare(req.body.password, user.Password, (error, result) => {
                     if(!result) {
                         res.json({
                             auth : false,
@@ -59,38 +59,49 @@ const login = async (req : express.Request, res : express.Response) => {
                         }).end()
                     } 
                     else if (result) {
-                        await signToken(user, (err, token, refreshToken) => {
-                            if (err) {
-                                console.log(err)
-                                res.status(500).json({
-                                    auth : false,
-                                    message : err.message,
-                                    error : err,
-                                }).end()
-                            }
-                            else if (token) {
-                                if(refreshToken) {
-                                    res = res.cookie('jwt', refreshToken, 
-                                    {
-                                        httpOnly:true,
-                                        secure: true,
-                                        sameSite: "lax",
-                                    })
-                                    res.cookie('jwtacc', token, 
-                                    {
-                                        httpOnly: true,
-                                        secure: true,
-                                        sameSite: "lax",
-                                    })
-                                    res.json({
-                                        auth : true,
-                                        message : "Authenticated",
-                                        token: token,
-                                        success : true,
-                                    }).status(200).end();
-                                }   
-                            }
-                        });
+                        req.session.regenerate((err) => {
+                            if (err) throw err
+                        })
+
+                        req.session["uid"] = user.Id
+                        req.session.save()
+
+                        res.json({
+                            auth: true, 
+                        }).status(200).end()
+
+                        // await signToken(user, (err, token, refreshToken) => {
+                        //     if (err) {
+                        //         console.log(err)
+                        //         res.status(500).json({
+                        //             auth : false,
+                        //             message : err.message,
+                        //             error : err,
+                        //         }).end()
+                        //     }
+                        //     else if (token) {
+                        //         if(refreshToken) {
+                        //             res = res.cookie('jwt', refreshToken, 
+                        //             {
+                        //                 httpOnly:true,
+                        //                 secure: true,
+                        //                 sameSite: "lax",
+                        //             })
+                        //             res.cookie('jwtacc', token, 
+                        //             {
+                        //                 httpOnly: true,
+                        //                 secure: true,
+                        //                 sameSite: "lax",
+                        //             })
+                        //             res.json({
+                        //                 auth : true,
+                        //                 message : "Authenticated",
+                        //                 token: token,
+                        //                 success : true,
+                        //             }).status(200).end();
+                        //         }   
+                        //     }
+                        // });
                     }
                     else if(error) {
                         res.json({
@@ -124,10 +135,11 @@ const login = async (req : express.Request, res : express.Response) => {
 
 const handshake = (req : express.Request, res : express.Response) => {
     try {
-        const token = req.cookies.jwtacc
-        const sessionId : any = jwtDecode(token)["id"]
-        
-        UserRepository.getUserFromSession(sessionId)
+        const uid = req.session["uid"]
+        if (uid == null){
+            res.status(500).end()
+        } else {
+        UserRepository.retrieveById(uid)
             .then((value) => {
                 if (value)
                     res.json(value).end();
@@ -139,6 +151,20 @@ const handshake = (req : express.Request, res : express.Response) => {
                 console.log(err)
                 res.status(500).end();
             })
+        
+        // UserRepository.getUserFromSession(sessionId)
+        //     .then((value) => {
+        //         if (value)
+        //             res.json(value).end();
+        //         else {
+        //             res.json(undefined).end()
+        //         }
+        //     })
+        //     .catch((err) => {
+        //         console.log(err)
+        //         res.status(500).end();
+        //     })
+        }
     }
     catch (err) {
         console.log(err)
@@ -147,11 +173,12 @@ const handshake = (req : express.Request, res : express.Response) => {
 }
 
 const logout = async (req : express.Request, res : express.Response) => {
-    const token = req.cookies.jwt
-    const sessionId : any = jwtDecode(token)["id"]
-    await UserRepository.deleteSession(sessionId);
-    
-    res.clearCookie("jwt").clearCookie("jwtacc").end();
+    // const token = req.cookies.jwt
+    // const sessionId : any = jwtDecode(token)["id"]
+    // await UserRepository.deleteSession(sessionId);
+    // res.clearCookie("jwt").clearCookie("jwtacc").end();
+    req.session.destroy((err) => {console.log(err)})
+    res.clearCookie("autoworks_s").end()
 }
 
 

@@ -4,6 +4,7 @@ import express from 'express';
 import { AddressInfo } from "net";
 import * as path from 'path';
 import cookieparser = require('cookie-parser');
+import session = require('express-session');
 
 const bodyParser = require('body-parser');
 const debug = require('debug')('my express app');
@@ -20,6 +21,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
+import sessionConfig from './config/sessConfig';
+app.use(session(sessionConfig))
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Enable cors
@@ -104,3 +107,4 @@ app.set('port', process.env.PORT || 3000);
 const server = app.listen(app.get('port'), function () {
     console.log(`Express server listening on port ${(server.address() as AddressInfo).port}`);
 });
+
