@@ -109,15 +109,15 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500);
     }
 });
-const filter = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const query = makeQuery(req);
-        customer_2.CustomerRepository.filter(query)
+        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        customer_2.CustomerRepository.delete(id)
             .then((result) => {
-            res.json({
-                data: (0, customer_1.makeCustomerArrayView)(result),
-                count: result.length
-            });
+            if (result == undefined) {
+                res.status(500).end();
+                return;
+            }
             res.status(200).end();
         })
             .catch((err) => {
@@ -130,15 +130,15 @@ const filter = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500);
     }
 });
-const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const filter = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
-        customer_2.CustomerRepository.delete(id)
+        const query = makeQuery(req);
+        customer_2.CustomerRepository.filter(query)
             .then((result) => {
-            if (result == undefined) {
-                res.status(500).end();
-                return;
-            }
+            res.json({
+                data: (0, customer_1.makeCustomerArrayView)(result),
+                count: result.length
+            });
             res.status(200).end();
         })
             .catch((err) => {

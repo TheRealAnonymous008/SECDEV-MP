@@ -3,8 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VehicleRepository = void 0;
+exports.makeSQLQuery = exports.VehicleRepository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
+const match_1 = require("../utils/match");
 exports.VehicleRepository = {
     retrieveAll(limit, offset) {
         let query = "SELECT * FROM vehicle";
@@ -108,10 +109,9 @@ exports.VehicleRepository = {
         });
     },
     filter(query) {
-        // Placeholder
-        let values = [];
+        let qv = (0, exports.makeSQLQuery)(query);
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, values, (err, res) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -121,3 +121,49 @@ exports.VehicleRepository = {
         });
     }
 };
+const makeSQLQuery = (query) => {
+    let q = `SELECT * FROM vehicle`;
+    let whereClauses = [];
+    let values = [];
+    if (query.licensePlate) {
+        whereClauses.push(`LicensePlate LIKE ?`);
+        values.push((0, match_1.buildMatchString)(query.licensePlate));
+    }
+    if (query.model) {
+        whereClauses.push(`Model LIKE ?`);
+        values.push((0, match_1.buildMatchString)(query.model));
+    }
+    if (query.manufacturer) {
+        whereClauses.push(`Manufacturer LIKE ?`);
+        values.push((0, match_1.buildMatchString)(query.manufacturer));
+    }
+    if (query.yearManufactured !== undefined) {
+        whereClauses.push(`YearManufactured = ?`);
+        values.push(query.yearManufactured);
+    }
+    if (query.color) {
+        whereClauses.push(`Color LIKE ?`);
+        values.push((0, match_1.buildMatchString)(query.color));
+    }
+    if (query.engine) {
+        whereClauses.push(`Engine LIKE ?`);
+        values.push((0, match_1.buildMatchString)(query.engine));
+    }
+    if (query.remarks) {
+        whereClauses.push(`Remarks LIKE ?`);
+        values.push((0, match_1.buildMatchString)(query.remarks));
+    }
+    if (whereClauses.length > 0) {
+        q += " WHERE " + whereClauses.join(" AND ");
+    }
+    if (query.limit !== undefined) {
+        q += ` LIMIT ?`;
+        values.push(query.limit);
+    }
+    if (query.skip !== undefined) {
+        q += ` OFFSET ?`;
+        values.push(query.skip);
+    }
+    return { query: q, values: values };
+};
+exports.makeSQLQuery = makeSQLQuery;

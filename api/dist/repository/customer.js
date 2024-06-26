@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeSQLQuery = exports.CustomerRepository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
+const match_1 = require("../utils/match");
 exports.CustomerRepository = {
     retrieveAll(limit, offset) {
         let query = "SELECT * FROM customer";
@@ -109,7 +110,6 @@ exports.CustomerRepository = {
     },
     filter(query) {
         let qv = (0, exports.makeSQLQuery)(query);
-        console.log("Query", qv.query, qv.values);
         return new Promise((resolve, reject) => {
             connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
@@ -127,27 +127,27 @@ const makeSQLQuery = (query) => {
     let values = [];
     if (query.name) {
         whereClauses.push(`CONCAT(FirstName, LastName) LIKE ?`);
-        values.push("%" + query.name + "%");
+        values.push((0, match_1.buildMatchString)(query.name));
     }
     if (query.email) {
         whereClauses.push(`Email LIKE ?`);
-        values.push(query.email);
+        values.push((0, match_1.buildMatchString)(query.email));
     }
     if (query.mobileNumber) {
         whereClauses.push(`MobileNumber LIKE ?`);
-        values.push(query.mobileNumber);
+        values.push((0, match_1.buildMatchString)(query.mobileNumber));
     }
     if (query.company) {
         whereClauses.push(`Company LIKE ?`);
-        values.push(query.company);
+        values.push((0, match_1.buildMatchString)(query.company));
     }
     if (query.insurance) {
         whereClauses.push(`Insurance LIKE ?`);
-        values.push(query.insurance);
+        values.push((0, match_1.buildMatchString)(query.insurance));
     }
     if (query.remarks) {
         whereClauses.push(`Remarks LIKE ?`);
-        values.push(query.remarks);
+        values.push((0, match_1.buildMatchString)(query.remarks));
     }
     if (whereClauses.length > 0) {
         q += " WHERE " + whereClauses.join(" AND ");

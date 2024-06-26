@@ -111,15 +111,16 @@ const update = async (req: express.Request, res: express.Response) => {
     }
 }
 
-const filter = async (req: express.Request, res: express.Response) => {
+const remove = async (req: express.Request, res: express.Response) => {
     try {
-        const query = makeQuery(req)
-        CustomerRepository.filter(query)
+        let id = validateInteger(req.query.id.toString())
+
+        CustomerRepository.delete(id)
             .then((result) => {
-                res.json({
-                    data: makeCustomerArrayView(result),
-                    count : result.length 
-                });
+                if (result == undefined){
+                    res.status(500).end();
+                    return
+                }
                 res.status(200).end();
             })
             .catch((err) => {
@@ -134,16 +135,16 @@ const filter = async (req: express.Request, res: express.Response) => {
     }
 }
 
-const remove = async (req: express.Request, res: express.Response) => {
-    try {
-        let id = validateInteger(req.query.id.toString())
 
-        CustomerRepository.delete(id)
+const filter = async (req: express.Request, res: express.Response) => {
+    try {
+        const query = makeQuery(req)
+        CustomerRepository.filter(query)
             .then((result) => {
-                if (result == undefined){
-                    res.status(500).end();
-                    return
-                }
+                res.json({
+                    data: makeCustomerArrayView(result),
+                    count : result.length 
+                });
                 res.status(200).end();
             })
             .catch((err) => {

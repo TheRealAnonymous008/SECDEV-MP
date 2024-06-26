@@ -3,7 +3,7 @@ import  express = require('express');
 import BCrypt = require('bcryptjs');
 import { ALL_ROLES, Roles } from '../models/enum';
 import { makeVehicleArrayView, makeVehicleView } from '../projections/vehicle';
-import { VehicleRepository } from '../repository/vehicle';
+import { VehicleQuery, VehicleRepository } from '../repository/vehicle';
 import Vehicle, { VehicleRow } from '../models/vehicle';
 import { baseValidation, validateInteger, validateLicensePlate, validateWord } from '../middleware/inputValidation';
 
@@ -128,130 +128,52 @@ const remove = (req: express.Request, res: express.Response) => {
     }
 }
 
-/*
 const filter = async (req: express.Request, res: express.Response) => {
-    const query : VehicleQuery = makeQuery(req);
-    const count = await Vehicle.find(makeMongooseQuery(query)).countDocuments();
-
-    Vehicle.find(makeMongooseQuery(query))
-    .skip(parseInt(req.query.skip as string))
-    .limit(parseInt(req.query.limit as string))
-    .then((result) => {
-        res.json({data : makeVehicleArrayView(result), count: count ? count : 0});
-        res.end();
-    }).catch((err) => {
+    try {
+        const query = makeQuery(req)
+        VehicleRepository.filter(query)
+            .then((result) => {
+                res.json({
+                    data: makeVehicleArrayView(result),
+                    count : result.length 
+                });
+                res.status(200).end();
+            })
+            .catch((err) => {
+                        
+                console.log(err);
+                res.status(500).end();
+            })
+    }
+    catch (err) {
         console.log(err);
-        res.end();
-    });
-}
-
-const filter = async (req: express.Request, res: express.Response) => {
-    VehicleRepository.retrieve
-
-
-interface VehicleQuery {
-    licensePlate: string,
-    model: string,
-    manufacturer: string,
-    yearManufactured: number,
-    color: string,
-    engine: string,
-    remarks: string,
-}
-
-const makeMongooseQuery = (q : VehicleQuery) : any => {
-    let query =  {
-        licensePlate: {$regex: ".*" + q.licensePlate + ".*" , $options: "i"},
-        model: {$regex: ".*" + q.model + ".*" , $options: "i"},
-        manufacturer: {$regex: ".*" + q.manufacturer + ".*" , $options: "i"},
-        color: {$regex: ".*" + q.color + ".*" , $options: "i"},
-        engine: {$regex: ".*" + q.engine + ".*" , $options: "i"}
-
+        res.status(500);
     }
-
-    if (q.yearManufactured > 0){
-        query["yearManufactured"] = q.yearManufactured;
-    }
-
-    return query;
 }
 
-const makeQuery = (req : express.Request) : VehicleQuery=> {
+
+const makeQuery = (req : express.Request) : VehicleQuery => {
+    const licensePlate = baseValidation(req.query.licensePlate)
+    const model = baseValidation(req.query.model)
+    const manufacturer = baseValidation(req.query.manufacturer)
+    const yearManufactured = baseValidation(req.query.yearManufactured)
+    const color = baseValidation(req.query.color)
+    const engine = baseValidation(req.query.engine)
+    const remarks = baseValidation(req.query.remarks)
+    const limit = baseValidation(req.query.limit)
+    const skip = baseValidation(req.query.skip)
+
     return {
-        licensePlate: (req.query.licensePlate) ? (req.query.licensePlate as string) : "",
-        model: (req.query.model) ? (req.query.model as string) : "",
-        manufacturer: (req.query.manufacturer) ? (req.query.manufacturer as string) : "",
-        yearManufactured: (req.query.yearManufactured) ? parseInt(req.query.yearManufactured as string) : -1,
-        color: (req.query.color) ? (req.query.color as string) : "",
-        engine: (req.query.engine) ? (req.query.engine as string) : "",
-        remarks: (req.query.remarks) ? (req.query.remarks as string) : "",
+        licensePlate: (licensePlate) ? (licensePlate as string) : null,
+        model: (model) ? (model as string) : null,
+        manufacturer: (manufacturer) ? (manufacturer as string) : null,
+        yearManufactured: (yearManufactured) ? (yearManufactured as number) : null,
+        color: (color) ? (color as string) : null,
+        engine: (engine) ? (engine as string) : null,
+        remarks: (remarks) ? (remarks as string) : null,
+        limit: (limit) ? (limit as number) : null,
+        skip: (skip) ? (skip as number) : null,
     }
 }
 
-// old SQL
-const count = async (req: express.Request, res: express.Response) => {
-    VehicleRepository.countDocuments()
-    .then((count) => {
-        res.json({vehicleCount: count});
-    });
-};
-
-const all = async (req: express.Request, res: express.Response) => {
-    const count = await Vehicle.countDocuments({});
-
-    Vehicle.find({})
-    .skip(parseInt(req.query.skip as string))
-    .limit(parseInt(req.query.limit as string))
-    .sort({$natural:-1})
-    .then((data) => {
-        res.json({data : makeVehicleArrayView(data), count: count ? count : 0});
-    });
-};
-
-const id = async (req: express.Request, res: express.Response) => {
-    Vehicle.findOne({_id : req.query.id})
-    .then((data) => {
-        res.json(makeVehicleView(data));
-    });
-};
-
-const create = (req: express.Request, res: express.Response) => {
-    Vehicle.create({_id: randomUUID(), ...req.body, })
-    .then((result) => {
-        console.log(result);
-    })
-    .catch((err) => {
-        console.log(err);
-    })
-    .finally(() => {
-        res.json(req.body);
-        res.end();
-    });
-};
-
-const update = (req: express.Request, res: express.Response) => {
-    Vehicle.updateOne({_id: req.query.id}, req.body, (err) => {
-        if (err){
-            console.log(err);
-            res.json(null)
-        }
-        else {
-            res.json(req.body);
-        }
-        res.end();
-    });
-};
-
-const remove = (req: express.Request, res: express.Response) => {
-    Vehicle.deleteOne({_id: req.query.id})
-    .then((delRes) => {
-        res.end();
-    })
-    .catch((err) => {
-    console.log(err);
-    res.end();
-    });
-};
-*/
-
-export default {all, id, create, update, remove};
+export default {all, id, create, update, remove, filter};

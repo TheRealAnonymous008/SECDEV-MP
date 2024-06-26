@@ -2,6 +2,7 @@ import { QueryResult, ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
 import Vehicle, { VehicleRow } from "../models/vehicle";
 import IRepository from "./IRepository";
+import { buildMatchString } from "../utils/match";
 
 
 export const VehicleRepository : IRepository<Vehicle> = {
@@ -138,12 +139,12 @@ export const VehicleRepository : IRepository<Vehicle> = {
     },
 
     filter(query : any) : Promise<Vehicle[]> {
-        // Placeholder
-        let values = []
+        let qv = makeSQLQuery(query)
+
         return new Promise((resolve, reject) => {
             connection.execute<Vehicle[]>(
-                query,
-                values,
+                qv.query,
+                qv.values,
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -153,4 +154,66 @@ export const VehicleRepository : IRepository<Vehicle> = {
             )
         })
     }
+}
+
+export interface VehicleQuery {
+    licensePlate: string,
+    model: string,
+    manufacturer: string,
+    yearManufactured: number,
+    color: string,
+    engine: string,
+    remarks: string,
+    limit: number ,
+    skip: number 
+}
+
+export const makeSQLQuery = (query: VehicleQuery): { query: string, values: any[] } => {
+    let q = `SELECT * FROM vehicle`;
+    let whereClauses: string[] = [];
+    let values: any[] = [];
+
+    if (query.licensePlate) {
+        whereClauses.push(`LicensePlate LIKE ?`);
+        values.push(buildMatchString(query.licensePlate));
+    }
+    if (query.model) {
+        whereClauses.push(`Model LIKE ?`);
+        values.push(buildMatchString(query.model));
+    }
+    if (query.manufacturer) {
+        whereClauses.push(`Manufacturer LIKE ?`);
+        values.push(buildMatchString(query.manufacturer));
+    }
+    if (query.yearManufactured !== undefined) {
+        whereClauses.push(`YearManufactured = ?`);
+        values.push(query.yearManufactured);
+    }
+    if (query.color) {
+        whereClauses.push(`Color LIKE ?`);
+        values.push(buildMatchString(query.color));
+    }
+    if (query.engine) {
+        whereClauses.push(`Engine LIKE ?`);
+        values.push(buildMatchString(query.engine));
+    }
+    if (query.remarks) {
+        whereClauses.push(`Remarks LIKE ?`);
+        values.push(buildMatchString(query.remarks));
+    }
+
+    if (whereClauses.length > 0) {
+        q += " WHERE " + whereClauses.join(" AND ");
+    }
+
+    if (query.limit !== undefined) {
+        q += ` LIMIT ?`;
+        values.push(query.limit);
+    }
+    if (query.skip !== undefined) {
+        q += ` OFFSET ?`;
+        values.push(query.skip);
+    }
+
+    return { query: q, values: values };
 }

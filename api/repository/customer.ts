@@ -2,6 +2,7 @@ import { QueryResult, ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
 import Customer, { CustomerRow } from "../models/customer";
 import IRepository from "./IRepository";
+import { buildMatchString } from "../utils/match";
 
 
 export const CustomerRepository : IRepository<Customer> = {
@@ -139,7 +140,6 @@ export const CustomerRepository : IRepository<Customer> = {
 
     filter(query : CustomerQuery) : Promise<Customer[]> {
         let qv = makeSQLQuery(query)
-        console.log("Query", qv.query, qv.values)
 
         return new Promise((resolve, reject) => {
             connection.execute<Customer[]>(
@@ -175,27 +175,27 @@ export const makeSQLQuery = (query: CustomerQuery): { query: string, values: any
 
     if (query.name) {
         whereClauses.push(`CONCAT(FirstName, LastName) LIKE ?`);
-        values.push("%" + query.name + "%");
+        values.push(buildMatchString(query.name));
     }
     if (query.email) {
         whereClauses.push(`Email LIKE ?`);
-        values.push(query.email);
+        values.push(buildMatchString(query.email));
     }
     if (query.mobileNumber) {
         whereClauses.push(`MobileNumber LIKE ?`);
-        values.push(query.mobileNumber);
+        values.push(buildMatchString(query.mobileNumber));
     }
     if (query.company) {
         whereClauses.push(`Company LIKE ?`);
-        values.push(query.company);
+        values.push(buildMatchString(query.company));
     }
     if (query.insurance) {
         whereClauses.push(`Insurance LIKE ?`);
-        values.push(query.insurance);
+        values.push(buildMatchString(query.insurance));
     }
     if (query.remarks) {
         whereClauses.push(`Remarks LIKE ?`);
-        values.push(query.remarks);
+        values.push(buildMatchString(query.remarks));
     }
 
     if (whereClauses.length > 0) {
