@@ -31,6 +31,8 @@ import { NextFunction, Request, Response } from "express";
 
 const validateToken = (req : Request, res : Response, next : NextFunction) => {
     try {
+        console.log(req.cookies["autoworks_s"])
+        console.log("Vali token", req.session)
         if (req.session){
             next()
         }

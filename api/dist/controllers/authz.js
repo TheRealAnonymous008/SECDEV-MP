@@ -86,9 +86,11 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                         req.session.regenerate((err) => {
                             if (err)
                                 throw err;
+                            const session = req.session;
+                            session.uid = user.Id;
+                            session.save();
                         });
-                        req.session["uid"] = user.Id;
-                        req.session.save();
+                        // res.cookie("autoworks_s", req.session.id, req.session.cookie as CookieOptions)
                         res.json({
                             auth: true,
                         }).status(200).end();
@@ -156,6 +158,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const handshake = (req, res) => {
     try {
+        console.log("Shake hands", req.session);
         const uid = req.session["uid"];
         if (uid == null) {
             res.status(500).end();

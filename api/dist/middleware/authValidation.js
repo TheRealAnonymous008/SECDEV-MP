@@ -26,6 +26,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // }
 const validateToken = (req, res, next) => {
     try {
+        console.log(req.cookies["autoworks_s"]);
+        console.log("Vali token", req.session);
         if (req.session) {
             next();
         }
