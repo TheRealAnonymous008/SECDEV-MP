@@ -35,6 +35,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const jwt = require("jsonwebtoken");
 const authConfig_1 = __importStar(require("../config/authConfig"));
 const user_1 = require("../repository/user");
+const enum_1 = require("../models/enum");
 var uid = require('uid-safe');
 const makeRefreshToken = (user, token, sessionId, callback) => __awaiter(void 0, void 0, void 0, function* () {
     yield jwt.sign({
@@ -64,7 +65,7 @@ const signToken = (user, callback) => __awaiter(void 0, void 0, void 0, function
         const secret = (0, authConfig_1.getRandomAccessSecret)();
         yield jwt.sign({
             id: sessionId,
-            role: user.Role.toString(),
+            admin: user.Role == enum_1.RoleIds.ADMIN
         }, secret, {
             expiresIn: authConfig_1.default.token.expireTime,
             issuer: authConfig_1.default.token.issuer,

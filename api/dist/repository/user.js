@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserRepository = void 0;
+exports.hashSessionId = exports.UserRepository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
 const crypto = require("crypto");
 exports.UserRepository = {
@@ -108,7 +108,7 @@ exports.UserRepository = {
         });
     },
     retrieveById(id) {
-        let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id WHERE u.Id = ?`;
+        let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, u.MobileNumber, u.Role, u.Email FROM users u WHERE u.Id = ?`;
         return new Promise((resolve, reject) => {
             connection_1.default.execute(query, [id], (err, res) => {
                 if (err)
@@ -212,3 +212,4 @@ function hashSessionId(sessionId) {
     hash.update(sessionIdBuffer);
     return hash.digest('hex');
 }
+exports.hashSessionId = hashSessionId;

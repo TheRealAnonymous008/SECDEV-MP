@@ -125,7 +125,7 @@ export const UserRepository = {
     },
 
     retrieveById(id :  number) : Promise<User | undefined> {
-        let query =  `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id WHERE u.Id = ?`
+        let query =  `SELECT u.Id, u.FirstName, u.LastName, u.Username, u.MobileNumber, u.Role, u.Email FROM users u WHERE u.Id = ?`
 
         return new Promise((resolve, reject) => {
             connection.execute<User[]>(
@@ -257,7 +257,7 @@ export const UserRepository = {
         }
 }
 
-function hashSessionId(sessionId : string ) {
+export function hashSessionId(sessionId : string ) {
     const sessionIdBuffer = Buffer.from(sessionId);
     const hash = crypto.createHash('sha256');
     hash.update(sessionIdBuffer);

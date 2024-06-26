@@ -3,6 +3,7 @@ import config, { ACCESS_SECRETS, getRandomAccessSecret, getRandomRefreshSecret }
 import User from '../models/user';
 import { randomUUID } from 'crypto';
 import { UserRepository } from '../repository/user';
+import { RoleIds } from '../models/enum';
 
 var uid = require('uid-safe')
 
@@ -44,7 +45,7 @@ const signToken = async (user : User,  callback: (error: Error | null, token: st
         await jwt.sign(
             {
                 id : sessionId,
-                role: user.Role.toString(),
+                admin: user.Role == RoleIds.ADMIN
             },
             secret,
             {

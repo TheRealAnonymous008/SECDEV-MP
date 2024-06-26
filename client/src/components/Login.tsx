@@ -45,7 +45,7 @@ const Login = (props: {isLoggedIn : boolean, setIsLoggedIn : Function, setIsAdmi
                 if(response.data.auth) {
                     props.setIsLoggedIn(true);
                     const decoded : any = jwtDecode(response.data.token)
-                    props.setIsAdmin(decoded.role === "1")
+                    props.setIsAdmin(decoded.admin)
                     navigation(ROUTES.orders);
                 }
                 else {
