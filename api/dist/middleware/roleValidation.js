@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const validateRole = (allowedRoles) => {
     return (req, res, next) => {
+        const sessionId = res.locals.jwt.id;
         next();
         // if(allowedRoles.includes(res.locals.jwt.role))
         //     next();

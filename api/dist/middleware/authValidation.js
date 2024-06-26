@@ -63,7 +63,6 @@ const validateToken = (req, res, next) => {
                 throw Error("JWT not decoded properly");
             }
             res.locals.jwt = decoded;
-            console.log(res.locals.jwt);
             next();
         }
         catch (error) {

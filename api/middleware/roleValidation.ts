@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 
 const validateRole = (allowedRoles : number[]) => {
     return (req : Request, res : Response, next : NextFunction) => {
+        const sessionId = res.locals.jwt.id
+
         next();
         // if(allowedRoles.includes(res.locals.jwt.role))
         //     next();

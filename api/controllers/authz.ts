@@ -124,8 +124,7 @@ const login = async (req : express.Request, res : express.Response) => {
 
 const handshake = (req : express.Request, res : express.Response) => {
     try {
-        const token = req.cookies.jwtacc
-        const sessionId : any = jwtDecode(token)["id"]
+        const sessionId = res.locals.jwt.id
         
         UserRepository.getUserFromSession(sessionId)
             .then((value) => {

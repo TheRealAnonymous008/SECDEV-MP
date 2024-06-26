@@ -150,8 +150,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const handshake = (req, res) => {
     try {
-        const token = req.cookies.jwtacc;
-        const sessionId = (0, jwt_decode_1.default)(token)["id"];
+        const sessionId = res.locals.jwt.id;
         user_1.UserRepository.getUserFromSession(sessionId)
             .then((value) => {
             if (value)
