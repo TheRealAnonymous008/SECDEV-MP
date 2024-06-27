@@ -3,10 +3,9 @@ import connection from "../config/connection";
 import Customer, { CustomerRow } from "../models/customer";
 import IRepository from "./IRepository";
 import Order, { OrderRow } from "../models/order";
-import dbConfig from "../config/dbConfig";
 
 
-const ORDER_TABLE_NAME = dbConfig.database + ".order";
+const ORDER_TABLE_NAME = process.env.DB_DATABASE + ".order";
 
 export const OrderRespository : IRepository<Order> = {
     retrieveAll(limit? : number, offset? : number) : Promise<Order[]> {

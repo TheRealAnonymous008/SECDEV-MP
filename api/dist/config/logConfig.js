@@ -9,4 +9,4 @@ var LogLevel;
     LogLevel[LogLevel["ERRORS"] = 3] = "ERRORS";
     LogLevel[LogLevel["STACK_TRACE"] = 4] = "STACK_TRACE";
 })(LogLevel = exports.LogLevel || (exports.LogLevel = {}));
-exports.LOG_LEVEL = LogLevel.STACK_TRACE;
+exports.LOG_LEVEL = parseInt(process.env.LOG_LEVEL);

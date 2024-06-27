@@ -6,4 +6,4 @@ export enum LogLevel {
     STACK_TRACE,    // Displays all stack traces
 }
 
-export const LOG_LEVEL : LogLevel = LogLevel.STACK_TRACE
+export const LOG_LEVEL : LogLevel = parseInt(process.env.LOG_LEVEL)

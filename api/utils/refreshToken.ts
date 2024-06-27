@@ -1,5 +1,5 @@
 import jwt = require('jsonwebtoken');
-import config, { getRandomRefreshSecret } from "../config/authConfig";
+import { JWT_EXPIRE_TIME, getRandomRefreshSecret } from "../config/authConfig";
 import { checkRefreshToken } from '../middleware/authValidation';
 
 const refreshToken = (refreshjwt : string) : string => {
@@ -14,7 +14,7 @@ const refreshToken = (refreshjwt : string) : string => {
             },
             getRandomRefreshSecret(),
             {
-                expiresIn: config.token.expireTime,
+                expiresIn: JWT_EXPIRE_TIME,
                 issuer: decoded.accessIssuer,
             },);
     }

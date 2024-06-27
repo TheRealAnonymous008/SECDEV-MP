@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -33,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const jwt = require("jsonwebtoken");
-const authConfig_1 = __importStar(require("../config/authConfig"));
+const authConfig_1 = require("../config/authConfig");
 const user_1 = require("../repository/user");
 const enum_1 = require("../models/enum");
 var uid = require('uid-safe');
@@ -41,9 +18,9 @@ const makeRefreshToken = (user, token, sessionId, callback) => __awaiter(void 0,
     yield jwt.sign({
         id: sessionId,
         role: user.Role,
-        accessIssuer: authConfig_1.default.token.issuer,
+        accessIssuer: authConfig_1.JWT_ISSUER,
     }, (0, authConfig_1.getRandomRefreshSecret)(), {
-        expiresIn: authConfig_1.default.refreshToken.expireTime
+        expiresIn: authConfig_1.REFRESH_EXPIRE_TIME
     }, (error, refreshToken) => {
         if (error) {
             callback(error, null, null);
@@ -58,7 +35,7 @@ const makeRefreshToken = (user, token, sessionId, callback) => __awaiter(void 0,
 });
 const signToken = (user, callback) => __awaiter(void 0, void 0, void 0, function* () {
     const timeSinceEpoch = new Date().getTime();
-    const expirationTime = timeSinceEpoch + Number(authConfig_1.default.token.expireTime) * 10000;
+    const expirationTime = timeSinceEpoch + Number(authConfig_1.JWT_EXPIRE_TIME) * 10000;
     const sessionId = uid.sync(24);
     try {
         yield user_1.UserRepository.addSession(user.Id, sessionId);
@@ -67,8 +44,8 @@ const signToken = (user, callback) => __awaiter(void 0, void 0, void 0, function
             id: sessionId,
             admin: user.Role == enum_1.RoleIds.ADMIN
         }, secret, {
-            expiresIn: authConfig_1.default.token.expireTime,
-            issuer: authConfig_1.default.token.issuer,
+            expiresIn: authConfig_1.JWT_EXPIRE_TIME,
+            issuer: authConfig_1.JWT_ISSUER,
         }, (error, token) => __awaiter(void 0, void 0, void 0, function* () {
             if (error) {
                 callback(error, null, null);

@@ -26,7 +26,7 @@ const log = (level, what) => {
                 break;
         }
         const coloredLevel = `${colorCode}${levelStr}\x1b[0m`;
-        console.log(`${coloredLevel} ${greenTimestamp} ${what}`);
+        console.log(`${greenTimestamp} ${coloredLevel} ${what}`);
     }
 };
 exports.default = { log };

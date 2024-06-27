@@ -1,11 +1,9 @@
 import mysql from "mysql2"
-import dbConfig from "./dbConfig"
-
 export default mysql.createConnection({
-    host: dbConfig.host,
-    user: dbConfig.user,
-    password: dbConfig.password,
-    database: dbConfig.database
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
 })
 
 // Note: We use connection.execute rather than connection.query. This is more secure since we prepare the statement fiirst. 

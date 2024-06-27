@@ -5,8 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderRespository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
-const dbConfig_1 = __importDefault(require("../config/dbConfig"));
-const ORDER_TABLE_NAME = dbConfig_1.default.database + ".order";
+const ORDER_TABLE_NAME = process.env.DB_DATABASE + ".order";
 exports.OrderRespository = {
     retrieveAll(limit, offset) {
         let query = `SELECT * FROM ${ORDER_TABLE_NAME}`;
