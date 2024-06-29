@@ -5,6 +5,9 @@ import { AddressInfo } from "net";
 import * as path from 'path';
 import cookieparser = require('cookie-parser');
 
+const fs = require('fs')
+const https = require('https')
+
 const bodyParser = require('body-parser');
 const debug = require('debug')('my express app');
 const app = express();
@@ -101,6 +104,11 @@ app.use((err, req, res, next) => { // eslint-disable-line @typescript-eslint/no-
 
 app.set('port', process.env.PORT || 3000);
 
-const server = app.listen(app.get('port'), function () {
-    console.log(`Express server listening on port ${(server.address() as AddressInfo).port}`);
+const privatekey = fs.readFileSync("certs/key.pem", 'utf8')
+const certificate = fs.readFileSync('certs/cert.pem', 'utf8')
+
+const credentials = {key : privatekey, cert: certificate, passphrase: process.env.SSL_PASSPHRASE}
+const httpServer = https.createServer(credentials, app)
+httpServer.listen(app.get('port'), function () {
+    console.log(`Express server listening on port ${(httpServer.address() as AddressInfo).port}`);
 });

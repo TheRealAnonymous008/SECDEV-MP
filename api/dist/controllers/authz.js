@@ -173,9 +173,15 @@ const handshake = (req, res) => {
     }
 };
 const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const token = req.cookies.jwt;
-    const sessionId = (0, jwt_decode_1.default)(token)["id"];
-    yield user_1.UserRepository.deleteSession(sessionId);
-    res.clearCookie("jwt").clearCookie("jwtacc").end();
+    try {
+        const token = req.cookies.jwt;
+        const sessionId = (0, jwt_decode_1.default)(token)["id"];
+        yield user_1.UserRepository.deleteSession(sessionId).catch((err) => { console.log(err); });
+        res.clearCookie("jwt").clearCookie("jwtacc").end();
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
 });
 exports.default = { register, login, logout, handshake };

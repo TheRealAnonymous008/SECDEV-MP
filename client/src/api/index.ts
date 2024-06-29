@@ -2,7 +2,7 @@ import axios from "axios";
 const Cookies = require('js-cookie')
 
 const DEPLOYMENT_BASE_URL = 'https://autoworks-api.up.railway.app/'
-const DEVELOPMENT_BASE_URL = "http://localhost:3000/"
+const DEVELOPMENT_BASE_URL = "https://localhost:3000/"
 
 export const BASE_URL = DEVELOPMENT_BASE_URL
 
@@ -11,7 +11,6 @@ export const createAPIEndpoint = (endpoint : string) => {
     let url = BASE_URL + 'api/' + endpoint ;
 
     let token = Cookies.get("jwtacc")
-    console.log("Cookie" , token)
     return {
         fetch: (params?: any, headers:any = 
             {'Content-Type': 'application/json'

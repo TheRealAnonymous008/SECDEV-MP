@@ -75,6 +75,7 @@ const login = async (req : express.Request, res : express.Response) => {
                                 if(refreshToken) {
                                     res = res.cookie('jwt', refreshToken, 
                                     {
+
                                         httpOnly:true,
                                         secure: true,
                                         sameSite: "lax",
@@ -149,11 +150,16 @@ const handshake = (req : express.Request, res : express.Response) => {
 }
 
 const logout = async (req : express.Request, res : express.Response) => {
-    const token = req.cookies.jwt
-    const sessionId : any = jwtDecode(token)["id"]
-    await UserRepository.deleteSession(sessionId);
-    
-    res.clearCookie("jwt").clearCookie("jwtacc").end();
+    try {
+        const token = req.cookies.jwt
+        const sessionId : any = jwtDecode(token)["id"]
+        await UserRepository.deleteSession(sessionId).catch((err) => {console.log(err)});
+        
+        res.clearCookie("jwt").clearCookie("jwtacc").end();
+    } catch(err) {
+        console.log(err)
+        res.status(500).end()
+    }
 }
 
 

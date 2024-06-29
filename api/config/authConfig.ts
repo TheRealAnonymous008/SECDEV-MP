@@ -14,3 +14,5 @@ export const getRandomAccessSecret = () =>{
 export const getRandomRefreshSecret = () => {
     return REFRESH_SECRETS[randomInt(REFRESH_SECRETS.length)]
 }
+
+export const SESSION_EXPIRE_TIME = parseInt(process.env.SESSION_EXPIRE_TIME)

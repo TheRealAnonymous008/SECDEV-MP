@@ -27,5 +27,6 @@ export interface UserRow {
 
 export interface SessionEntry extends RowDataPacket {
     SessionId : string,
-    UserId: number 
+    UserId: number, 
+    SessionTime
 }

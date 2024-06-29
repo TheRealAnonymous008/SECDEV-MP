@@ -3,6 +3,7 @@ import { QueryResult, ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
 import IRepository from "./IRepository";
 import { Multer } from "multer";
+import { SESSION_EXPIRE_TIME } from "../config/authConfig";
 
 const crypto = require("crypto")
 
@@ -36,15 +37,16 @@ export const UserRepository = {
     },
 
     addSession(id : number, sessionId : string) : Promise<boolean>{
-        let query = `INSERT INTO sessions(SessionId, UserId) VALUES (?, ?)`;
+        let query = `INSERT INTO sessions(SessionId, UserId, SessionTime) VALUES (?, ?, ?)`;
         
         // Make sure to hash the session ID
         sessionId = hashSessionId(sessionId);
+        const sessionTime = new Date().getTime()
 
         return new Promise((resolve, reject) => { 
             connection.execute<ResultSetHeader>(
                 query,
-                [sessionId, id], 
+                [sessionId, id, sessionTime], 
                 (err, res) => {
                     if (err) reject(err); 
                     else { 
@@ -59,6 +61,7 @@ export const UserRepository = {
         let query = `SELECT UserId FROM sessions WHERE SessionId = ?`;
 
         sessionId = hashSessionId(sessionId);
+        const currentTime = new Date().getTime()
 
         return new Promise((resolve, reject) => {
             connection.execute<SessionEntry[]>(
@@ -69,6 +72,9 @@ export const UserRepository = {
                     else {
                         if (res.length == 0)
                             resolve(undefined)
+                        else if (currentTime - parseInt(res[0].SessionTime) > SESSION_EXPIRE_TIME) {
+                            resolve(undefined)
+                        }
                         else {
                             const x = await UserRepository.retrieveById(res[0].UserId);
                             resolve(x);

@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.hashSessionId = exports.UserRepository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
+const authConfig_1 = require("../config/authConfig");
 const crypto = require("crypto");
 exports.UserRepository = {
     register(user) {
@@ -40,11 +41,12 @@ exports.UserRepository = {
         });
     },
     addSession(id, sessionId) {
-        let query = `INSERT INTO sessions(SessionId, UserId) VALUES (?, ?)`;
+        let query = `INSERT INTO sessions(SessionId, UserId, SessionTime) VALUES (?, ?, ?)`;
         // Make sure to hash the session ID
         sessionId = hashSessionId(sessionId);
+        const sessionTime = new Date().getTime();
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, [sessionId, id], (err, res) => {
+            connection_1.default.execute(query, [sessionId, id, sessionTime], (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -56,6 +58,7 @@ exports.UserRepository = {
     getUserFromSession(sessionId) {
         let query = `SELECT UserId FROM sessions WHERE SessionId = ?`;
         sessionId = hashSessionId(sessionId);
+        const currentTime = new Date().getTime();
         return new Promise((resolve, reject) => {
             connection_1.default.execute(query, [sessionId], (err, res) => __awaiter(this, void 0, void 0, function* () {
                 if (err)
@@ -63,6 +66,9 @@ exports.UserRepository = {
                 else {
                     if (res.length == 0)
                         resolve(undefined);
+                    else if (currentTime - parseInt(res[0].SessionTime) > authConfig_1.SESSION_EXPIRE_TIME) {
+                        resolve(undefined);
+                    }
                     else {
                         const x = yield exports.UserRepository.retrieveById(res[0].UserId);
                         resolve(x);
