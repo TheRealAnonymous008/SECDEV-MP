@@ -3,12 +3,13 @@ import connection from "../config/connection";
 import Customer, { CustomerRow } from "../models/customer";
 import IRepository from "./IRepository";
 import Order, { OrderRow } from "../models/order";
+import { LIMIT_MAX } from "../config/limiterConfig";
 
 
 const ORDER_TABLE_NAME = process.env.DB_DATABASE + ".order";
 
 export const OrderRespository : IRepository<Order> = {
-    retrieveAll(limit? : number, offset? : number) : Promise<Order[]> {
+    retrieveAll(limit : number = LIMIT_MAX , offset? : number) : Promise<Order[]> {
         let query = `SELECT * FROM ${ORDER_TABLE_NAME}`;
         let values = []
         if (limit){

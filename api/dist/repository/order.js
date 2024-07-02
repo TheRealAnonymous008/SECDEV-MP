@@ -5,9 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderRespository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
+const limiterConfig_1 = require("../config/limiterConfig");
 const ORDER_TABLE_NAME = process.env.DB_DATABASE + ".order";
 exports.OrderRespository = {
-    retrieveAll(limit, offset) {
+    retrieveAll(limit = limiterConfig_1.LIMIT_MAX, offset) {
         let query = `SELECT * FROM ${ORDER_TABLE_NAME}`;
         let values = [];
         if (limit) {

@@ -3,10 +3,11 @@ import connection from "../config/connection";
 import Customer, { CustomerRow } from "../models/customer";
 import IRepository from "./IRepository";
 import { buildMatchString } from "../utils/match";
+import { LIMIT_MAX } from "../config/limiterConfig";
 
 
 export const CustomerRepository : IRepository<Customer> = {
-    retrieveAll(limit? : number, offset? : number) : Promise<Customer[]> {
+    retrieveAll(limit : number = LIMIT_MAX, offset? : number) : Promise<Customer[]> {
         let query = "SELECT * FROM customer";
         let values = []
         if (limit){
@@ -205,7 +206,11 @@ export const makeSQLQuery = (query: CustomerQuery): { query: string, values: any
     if (query.limit) {
         q += ` LIMIT ?`;
         values.push(query.limit);
+    } else {
+        q += ` LIMIT ?`
+        values.push(LIMIT_MAX)
     }
+
     if (query.skip) {
         q += ` OFFSET ?`;
         values.push(query.skip);

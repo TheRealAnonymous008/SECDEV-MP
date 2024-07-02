@@ -2,6 +2,7 @@ import { assert } from "console";
 import { ALL_ROLES, Roles } from "../models/enum";
 
 import sanitizeHtml from 'sanitize-html';
+import { LIMIT_MAX } from "../config/limiterConfig";
 var sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 
 
@@ -63,7 +64,7 @@ export function validateWord(name) {
     return name
 }
 
-export function validateUsername(username) {
+export function validateUsername(username : string) {
     assertNotNullOrEmpty(username)
     username = baseValidation(username)
     const regex = /^[a-zA-Z0-9]{4,35}$/;
@@ -71,7 +72,7 @@ export function validateUsername(username) {
     if (!regex.test(username)) {
         throw new Error("Invalid username format");
     }
-    return username
+    return username.toLowerCase()
 }
 
 export function validateMobileNumber(mobileNumber) {
@@ -95,6 +96,17 @@ export function validateInteger(number : string) {
         throw new Error("Invalid number format.");
     }
     return parseInt(number.toString()); 
+}
+
+export function validateLimit(number) {
+    const limit = validateInteger(number)
+    if (limit <= 0){
+        throw new Error("Invalid Limit Value")
+    }
+    if (limit > LIMIT_MAX){
+        throw new Error("Limit value too large")
+    }
+    return limit;
 }
 
 

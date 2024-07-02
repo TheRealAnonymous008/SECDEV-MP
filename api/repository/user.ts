@@ -4,6 +4,7 @@ import connection from "../config/connection";
 import IRepository from "./IRepository";
 import { Multer } from "multer";
 import { SESSION_EXPIRE_TIME } from "../config/authConfig";
+import { LIMIT_MAX } from "../config/limiterConfig";
 
 const crypto = require("crypto")
 
@@ -105,7 +106,7 @@ export const UserRepository = {
         })
     },
 
-    retrieveAll(limit? : number, offset? : number) : Promise<User[]> {
+    retrieveAll(limit : number = LIMIT_MAX, offset? : number) : Promise<User[]> {
         let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id`;
         let values = []
         if (limit){

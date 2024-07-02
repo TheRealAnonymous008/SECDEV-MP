@@ -3,9 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateImage = exports.assertNotNullOrEmpty = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
+exports.validateImage = exports.assertNotNullOrEmpty = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateLimit = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
 const enum_1 = require("../models/enum");
 const sanitize_html_1 = __importDefault(require("sanitize-html"));
+const limiterConfig_1 = require("../config/limiterConfig");
 var sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 function validateNoHTML(text) {
     const clean = (0, sanitize_html_1.default)(text, {
@@ -66,7 +67,7 @@ function validateUsername(username) {
     if (!regex.test(username)) {
         throw new Error("Invalid username format");
     }
-    return username;
+    return username.toLowerCase();
 }
 exports.validateUsername = validateUsername;
 function validateMobileNumber(mobileNumber) {
@@ -89,6 +90,17 @@ function validateInteger(number) {
     return parseInt(number.toString());
 }
 exports.validateInteger = validateInteger;
+function validateLimit(number) {
+    const limit = validateInteger(number);
+    if (limit <= 0) {
+        throw new Error("Invalid Limit Value");
+    }
+    if (limit > limiterConfig_1.LIMIT_MAX) {
+        throw new Error("Limit value too large");
+    }
+    return limit;
+}
+exports.validateLimit = validateLimit;
 function validatePassword(password) {
     assertNotNullOrEmpty(password);
     password = baseValidation(password);

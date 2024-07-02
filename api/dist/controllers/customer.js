@@ -158,7 +158,7 @@ const makeQuery = (req) => {
     const company = (0, inputValidation_1.baseValidation)(req.query.company);
     const insurance = (0, inputValidation_1.baseValidation)(req.query.insurance);
     const remarks = (0, inputValidation_1.baseValidation)(req.query.remarks);
-    const limit = (0, inputValidation_1.baseValidation)(req.query.limit);
+    const limit = (0, inputValidation_1.validateLimit)(req.query.limit);
     const skip = (0, inputValidation_1.baseValidation)(req.query.skip);
     return {
         name: (name) ? name : null,

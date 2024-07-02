@@ -9,3 +9,5 @@ export const limiter = rateLimit({
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers,
 	message: "Too many requests. Try again later",
 });
+
+export const LIMIT_MAX = parseInt(process.env.LIMIT_MAX)

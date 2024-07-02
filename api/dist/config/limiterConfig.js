@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.limiter = void 0;
+exports.LIMIT_MAX = exports.limiter = void 0;
 const express_rate_limit_1 = require("express-rate-limit");
 // Rate limiter for login capping
 exports.limiter = (0, express_rate_limit_1.rateLimit)({
@@ -10,3 +10,4 @@ exports.limiter = (0, express_rate_limit_1.rateLimit)({
     legacyHeaders: false,
     message: "Too many requests. Try again later",
 });
+exports.LIMIT_MAX = parseInt(process.env.LIMIT_MAX);

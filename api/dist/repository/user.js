@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.hashSessionId = exports.UserRepository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
 const authConfig_1 = require("../config/authConfig");
+const limiterConfig_1 = require("../config/limiterConfig");
 const crypto = require("crypto");
 exports.UserRepository = {
     register(user) {
@@ -92,7 +93,7 @@ exports.UserRepository = {
             });
         });
     },
-    retrieveAll(limit, offset) {
+    retrieveAll(limit = limiterConfig_1.LIMIT_MAX, offset) {
         let query = `SELECT u.Id, u.FirstName, u.LastName, u.Username, e.Name as "Role", u.MobileNumber, u.Email FROM users u INNER JOIN roleenum e ON u.Role = e.Id`;
         let values = [];
         if (limit) {

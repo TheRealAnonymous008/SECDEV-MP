@@ -3,10 +3,11 @@ import connection from "../config/connection";
 import Vehicle, { VehicleRow } from "../models/vehicle";
 import IRepository from "./IRepository";
 import { buildMatchString } from "../utils/match";
+import { LIMIT_MAX } from "../config/limiterConfig";
 
 
 export const VehicleRepository : IRepository<Vehicle> = {
-    retrieveAll(limit? : number, offset? : number) : Promise<Vehicle[]> {
+    retrieveAll(limit : number = LIMIT_MAX, offset? : number) : Promise<Vehicle[]> {
         let query = "SELECT * FROM vehicle";
         let values = []
         if (limit){
@@ -209,6 +210,9 @@ export const makeSQLQuery = (query: VehicleQuery): { query: string, values: any[
     if (query.limit !== undefined) {
         q += ` LIMIT ?`;
         values.push(query.limit);
+    } else {
+        q += ` LIMIT ?`;
+        values.push(LIMIT_MAX)
     }
     if (query.skip !== undefined) {
         q += ` OFFSET ?`;

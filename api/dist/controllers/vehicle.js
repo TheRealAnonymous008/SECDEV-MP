@@ -159,7 +159,7 @@ const makeQuery = (req) => {
     const color = (0, inputValidation_1.baseValidation)(req.query.color);
     const engine = (0, inputValidation_1.baseValidation)(req.query.engine);
     const remarks = (0, inputValidation_1.baseValidation)(req.query.remarks);
-    const limit = (0, inputValidation_1.baseValidation)(req.query.limit);
+    const limit = (0, inputValidation_1.validateLimit)(req.query.limit);
     const skip = (0, inputValidation_1.baseValidation)(req.query.skip);
     return {
         licensePlate: (licensePlate) ? licensePlate : null,

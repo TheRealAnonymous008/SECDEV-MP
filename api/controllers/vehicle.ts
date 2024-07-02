@@ -5,7 +5,7 @@ import { ALL_ROLES, Roles } from '../models/enum';
 import { makeVehicleArrayView, makeVehicleView } from '../projections/vehicle';
 import { VehicleQuery, VehicleRepository } from '../repository/vehicle';
 import Vehicle, { VehicleRow } from '../models/vehicle';
-import { baseValidation, validateInteger, validateLicensePlate, validateWord } from '../middleware/inputValidation';
+import { baseValidation, validateInteger, validateLicensePlate, validateLimit, validateWord } from '../middleware/inputValidation';
 
 const all = async (req: express.Request, res: express.Response) => {
     VehicleRepository.retrieveAll()
@@ -160,7 +160,7 @@ const makeQuery = (req : express.Request) : VehicleQuery => {
     const color = baseValidation(req.query.color)
     const engine = baseValidation(req.query.engine)
     const remarks = baseValidation(req.query.remarks)
-    const limit = baseValidation(req.query.limit)
+    const limit = validateLimit(req.query.limit)
     const skip = baseValidation(req.query.skip)
 
     return {

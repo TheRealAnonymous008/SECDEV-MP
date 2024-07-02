@@ -6,8 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeSQLQuery = exports.CustomerRepository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
 const match_1 = require("../utils/match");
+const limiterConfig_1 = require("../config/limiterConfig");
 exports.CustomerRepository = {
-    retrieveAll(limit, offset) {
+    retrieveAll(limit = limiterConfig_1.LIMIT_MAX, offset) {
         let query = "SELECT * FROM customer";
         let values = [];
         if (limit) {
@@ -155,6 +156,10 @@ const makeSQLQuery = (query) => {
     if (query.limit) {
         q += ` LIMIT ?`;
         values.push(query.limit);
+    }
+    else {
+        q += ` LIMIT ?`;
+        values.push(limiterConfig_1.LIMIT_MAX);
     }
     if (query.skip) {
         q += ` OFFSET ?`;
