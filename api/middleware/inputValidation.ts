@@ -5,6 +5,7 @@ import sanitizeHtml from 'sanitize-html';
 import { LIMIT_MAX } from "../config/limiterConfig";
 var sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 
+import validator from "validator";
 
 export function validateNoHTML(text) {
     const clean = sanitizeHtml(text, {
@@ -30,78 +31,74 @@ export function baseValidation(text) {
     return text 
 }
 
-export function validateEmail(email) {
-    assertNotNullOrEmpty(email)
-    email = baseValidation(email)
+export function validateEmail(str) {
+    assertNotNullOrEmpty(str)
+    str = baseValidation(str)
 
-    const regex = /^(?!.*[-_.](?![a-zA-Z0-9]))[a-zA-Z0-9][a-zA-Z0-9._-]*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
-    if (!regex.test(email)) {
-        throw new Error("Invalid email format");
-    }
-    return email
+    if (validator.isEmail(str)) 
+        return str 
+    
+    throw new Error("Invalid email format");
 }
 
 
-export function validateName(name) {
-    assertNotNullOrEmpty(name)
-    name = baseValidation(name)
+export function validateName(str) {
+    assertNotNullOrEmpty(str)
+    str = baseValidation(str)
+
     const regex = /^[A-Z][a-zA-Z]{1,34}$/;
 
-    if (!regex.test(name)) {
-        throw new Error("Invalid name format");
+    if (regex.test(str)) {
+        return str
     }
-    return name
+    throw new Error("Invalid name format");
 }
 
-export function validateWord(name) {
-    assertNotNullOrEmpty(name)
-    name = baseValidation(name)
-    const regex = /^[a-zA-Z]{1,34}$/;
+export function validateWord(str) {
+    assertNotNullOrEmpty(str)
+    str = baseValidation(str)
 
-    if (!regex.test(name)) {
-        throw new Error("Invalid word format");
+    if (validator.isAlpha(str) && validator.isLength(str, {min: 1, max:34})) {
+        return str
     }
-    return name
+    throw new Error("Invalid word format");
 }
 
-export function validateUsername(username : string) {
-    assertNotNullOrEmpty(username)
-    username = baseValidation(username)
-    const regex = /^[a-zA-Z0-9]{4,35}$/;
+export function validateUsername(str : string) {
+    assertNotNullOrEmpty(str)
+    str = baseValidation(str)
 
-    if (!regex.test(username)) {
-        throw new Error("Invalid username format");
+    if (validator.isAlphanumeric(str) && validator.isLength(str, {min: 4, max: 35})) {
+        return str.toLowerCase()
     }
-    return username.toLowerCase()
+    throw new Error("Invalid username format");
 }
 
-export function validateMobileNumber(mobileNumber) {
-    assertNotNullOrEmpty(mobileNumber)
-    mobileNumber = baseValidation(mobileNumber)
+export function validateMobileNumber(str) {
+    assertNotNullOrEmpty(str)
+    str = baseValidation(str)
     const regex = /^09\d{9}$/;
 
-    if (!regex.test(mobileNumber)) {
-        throw new Error("Invalid mobile number format.");
+    if (regex.test(str)) {
+        return str
     }
-    return mobileNumber
+    throw new Error("Invalid mobile number format.");
 }
 
-export function validateInteger(number : string) {
-    assertNotNullOrEmpty(number)
-    number = baseValidation(number)
+export function validateInteger(str : string) {
+    assertNotNullOrEmpty(str)
+    str = baseValidation(str)
 
-    const regex = /\d+$/;
-
-    if (!regex.test(number)) {
-        throw new Error("Invalid number format.");
+    if (validator.isInt(str)) {
+        return parseInt(str.toString()); 
     }
-    return parseInt(number.toString()); 
+    throw new Error("Invalid number format.");
 }
 
-export function validateLimit(number) {
-    const limit = validateInteger(number)
+export function validateLimit(str) {
+    const limit = validateInteger(str)
     if (limit <= 0){
-        throw new Error("Invalid Limit Value")
+        throw new Error("Invalid Limit Value. Too small")
     }
     if (limit > LIMIT_MAX){
         throw new Error("Limit value too large")
@@ -110,38 +107,38 @@ export function validateLimit(number) {
 }
 
 
-export function validatePassword(password) {
-    assertNotNullOrEmpty(password)
-    password = baseValidation(password)
+export function validatePassword(str) {
+    assertNotNullOrEmpty(str)
+    str = baseValidation(str)
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{8,32}$/;
 
-    if (!regex.test(password)) {
+    if (!regex.test(str)) {
         throw new Error("Invalid password format.");
     }
-    return password
+    return str
 }
 
-export function validateRole(role) {
-    assertNotNullOrEmpty(role)
-    role = baseValidation(role)
+export function validateRole(str) {
+    assertNotNullOrEmpty(str)
+    str = baseValidation(str)
 
-    if (ALL_ROLES.includes(role))
-        return role 
+    if (ALL_ROLES.includes(str))
+        return str 
 
     throw new Error("Invalid Role")
 }
 
-export function validateLicensePlate(licensePlate){
-    assertNotNullOrEmpty(licensePlate)
-    licensePlate = baseValidation(licensePlate)
+export function validateLicensePlate(str){
+    assertNotNullOrEmpty(str)
+    str = baseValidation(str)
 
     const regex = /^[A-Z0-9]{6,7}$/;                // Follows the specs for Filipino license plates
 
-    if (!regex.test(licensePlate)){
+    if (!regex.test(str)){
         throw new Error("Invalid License Plate")
     }
 
-    return licensePlate;
+    return str;
 }
 
 export function assertNotNullOrEmpty(field) {
