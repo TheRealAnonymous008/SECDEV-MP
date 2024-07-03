@@ -117,4 +117,43 @@ const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500);
     }
 });
-exports.default = { all, id, upload, update, remove };
+const filter = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const query = makeQuery(req);
+        user_2.UserRepository.filter(query)
+            .then((result) => {
+            res.json({
+                data: (0, user_1.makeUserArrayView)(result),
+                count: result.length
+            });
+            res.status(200).end();
+        })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+    }
+});
+const makeQuery = (req) => {
+    const name = (0, inputValidation_1.baseValidation)(req.query.name);
+    const username = (0, inputValidation_1.baseValidation)(req.query.username);
+    const email = (0, inputValidation_1.baseValidation)(req.query.email);
+    const mobileNumber = (0, inputValidation_1.baseValidation)(req.query.mobileNumber);
+    const role = (0, inputValidation_1.baseValidation)(req.query.role);
+    const limit = (0, inputValidation_1.validateLimit)(req.query.limit);
+    const skip = (0, inputValidation_1.baseValidation)(req.query.skip);
+    return {
+        name: (name) ? name : null,
+        username: (username) ? username : null,
+        email: (email) ? email : null,
+        mobileNumber: (mobileNumber) ? mobileNumber : null,
+        role: (role) ? role : null,
+        limit: (limit) ? limit : null,
+        skip: (skip) ? skip : null,
+    };
+};
+exports.default = { all, id, upload, update, remove, filter };

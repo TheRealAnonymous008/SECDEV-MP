@@ -5,6 +5,7 @@ import IRepository from "./IRepository";
 import { Multer } from "multer";
 import { SESSION_EXPIRE_TIME } from "../config/authConfig";
 import { LIMIT_MAX } from "../config/limiterConfig";
+import { buildMatchString } from "../utils/match";
 
 const crypto = require("crypto")
 
@@ -261,7 +262,25 @@ export const UserRepository = {
                     }
                 )
             })
-        }
+        },
+
+
+    filter(query : UserQuery) : Promise<User[]> {
+        let qv = makeSQLQuery(query)
+
+        return new Promise((resolve, reject) => {
+            connection.execute<User[]>(
+                qv.query,
+                qv.values,
+                (err, res) => {
+                    if (err) reject(err);
+                    else{
+                        resolve(res)
+                    }
+                }
+            )
+        })
+    }
 }
 
 export function hashSessionId(sessionId : string ) {
@@ -270,3 +289,56 @@ export function hashSessionId(sessionId : string ) {
     hash.update(sessionIdBuffer);
     return hash.digest('hex');
   }
+
+
+export interface UserQuery {
+    name : string,
+    username: string ,
+    email: string,
+    mobileNumber: string,
+    role: string,
+    limit : number,
+    skip : number,
+}
+
+export const makeSQLQuery = (query: UserQuery): { query: string, values: any[] } => {
+    let q = `SELECT * FROM users`;
+    let whereClauses: string[] = [];
+    let values: any[] = [];
+
+    if (query.name) {
+        whereClauses.push(`CONCAT(FirstName, LastName) LIKE ?`);
+        values.push(buildMatchString(query.name));
+    }
+    if (query.email) {
+        whereClauses.push(`Email LIKE ?`);
+        values.push(buildMatchString(query.email));
+    }
+    if (query.mobileNumber) {
+        whereClauses.push(`MobileNumber LIKE ?`);
+        values.push(buildMatchString(query.mobileNumber));
+    }
+    if (query.username) {
+        whereClauses.push(`Username LIKE ?`);
+        values.push(buildMatchString(query.username));
+    }
+
+    if (whereClauses.length > 0) {
+        q += " WHERE " + whereClauses.join(" AND ");
+    }
+
+    if (query.limit) {
+        q += ` LIMIT ?`;
+        values.push(query.limit);
+    } else {
+        q += ` LIMIT ?`
+        values.push(LIMIT_MAX)
+    }
+
+    if (query.skip) {
+        q += ` OFFSET ?`;
+        values.push(query.skip);
+    }
+
+    return { query: q, values: values };
+}

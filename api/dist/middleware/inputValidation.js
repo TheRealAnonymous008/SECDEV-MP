@@ -8,6 +8,7 @@ const enum_1 = require("../models/enum");
 const sanitize_html_1 = __importDefault(require("sanitize-html"));
 const limiterConfig_1 = require("../config/limiterConfig");
 var sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
+const validator_1 = __importDefault(require("validator"));
 function validateNoHTML(text) {
     const clean = (0, sanitize_html_1.default)(text, {
         allowedTags: [],
@@ -30,70 +31,65 @@ function baseValidation(text) {
     return text;
 }
 exports.baseValidation = baseValidation;
-function validateEmail(email) {
-    assertNotNullOrEmpty(email);
-    email = baseValidation(email);
-    const regex = /^(?!.*[-_.](?![a-zA-Z0-9]))[a-zA-Z0-9][a-zA-Z0-9._-]*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
-    if (!regex.test(email)) {
-        throw new Error("Invalid email format");
-    }
-    return email;
+function validateEmail(str) {
+    assertNotNullOrEmpty(str);
+    str = baseValidation(str);
+    if (validator_1.default.isEmail(str))
+        return str;
+    throw new Error("Invalid email format");
 }
 exports.validateEmail = validateEmail;
-function validateName(name) {
-    assertNotNullOrEmpty(name);
-    name = baseValidation(name);
+function validateName(str) {
+    assertNotNullOrEmpty(str);
+    str = baseValidation(str);
     const regex = /^[A-Z][a-zA-Z]{1,34}$/;
-    if (!regex.test(name)) {
-        throw new Error("Invalid name format");
+    if (regex.test(str)) {
+        return str;
     }
-    return name;
+    throw new Error("Invalid name format");
 }
 exports.validateName = validateName;
-function validateWord(name) {
-    assertNotNullOrEmpty(name);
-    name = baseValidation(name);
-    const regex = /^[a-zA-Z]{1,34}$/;
-    if (!regex.test(name)) {
-        throw new Error("Invalid word format");
+function validateWord(str) {
+    assertNotNullOrEmpty(str);
+    str = baseValidation(str);
+    if (validator_1.default.isAlpha(str) && validator_1.default.isLength(str, { min: 1, max: 34 })) {
+        return str;
     }
-    return name;
+    throw new Error("Invalid word format");
 }
 exports.validateWord = validateWord;
-function validateUsername(username) {
-    assertNotNullOrEmpty(username);
-    username = baseValidation(username);
-    const regex = /^[a-zA-Z0-9]{4,35}$/;
-    if (!regex.test(username)) {
-        throw new Error("Invalid username format");
+function validateUsername(str) {
+    assertNotNullOrEmpty(str);
+    str = baseValidation(str);
+    if (validator_1.default.isAlphanumeric(str) && validator_1.default.isLength(str, { min: 4, max: 35 })) {
+        return str.toLowerCase();
     }
-    return username.toLowerCase();
+    throw new Error("Invalid username format");
 }
 exports.validateUsername = validateUsername;
-function validateMobileNumber(mobileNumber) {
-    assertNotNullOrEmpty(mobileNumber);
-    mobileNumber = baseValidation(mobileNumber);
+function validateMobileNumber(str) {
+    assertNotNullOrEmpty(str);
+    str = baseValidation(str);
     const regex = /^09\d{9}$/;
-    if (!regex.test(mobileNumber)) {
-        throw new Error("Invalid mobile number format.");
+    if (regex.test(str)) {
+        return str;
     }
-    return mobileNumber;
+    throw new Error("Invalid mobile number format.");
 }
 exports.validateMobileNumber = validateMobileNumber;
-function validateInteger(number) {
-    assertNotNullOrEmpty(number);
-    number = baseValidation(number);
-    const regex = /\d+$/;
-    if (!regex.test(number)) {
-        throw new Error("Invalid number format.");
+function validateInteger(str) {
+    assertNotNullOrEmpty(str);
+    str = baseValidation(str);
+    if (validator_1.default.isInt(str)) {
+        return parseInt(str.toString());
     }
-    return parseInt(number.toString());
+    throw new Error("Invalid number format.");
 }
 exports.validateInteger = validateInteger;
-function validateLimit(number) {
-    const limit = validateInteger(number);
+function validateLimit(str) {
+    const limit = validateInteger(str);
     if (limit <= 0) {
-        throw new Error("Invalid Limit Value");
+        throw new Error("Invalid Limit Value. Too small");
     }
     if (limit > limiterConfig_1.LIMIT_MAX) {
         throw new Error("Limit value too large");
@@ -101,32 +97,32 @@ function validateLimit(number) {
     return limit;
 }
 exports.validateLimit = validateLimit;
-function validatePassword(password) {
-    assertNotNullOrEmpty(password);
-    password = baseValidation(password);
+function validatePassword(str) {
+    assertNotNullOrEmpty(str);
+    str = baseValidation(str);
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{8,32}$/;
-    if (!regex.test(password)) {
+    if (!regex.test(str)) {
         throw new Error("Invalid password format.");
     }
-    return password;
+    return str;
 }
 exports.validatePassword = validatePassword;
-function validateRole(role) {
-    assertNotNullOrEmpty(role);
-    role = baseValidation(role);
-    if (enum_1.ALL_ROLES.includes(role))
-        return role;
+function validateRole(str) {
+    assertNotNullOrEmpty(str);
+    str = baseValidation(str);
+    if (enum_1.ALL_ROLES.includes(str))
+        return str;
     throw new Error("Invalid Role");
 }
 exports.validateRole = validateRole;
-function validateLicensePlate(licensePlate) {
-    assertNotNullOrEmpty(licensePlate);
-    licensePlate = baseValidation(licensePlate);
+function validateLicensePlate(str) {
+    assertNotNullOrEmpty(str);
+    str = baseValidation(str);
     const regex = /^[A-Z0-9]{6,7}$/; // Follows the specs for Filipino license plates
-    if (!regex.test(licensePlate)) {
+    if (!regex.test(str)) {
         throw new Error("Invalid License Plate");
     }
-    return licensePlate;
+    return str;
 }
 exports.validateLicensePlate = validateLicensePlate;
 function assertNotNullOrEmpty(field) {

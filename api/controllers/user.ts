@@ -4,9 +4,9 @@ import Bcrypt = require('bcryptjs');
 import { CustomerRepository } from '../repository/customer';
 import { UserRow } from '../models/user';
 import { makeUserArrayView, makeUserView } from '../projections/user';
-import { UserRepository } from '../repository/user';
+import { UserQuery, UserRepository } from '../repository/user';
 import { RoleIds, Roles } from '../models/enum';
-import { validateName, validateUsername, validateMobileNumber, validateEmail, validateInteger, validateImage, validateRole } from '../middleware/inputValidation';
+import { validateName, validateUsername, validateMobileNumber, validateEmail, validateInteger, validateImage, validateRole, baseValidation, validateLimit } from '../middleware/inputValidation';
 import { Multer } from 'multer';
 
 const SALT_ROUNDS = 10
@@ -126,4 +126,48 @@ const remove = async (req: express.Request, res: express.Response) => {
     }
 }
 
-export default {all, id, upload, update, remove};
+
+const filter = async (req: express.Request, res: express.Response) => {
+    try {
+        const query = makeQuery(req)
+        UserRepository.filter(query)
+            .then((result) => {
+                res.json({
+                    data: makeUserArrayView(result),
+                    count : result.length 
+                });
+                res.status(200).end();
+            })
+            .catch((err) => {
+                        
+                console.log(err);
+                res.status(500).end();
+            })
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+    }
+}
+
+const makeQuery = (req : express.Request) : UserQuery => {
+    const name = baseValidation(req.query.name)
+    const username = baseValidation(req.query.username)
+    const email = baseValidation(req.query.email)
+    const mobileNumber = baseValidation(req.query.mobileNumber)
+    const role = baseValidation(req.query.role)
+    const limit = validateLimit(req.query.limit)
+    const skip = baseValidation(req.query.skip)
+
+    return {
+        name: (name) ? (name as string) : null,
+        username : (username) ? (username as string) : null,
+        email: (email) ? (email as string) : null,
+        mobileNumber: (mobileNumber) ? (mobileNumber as string) : null,
+        role: (role)? (role as string) : null,
+        limit: (limit) ? (limit as number) : null,
+        skip: (skip) ? (skip as number) : null,
+    }
+}
+
+export default {all, id, upload, update, remove, filter};

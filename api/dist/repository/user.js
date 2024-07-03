@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hashSessionId = exports.UserRepository = void 0;
+exports.makeSQLQuery = exports.hashSessionId = exports.UserRepository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
 const authConfig_1 = require("../config/authConfig");
 const limiterConfig_1 = require("../config/limiterConfig");
+const match_1 = require("../utils/match");
 const crypto = require("crypto");
 exports.UserRepository = {
     register(user) {
@@ -211,6 +212,18 @@ exports.UserRepository = {
                 }
             });
         });
+    },
+    filter(query) {
+        let qv = (0, exports.makeSQLQuery)(query);
+        return new Promise((resolve, reject) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
+                if (err)
+                    reject(err);
+                else {
+                    resolve(res);
+                }
+            });
+        });
     }
 };
 function hashSessionId(sessionId) {
@@ -220,3 +233,41 @@ function hashSessionId(sessionId) {
     return hash.digest('hex');
 }
 exports.hashSessionId = hashSessionId;
+const makeSQLQuery = (query) => {
+    let q = `SELECT * FROM users`;
+    let whereClauses = [];
+    let values = [];
+    if (query.name) {
+        whereClauses.push(`CONCAT(FirstName, LastName) LIKE ?`);
+        values.push((0, match_1.buildMatchString)(query.name));
+    }
+    if (query.email) {
+        whereClauses.push(`Email LIKE ?`);
+        values.push((0, match_1.buildMatchString)(query.email));
+    }
+    if (query.mobileNumber) {
+        whereClauses.push(`MobileNumber LIKE ?`);
+        values.push((0, match_1.buildMatchString)(query.mobileNumber));
+    }
+    if (query.username) {
+        whereClauses.push(`Username LIKE ?`);
+        values.push((0, match_1.buildMatchString)(query.username));
+    }
+    if (whereClauses.length > 0) {
+        q += " WHERE " + whereClauses.join(" AND ");
+    }
+    if (query.limit) {
+        q += ` LIMIT ?`;
+        values.push(query.limit);
+    }
+    else {
+        q += ` LIMIT ?`;
+        values.push(limiterConfig_1.LIMIT_MAX);
+    }
+    if (query.skip) {
+        q += ` OFFSET ?`;
+        values.push(query.skip);
+    }
+    return { query: q, values: values };
+};
+exports.makeSQLQuery = makeSQLQuery;
