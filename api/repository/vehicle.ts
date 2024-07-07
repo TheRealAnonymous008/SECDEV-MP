@@ -3,25 +3,19 @@ import connection from "../config/connection";
 import Vehicle, { VehicleRow } from "../models/vehicle";
 import IRepository from "./IRepository";
 import { LIMIT_MAX } from "../config/limiterConfig";
+import { queryBuilder, QueryValuePair } from "../utils/dbUtils";
 
-
+const tableName = "vehicle"
 export const VehicleRepository : IRepository<Vehicle> = {
     retrieveAll(limit : number = LIMIT_MAX, offset? : number) : Promise<Vehicle[]> {
-        let query = "SELECT * FROM vehicle";
-        let values = []
-        if (limit){
-            query += ` LIMIT ?`
-            values.push(limit)
-        }
-        if (offset){
-            query += ` OFFSET ?`
-            values.push(offset)
-        }
+        let qv = queryBuilder.select(tableName)
+        queryBuilder.limit(qv, limit),
+        queryBuilder.skip(qv, offset)
 
         return new Promise((resolve, reject) => {
             connection.execute<Vehicle[]>(
-                query,
-                values,
+                qv.query,
+                qv.values,
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -33,12 +27,13 @@ export const VehicleRepository : IRepository<Vehicle> = {
     },
 
     retrieveById(id :  number) : Promise<Vehicle | undefined> {
-        let query = `SELECT * FROM vehicle WHERE Id = ?`
+        let qv = queryBuilder.select(tableName)
+        queryBuilder.where(qv, {"Id": id})
 
         return new Promise((resolve, reject) => {
             connection.execute<Vehicle[]>(
-                query,
-                [id],
+                qv.query,
+                qv.values,
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -50,23 +45,20 @@ export const VehicleRepository : IRepository<Vehicle> = {
     },
 
     insert(object : VehicleRow ) : Promise<number> {
-        let values = [
-            object.LicensePlate,
-            object.Model,
-            object.Manufacturer,
-            object.YearManufactured,
-            object.Color,
-            object.Engine,
-            object.Remarks
-        ]
-
-        let query ="INSERT INTO vehicle(LicensePlate, Model, Manufacturer, YearManufactured, Color, Engine, Remarks) \
-        VALUES(?, ?, ?, ?, ?, ?, ?);"
+        let qv = queryBuilder.insert(tableName, {
+            "LicensePlate": object.LicensePlate,
+            "Model": object.Model,
+            "Manufacturer": object.Manufacturer,
+            "YearManufactured": object.YearManufactured,
+            "Color": object.Color,
+            "Engine": object.Engine,
+            "Remarks": object.Remarks
+        })
         
         return new Promise((resolve, reject) => {
             connection.execute<ResultSetHeader>(
-                query,
-                values,
+                qv.query,
+                qv.values,
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -78,23 +70,20 @@ export const VehicleRepository : IRepository<Vehicle> = {
     },
 
     update(id : number, object : VehicleRow) : Promise<number> {
-        let values = [
-            object.LicensePlate,
-            object.Model,
-            object.Manufacturer,
-            object.YearManufactured,
-            object.Color,
-            object.Engine,
-            object.Remarks,
-            id
-        ]
+        let qv = queryBuilder.update(tableName, {
+            "LicensePlate": object.LicensePlate,
+            "Model": object.Model,
+            "Manufacturer": object.Manufacturer,
+            "YearManufactured": object.YearManufactured,
+            "Color": object.Color,
+            "Engine": object.Engine,
+            "Remarks": object.Remarks
+        })
 
-        let query ="UPDATE vehicle SET LicensePlate = ?, Model = ?, Manufacturer = ?, YearManufactured = ?, Color = ?, Engine = ?, Remarks = ? WHERE Id=?"
-        
         return new Promise((resolve, reject) => {
             connection.execute<ResultSetHeader>(
-                query,
-                values,
+                qv.query,
+                qv.values,
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -106,12 +95,13 @@ export const VehicleRepository : IRepository<Vehicle> = {
     },
 
     delete(id : number) : Promise<number> {
-        let query =`DELETE FROM vehicle WHERE id = ?`
-        
+        let qv = queryBuilder.delete(tableName)
+        queryBuilder.where(qv, {"id" : id})
+
         return new Promise((resolve, reject) => {
             connection.execute<ResultSetHeader>(
-                query,
-                [id],
+                qv.query,
+                qv.values,
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -123,11 +113,12 @@ export const VehicleRepository : IRepository<Vehicle> = {
     },
 
     count() : Promise<number> {
-        let query = "SELECT COUNT(*) FROM vehicle"
-        
+        let qv = queryBuilder.count(tableName)
+
         return new Promise((resolve, reject) => {
             connection.execute<QueryResult>(
-                query,
+                qv.query,
+                qv.values,
                 (err, res) => {
                     if (err) reject(err);
                     else{
@@ -168,55 +159,19 @@ export interface VehicleQuery {
     skip: number 
 }
 
-export const makeSQLQuery = (query: VehicleQuery): { query: string, values: any[] } => {
-    let q = `SELECT * FROM vehicle`;
-    let whereClauses: string[] = [];
-    let values: any[] = [];
+export const makeSQLQuery = (query: VehicleQuery): QueryValuePair => {
+    let qv = queryBuilder.select(tableName)
+    queryBuilder.filter(qv, {
+        "LicensePlate": query.licensePlate,
+        "Model": query.model,
+        "Manufacturer": query.manufacturer,
+        "YearManufactured": query.yearManufactured,
+        "Color": query.color,
+        "Engine": query.engine,
+        "Remarks": query.remarks
+    })
+    queryBuilder.limit(qv, query.limit)
+    queryBuilder.skip(qv, query.skip)
 
-    // if (query.licensePlate) {
-    //     whereClauses.push(`LicensePlate LIKE ?`);
-    //     values.push(like(query.licensePlate));
-    // }
-    // if (query.model) {
-    //     whereClauses.push(`Model LIKE ?`);
-    //     values.push(like(query.model));
-    // }
-    // if (query.manufacturer) {
-    //     whereClauses.push(`Manufacturer LIKE ?`);
-    //     values.push(like(query.manufacturer));
-    // }
-    // if (query.yearManufactured !== undefined) {
-    //     whereClauses.push(`YearManufactured = ?`);
-    //     values.push(query.yearManufactured);
-    // }
-    // if (query.color) {
-    //     whereClauses.push(`Color LIKE ?`);
-    //     values.push(like(query.color));
-    // }
-    // if (query.engine) {
-    //     whereClauses.push(`Engine LIKE ?`);
-    //     values.push(like(query.engine));
-    // }
-    // if (query.remarks) {
-    //     whereClauses.push(`Remarks LIKE ?`);
-    //     values.push(like(query.remarks));
-    // }
-
-    if (whereClauses.length > 0) {
-        q += " WHERE " + whereClauses.join(" AND ");
-    }
-
-    if (query.limit !== undefined) {
-        q += ` LIMIT ?`;
-        values.push(query.limit);
-    } else {
-        q += ` LIMIT ?`;
-        values.push(LIMIT_MAX)
-    }
-    if (query.skip !== undefined) {
-        q += ` OFFSET ?`;
-        values.push(query.skip);
-    }
-
-    return { query: q, values: values };
+    return qv;
 }

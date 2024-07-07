@@ -2,7 +2,7 @@ import express = require('express');
 import { makeCustomerArrayView, makeCustomerView } from '../projections/customer';
 import { CustomerQuery, CustomerRepository } from '../repository/customer';
 import { CustomerRow } from '../models/customer';
-import { baseValidation, validateEmail, validateInteger, validateLimit, validateMobileNumber, validateName, validateNoHTML, validateWord } from '../middleware/inputValidation';
+import { baseValidation, validateEmail, validateInteger, validateLimit, validateMobileNumber, validateName, validateWord } from '../middleware/inputValidation';
 
 const all = async (req: express.Request, res: express.Response) => {
     CustomerRepository.retrieveAll()

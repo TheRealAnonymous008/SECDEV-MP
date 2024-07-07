@@ -1,15 +1,9 @@
-import { randomInt, randomUUID } from 'crypto';
 import express = require('express');
-import Bcrypt = require('bcryptjs');
-import { CustomerRepository } from '../repository/customer';
 import { UserRow } from '../models/user';
 import { makeUserArrayView, makeUserView } from '../projections/user';
 import { UserQuery, UserRepository } from '../repository/user';
-import { RoleIds, Roles } from '../models/enum';
 import { validateName, validateUsername, validateMobileNumber, validateEmail, validateInteger, validateImage, validateRole, baseValidation, validateLimit } from '../middleware/inputValidation';
-import { Multer } from 'multer';
 
-const SALT_ROUNDS = 10
 const all = async (req: express.Request, res: express.Response) => {
     UserRepository.retrieveAll()
         .then((result) => {

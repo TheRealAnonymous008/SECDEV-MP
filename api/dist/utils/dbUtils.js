@@ -5,9 +5,16 @@ const limiterConfig_1 = require("../config/limiterConfig");
 const inputValidation_1 = require("../middleware/inputValidation");
 const DB_NAME = process.env.DB_DATABASE;
 const tableName = (table) => { return DB_NAME + "." + table; };
-const select = (table) => {
+const select = (table, filter = []) => {
+    if (filter.length == 0) {
+        return {
+            query: `SELECT * FROM ${tableName(table)}`,
+            values: []
+        };
+    }
+    const f = filter.join(', ');
     return {
-        query: `SELECT * FROM ${tableName(table)}`,
+        query: `SELECT ${f} FROM ${tableName(table)}`,
         values: []
     };
 };
@@ -109,4 +116,10 @@ const skip = (qv, skip) => {
     }
     return qv;
 };
-exports.queryBuilder = { select, insert, update, delete: remove, like, where, filter, limit, skip, count };
+const concat = (q1, q2) => {
+    return {
+        query: q1.query + "; " + q2.query,
+        values: q1.values.concat(q2.values)
+    };
+};
+exports.queryBuilder = { select, insert, update, delete: remove, like, where, filter, limit, skip, count, concat };

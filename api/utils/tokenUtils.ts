@@ -1,6 +1,5 @@
 import jwt = require('jsonwebtoken');
-import { JWT_EXPIRE_TIME, JWT_ISSUER, REFRESH_EXPIRE_TIME, getRandomAccessSecret, getRandomRefreshSecret } from "../config/authConfig";
-import { checkRefreshToken } from '../middleware/authValidation';
+import { ACCESS_SECRETS, JWT_EXPIRE_TIME, JWT_ISSUER, REFRESH_EXPIRE_TIME, REFRESH_SECRETS, getRandomAccessSecret, getRandomRefreshSecret } from "../config/authConfig";
 import { RoleIds } from '../models/enum';
 import User from '../models/user';
 import { UserRepository } from '../repository/user';
@@ -85,3 +84,38 @@ export const signToken = async (user : User,  callback: (error: Error | null, to
         callback(error, null, null);
     }
 };
+
+
+export const checkAccessToken = (token) => {
+    let decoded = null 
+    for (let i = 0; i < ACCESS_SECRETS.length; ++i){
+        try {
+            decoded = jwt.verify(token, ACCESS_SECRETS[i], {issuer : JWT_ISSUER})
+        }
+        catch(err){
+            // Do nothing
+        }
+
+        if (decoded != null)
+            break
+    }
+    return decoded
+}
+
+
+export const checkRefreshToken = (token) => {
+    let decoded = null 
+    for (let i = 0; i < REFRESH_SECRETS.length; ++i){
+        try {
+            decoded = jwt.verify(token, REFRESH_SECRETS[i], {issuer : JWT_ISSUER})
+        }
+        catch(err){
+            // Do nothing
+        }
+
+        if (decoded != null)
+            break
+    }
+
+    return decoded
+}

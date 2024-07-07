@@ -9,14 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signToken = exports.refreshToken = void 0;
+exports.checkRefreshToken = exports.checkAccessToken = exports.signToken = exports.refreshToken = void 0;
 const jwt = require("jsonwebtoken");
 const authConfig_1 = require("../config/authConfig");
-const authValidation_1 = require("../middleware/authValidation");
 const enum_1 = require("../models/enum");
 const user_1 = require("../repository/user");
 const refreshToken = (refreshjwt) => {
-    const decoded = (0, authValidation_1.checkRefreshToken)(refreshjwt);
+    const decoded = (0, exports.checkRefreshToken)(refreshjwt);
     if (decoded) {
         return jwt.sign({
             id: decoded.id,
@@ -76,3 +75,33 @@ const signToken = (user, callback) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.signToken = signToken;
+const checkAccessToken = (token) => {
+    let decoded = null;
+    for (let i = 0; i < authConfig_1.ACCESS_SECRETS.length; ++i) {
+        try {
+            decoded = jwt.verify(token, authConfig_1.ACCESS_SECRETS[i], { issuer: authConfig_1.JWT_ISSUER });
+        }
+        catch (err) {
+            // Do nothing
+        }
+        if (decoded != null)
+            break;
+    }
+    return decoded;
+};
+exports.checkAccessToken = checkAccessToken;
+const checkRefreshToken = (token) => {
+    let decoded = null;
+    for (let i = 0; i < authConfig_1.REFRESH_SECRETS.length; ++i) {
+        try {
+            decoded = jwt.verify(token, authConfig_1.REFRESH_SECRETS[i], { issuer: authConfig_1.JWT_ISSUER });
+        }
+        catch (err) {
+            // Do nothing
+        }
+        if (decoded != null)
+            break;
+    }
+    return decoded;
+};
+exports.checkRefreshToken = checkRefreshToken;

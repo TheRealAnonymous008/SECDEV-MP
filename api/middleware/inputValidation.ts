@@ -1,5 +1,4 @@
-import { assert } from "console";
-import { ALL_ROLES, Roles } from "../models/enum";
+import { ALL_ROLES } from "../models/enum";
 
 import sanitizeHtml from 'sanitize-html';
 import { LIMIT_MAX } from "../config/limiterConfig";

@@ -1,5 +1,4 @@
 import express = require('express');
-import { makeCustomerArrayView, makeCustomerView } from '../projections/customer';
 import { CustomerRepository } from '../repository/customer';
 import { validateInteger } from '../middleware/inputValidation';
 import { OrderRespository } from '../repository/order';

@@ -1,10 +1,7 @@
-import { randomInt, randomUUID } from 'crypto';
 import  express = require('express');
-import BCrypt = require('bcryptjs');
-import { ALL_ROLES, Roles } from '../models/enum';
 import { makeVehicleArrayView, makeVehicleView } from '../projections/vehicle';
 import { VehicleQuery, VehicleRepository } from '../repository/vehicle';
-import Vehicle, { VehicleRow } from '../models/vehicle';
+import { VehicleRow } from '../models/vehicle';
 import { baseValidation, validateInteger, validateLicensePlate, validateLimit, validateWord } from '../middleware/inputValidation';
 
 const all = async (req: express.Request, res: express.Response) => {

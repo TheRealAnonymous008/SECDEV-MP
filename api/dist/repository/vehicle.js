@@ -6,20 +6,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeSQLQuery = exports.VehicleRepository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
 const limiterConfig_1 = require("../config/limiterConfig");
+const dbUtils_1 = require("../utils/dbUtils");
+const tableName = "vehicle";
 exports.VehicleRepository = {
     retrieveAll(limit = limiterConfig_1.LIMIT_MAX, offset) {
-        let query = "SELECT * FROM vehicle";
-        let values = [];
-        if (limit) {
-            query += ` LIMIT ?`;
-            values.push(limit);
-        }
-        if (offset) {
-            query += ` OFFSET ?`;
-            values.push(offset);
-        }
+        let qv = dbUtils_1.queryBuilder.select(tableName);
+        dbUtils_1.queryBuilder.limit(qv, limit),
+            dbUtils_1.queryBuilder.skip(qv, offset);
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, values, (err, res) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -29,9 +24,10 @@ exports.VehicleRepository = {
         });
     },
     retrieveById(id) {
-        let query = `SELECT * FROM vehicle WHERE Id = ?`;
+        let qv = dbUtils_1.queryBuilder.select(tableName);
+        dbUtils_1.queryBuilder.where(qv, { "Id": id });
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, [id], (err, res) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -41,19 +37,17 @@ exports.VehicleRepository = {
         });
     },
     insert(object) {
-        let values = [
-            object.LicensePlate,
-            object.Model,
-            object.Manufacturer,
-            object.YearManufactured,
-            object.Color,
-            object.Engine,
-            object.Remarks
-        ];
-        let query = "INSERT INTO vehicle(LicensePlate, Model, Manufacturer, YearManufactured, Color, Engine, Remarks) \
-        VALUES(?, ?, ?, ?, ?, ?, ?);";
+        let qv = dbUtils_1.queryBuilder.insert(tableName, {
+            "LicensePlate": object.LicensePlate,
+            "Model": object.Model,
+            "Manufacturer": object.Manufacturer,
+            "YearManufactured": object.YearManufactured,
+            "Color": object.Color,
+            "Engine": object.Engine,
+            "Remarks": object.Remarks
+        });
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, values, (err, res) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -63,19 +57,17 @@ exports.VehicleRepository = {
         });
     },
     update(id, object) {
-        let values = [
-            object.LicensePlate,
-            object.Model,
-            object.Manufacturer,
-            object.YearManufactured,
-            object.Color,
-            object.Engine,
-            object.Remarks,
-            id
-        ];
-        let query = "UPDATE vehicle SET LicensePlate = ?, Model = ?, Manufacturer = ?, YearManufactured = ?, Color = ?, Engine = ?, Remarks = ? WHERE Id=?";
+        let qv = dbUtils_1.queryBuilder.update(tableName, {
+            "LicensePlate": object.LicensePlate,
+            "Model": object.Model,
+            "Manufacturer": object.Manufacturer,
+            "YearManufactured": object.YearManufactured,
+            "Color": object.Color,
+            "Engine": object.Engine,
+            "Remarks": object.Remarks
+        });
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, values, (err, res) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -85,9 +77,10 @@ exports.VehicleRepository = {
         });
     },
     delete(id) {
-        let query = `DELETE FROM vehicle WHERE id = ?`;
+        let qv = dbUtils_1.queryBuilder.delete(tableName);
+        dbUtils_1.queryBuilder.where(qv, { "id": id });
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, [id], (err, res) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -97,9 +90,9 @@ exports.VehicleRepository = {
         });
     },
     count() {
-        let query = "SELECT COUNT(*) FROM vehicle";
+        let qv = dbUtils_1.queryBuilder.count(tableName);
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -122,52 +115,18 @@ exports.VehicleRepository = {
     }
 };
 const makeSQLQuery = (query) => {
-    let q = `SELECT * FROM vehicle`;
-    let whereClauses = [];
-    let values = [];
-    // if (query.licensePlate) {
-    //     whereClauses.push(`LicensePlate LIKE ?`);
-    //     values.push(like(query.licensePlate));
-    // }
-    // if (query.model) {
-    //     whereClauses.push(`Model LIKE ?`);
-    //     values.push(like(query.model));
-    // }
-    // if (query.manufacturer) {
-    //     whereClauses.push(`Manufacturer LIKE ?`);
-    //     values.push(like(query.manufacturer));
-    // }
-    // if (query.yearManufactured !== undefined) {
-    //     whereClauses.push(`YearManufactured = ?`);
-    //     values.push(query.yearManufactured);
-    // }
-    // if (query.color) {
-    //     whereClauses.push(`Color LIKE ?`);
-    //     values.push(like(query.color));
-    // }
-    // if (query.engine) {
-    //     whereClauses.push(`Engine LIKE ?`);
-    //     values.push(like(query.engine));
-    // }
-    // if (query.remarks) {
-    //     whereClauses.push(`Remarks LIKE ?`);
-    //     values.push(like(query.remarks));
-    // }
-    if (whereClauses.length > 0) {
-        q += " WHERE " + whereClauses.join(" AND ");
-    }
-    if (query.limit !== undefined) {
-        q += ` LIMIT ?`;
-        values.push(query.limit);
-    }
-    else {
-        q += ` LIMIT ?`;
-        values.push(limiterConfig_1.LIMIT_MAX);
-    }
-    if (query.skip !== undefined) {
-        q += ` OFFSET ?`;
-        values.push(query.skip);
-    }
-    return { query: q, values: values };
+    let qv = dbUtils_1.queryBuilder.select(tableName);
+    dbUtils_1.queryBuilder.filter(qv, {
+        "LicensePlate": query.licensePlate,
+        "Model": query.model,
+        "Manufacturer": query.manufacturer,
+        "YearManufactured": query.yearManufactured,
+        "Color": query.color,
+        "Engine": query.engine,
+        "Remarks": query.remarks
+    });
+    dbUtils_1.queryBuilder.limit(qv, query.limit);
+    dbUtils_1.queryBuilder.skip(qv, query.skip);
+    return qv;
 };
 exports.makeSQLQuery = makeSQLQuery;

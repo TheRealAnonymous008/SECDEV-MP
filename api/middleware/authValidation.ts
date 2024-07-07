@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import jwt = require("jsonwebtoken");
-import { ACCESS_SECRETS, JWT_ISSUER, REFRESH_SECRETS } from "../config/authConfig";
-import { refreshToken } from "../utils/tokenUtils";
+import { checkAccessToken, checkRefreshToken, refreshToken } from "../utils/tokenUtils";
 
 const clearRefreshToken = (res : Response) => {
     res.clearCookie("jwt")
@@ -74,37 +72,3 @@ const validateToken = (req : Request, res : Response, next : NextFunction) => {
 };
 
 export default validateToken;
-
-export const checkAccessToken = (token) => {
-    let decoded = null 
-    for (let i = 0; i < ACCESS_SECRETS.length; ++i){
-        try {
-            decoded = jwt.verify(token, ACCESS_SECRETS[i], {issuer : JWT_ISSUER})
-        }
-        catch(err){
-            // Do nothing
-        }
-
-        if (decoded != null)
-            break
-    }
-    return decoded
-}
-
-
-export const checkRefreshToken = (token) => {
-    let decoded = null 
-    for (let i = 0; i < REFRESH_SECRETS.length; ++i){
-        try {
-            decoded = jwt.verify(token, REFRESH_SECRETS[i], {issuer : JWT_ISSUER})
-        }
-        catch(err){
-            // Do nothing
-        }
-
-        if (decoded != null)
-            break
-    }
-
-    return decoded
-}

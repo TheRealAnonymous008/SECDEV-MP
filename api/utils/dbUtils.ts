@@ -1,5 +1,5 @@
 import { LIMIT_MAX } from "../config/limiterConfig"
-import { validateInteger, validateLimit, validateNonNegative } from "../middleware/inputValidation";
+import { validateLimit, validateNonNegative } from "../middleware/inputValidation";
 
 export interface QueryValuePair {
     query : string, 
@@ -11,9 +11,17 @@ const DB_NAME = process.env.DB_DATABASE;
 
 const tableName = (table : string) => {return DB_NAME + "." + table}
 
-const select = (table : string) : QueryValuePair => {
+const select = (table : string, filter : string[] = []) : QueryValuePair => {
+    if (filter.length == 0) {
+        return {
+            query : `SELECT * FROM ${tableName(table)}`,
+            values: []
+        }
+    }
+
+    const f = filter.join(', ')
     return {
-        query : `SELECT * FROM ${tableName(table)}`,
+        query : `SELECT ${f} FROM ${tableName(table)}`,
         values: []
     }
 }
@@ -138,4 +146,11 @@ const skip = (qv : QueryValuePair, skip : number) : QueryValuePair => {
     return qv
 }
 
-export const queryBuilder = {select, insert, update, delete : remove, like, where, filter, limit, skip, count}
+const concat = (q1 : QueryValuePair, q2: QueryValuePair) : QueryValuePair => {
+    return {
+        query: q1.query + "; " + q2.query,
+        values: q1.values.concat(q2.values)
+    }
+}
+
+export const queryBuilder = {select, insert, update, delete : remove, like, where, filter, limit, skip, count, concat}

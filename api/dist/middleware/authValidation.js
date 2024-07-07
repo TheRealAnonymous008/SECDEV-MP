@@ -1,8 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkRefreshToken = exports.checkAccessToken = void 0;
-const jwt = require("jsonwebtoken");
-const authConfig_1 = require("../config/authConfig");
 const tokenUtils_1 = require("../utils/tokenUtils");
 const clearRefreshToken = (res) => {
     res.clearCookie("jwt");
@@ -25,14 +22,14 @@ const handleAccessTokenExpired = (res, token) => {
         secure: true,
         sameSite: "none",
     });
-    res.locals.jwt = (0, exports.checkAccessToken)(token);
+    res.locals.jwt = (0, tokenUtils_1.checkAccessToken)(token);
 };
 const validateToken = (req, res, next) => {
     const refToken = req.cookies.jwt;
     let token = req.cookies.jwtacc;
     if (token && refToken) {
         try {
-            const decoded = (0, exports.checkAccessToken)(token);
+            const decoded = (0, tokenUtils_1.checkAccessToken)(token);
             if (decoded == null) {
                 throw Error("JWT not decoded properly");
             }
@@ -42,7 +39,7 @@ const validateToken = (req, res, next) => {
         catch (error) {
             console.log("Error", error);
             try {
-                (0, exports.checkRefreshToken)(refToken);
+                (0, tokenUtils_1.checkRefreshToken)(refToken);
             }
             catch (error) {
                 handleRefreshTokenExpired(res, error);
@@ -67,33 +64,3 @@ const validateToken = (req, res, next) => {
     }
 };
 exports.default = validateToken;
-const checkAccessToken = (token) => {
-    let decoded = null;
-    for (let i = 0; i < authConfig_1.ACCESS_SECRETS.length; ++i) {
-        try {
-            decoded = jwt.verify(token, authConfig_1.ACCESS_SECRETS[i], { issuer: authConfig_1.JWT_ISSUER });
-        }
-        catch (err) {
-            // Do nothing
-        }
-        if (decoded != null)
-            break;
-    }
-    return decoded;
-};
-exports.checkAccessToken = checkAccessToken;
-const checkRefreshToken = (token) => {
-    let decoded = null;
-    for (let i = 0; i < authConfig_1.REFRESH_SECRETS.length; ++i) {
-        try {
-            decoded = jwt.verify(token, authConfig_1.REFRESH_SECRETS[i], { issuer: authConfig_1.JWT_ISSUER });
-        }
-        catch (err) {
-            // Do nothing
-        }
-        if (decoded != null)
-            break;
-    }
-    return decoded;
-};
-exports.checkRefreshToken = checkRefreshToken;

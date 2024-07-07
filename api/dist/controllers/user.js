@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = require("../projections/user");
 const user_2 = require("../repository/user");
 const inputValidation_1 = require("../middleware/inputValidation");
-const SALT_ROUNDS = 10;
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     user_2.UserRepository.retrieveAll()
         .then((result) => {
