@@ -1,1 +1,0 @@
-export const MAX_INTEGER = Math.pow(2, 31) - 1;

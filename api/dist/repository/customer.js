@@ -5,22 +5,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeSQLQuery = exports.CustomerRepository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
-const match_1 = require("../utils/match");
 const limiterConfig_1 = require("../config/limiterConfig");
+const dbUtils_1 = require("../utils/dbUtils");
+const tableName = "customer";
 exports.CustomerRepository = {
     retrieveAll(limit = limiterConfig_1.LIMIT_MAX, offset) {
-        let query = "SELECT * FROM customer";
-        let values = [];
-        if (limit) {
-            query += ` LIMIT ?`;
-            values.push(limit);
-        }
-        if (offset) {
-            query += ` OFFSET ?`;
-            values.push(offset);
-        }
+        let qv = dbUtils_1.queryBuilder.select(tableName);
+        dbUtils_1.queryBuilder.limit(qv, limit),
+            dbUtils_1.queryBuilder.skip(qv, offset);
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, values, (err, res) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -30,9 +24,10 @@ exports.CustomerRepository = {
         });
     },
     retrieveById(id) {
-        let query = `SELECT * FROM customer WHERE Id = ?`;
+        let qv = dbUtils_1.queryBuilder.select(tableName);
+        dbUtils_1.queryBuilder.where(qv, { "Id": id });
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, [id], (err, res) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -42,19 +37,17 @@ exports.CustomerRepository = {
         });
     },
     insert(object) {
-        let values = [
-            object.FirstName,
-            object.LastName,
-            object.MobileNumber,
-            object.Email,
-            object.Company,
-            object.Insurance,
-            object.Remarks
-        ];
-        let query = "INSERT INTO customer(FirstName, LastName, MobileNumber, Email, Company, Insurance, Remarks) \
-        VALUES(?, ?, ?, ?, ?, ?, ?);";
+        let qv = dbUtils_1.queryBuilder.insert(tableName, {
+            "FirstName": object.FirstName,
+            "LastName": object.LastName,
+            "MobileNumber": object.MobileNumber,
+            "Email": object.Email,
+            "Company": object.Company,
+            "Insurance": object.Insurance,
+            "Remarks": object.Remarks,
+        });
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, values, (err, res) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -64,19 +57,18 @@ exports.CustomerRepository = {
         });
     },
     update(id, object) {
-        let values = [
-            object.FirstName,
-            object.LastName,
-            object.MobileNumber,
-            object.Email,
-            object.Company,
-            object.Insurance,
-            object.Remarks,
-            id
-        ];
-        let query = "UPDATE customer SET FirstName = ?, LastName = ?, MobileNumber = ?, Email = ?, Company = ?, Insurance = ?, Remarks = ? WHERE Id=?";
+        let qv = dbUtils_1.queryBuilder.update(tableName, {
+            "FirstName": object.FirstName,
+            "LastName": object.LastName,
+            "MobileNumber": object.MobileNumber,
+            "Email": object.Email,
+            "Company": object.Company,
+            "Insurance": object.Insurance,
+            "Remarks": object.Remarks,
+        });
+        dbUtils_1.queryBuilder.where(qv, { "Id": id });
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, values, (err, res) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -86,9 +78,10 @@ exports.CustomerRepository = {
         });
     },
     delete(id) {
-        let query = `DELETE FROM customer WHERE id = ?`;
+        let qv = dbUtils_1.queryBuilder.delete(tableName);
+        dbUtils_1.queryBuilder.where(qv, { "id": id });
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, [id], (err, res) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -98,9 +91,9 @@ exports.CustomerRepository = {
         });
     },
     count() {
-        let query = "SELECT COUNT(*) FROM vehicle";
+        let qv = dbUtils_1.queryBuilder.count(tableName);
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, (err, res) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
@@ -123,48 +116,16 @@ exports.CustomerRepository = {
     }
 };
 const makeSQLQuery = (query) => {
-    let q = `SELECT * FROM customer`;
-    let whereClauses = [];
-    let values = [];
-    if (query.name) {
-        whereClauses.push(`CONCAT(FirstName, LastName) LIKE ?`);
-        values.push((0, match_1.buildMatchString)(query.name));
-    }
-    if (query.email) {
-        whereClauses.push(`Email LIKE ?`);
-        values.push((0, match_1.buildMatchString)(query.email));
-    }
-    if (query.mobileNumber) {
-        whereClauses.push(`MobileNumber LIKE ?`);
-        values.push((0, match_1.buildMatchString)(query.mobileNumber));
-    }
-    if (query.company) {
-        whereClauses.push(`Company LIKE ?`);
-        values.push((0, match_1.buildMatchString)(query.company));
-    }
-    if (query.insurance) {
-        whereClauses.push(`Insurance LIKE ?`);
-        values.push((0, match_1.buildMatchString)(query.insurance));
-    }
-    if (query.remarks) {
-        whereClauses.push(`Remarks LIKE ?`);
-        values.push((0, match_1.buildMatchString)(query.remarks));
-    }
-    if (whereClauses.length > 0) {
-        q += " WHERE " + whereClauses.join(" AND ");
-    }
-    if (query.limit) {
-        q += ` LIMIT ?`;
-        values.push(query.limit);
-    }
-    else {
-        q += ` LIMIT ?`;
-        values.push(limiterConfig_1.LIMIT_MAX);
-    }
-    if (query.skip) {
-        q += ` OFFSET ?`;
-        values.push(query.skip);
-    }
-    return { query: q, values: values };
+    let qv = dbUtils_1.queryBuilder.select(tableName);
+    dbUtils_1.queryBuilder.filter(qv, {
+        "CONCAT(FirstName, LastName)": query.name,
+        "Email": query.email,
+        "MobileNumber": query.mobileNumber,
+        "Company": query.company,
+        "Remarks": query.remarks
+    });
+    dbUtils_1.queryBuilder.limit(qv, query.limit);
+    dbUtils_1.queryBuilder.skip(qv, query.skip);
+    return qv;
 };
 exports.makeSQLQuery = makeSQLQuery;

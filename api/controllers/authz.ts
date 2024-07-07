@@ -1,6 +1,5 @@
 import express = require('express');
 import Bcrypt = require('bcryptjs');
-import signToken from '../utils/signToken';
 import { RoleIds, Roles } from '../models/enum';
 import { UserRepository } from '../repository/user';
 import { UserRow } from '../models/user';
@@ -8,6 +7,7 @@ import * as inputValidation from '../middleware/inputValidation';
 import jwtDecode from 'jwt-decode';
 import logger from '../logging/logger';
 import { LogLevel } from '../config/logConfig';
+import { signToken } from '../utils/tokenUtils';
 
 const SALT_ROUNDS = 14
 

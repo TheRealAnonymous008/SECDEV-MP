@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt = require("jsonwebtoken");
 import { ACCESS_SECRETS, JWT_ISSUER, REFRESH_SECRETS } from "../config/authConfig";
-import refreshToken from "../utils/refreshToken";
+import { refreshToken } from "../utils/tokenUtils";
 
 const clearRefreshToken = (res : Response) => {
     res.clearCookie("jwt")

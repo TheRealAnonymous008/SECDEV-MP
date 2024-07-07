@@ -18,5 +18,5 @@ router.post('/create', authValidation_1.default, (0, roleValidation_1.default)([
 router.post('/update', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN]), user_1.default.update);
 router.delete('/delete', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN]), user_1.default.remove);
 router.post('/upload', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN, enum_1.RoleIds.VIEW, enum_1.RoleIds.VIEW_EDIT]), uploadHandler.single("image"), user_1.default.upload);
-// router.get('/filter', validateToken, validateRole(ALL_ROLES), controller.filter);
+router.get('/filter', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN, enum_1.RoleIds.VIEW, enum_1.RoleIds.VIEW_EDIT]), user_1.default.filter);
 exports.default = router;

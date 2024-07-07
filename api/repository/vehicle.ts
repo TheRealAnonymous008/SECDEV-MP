@@ -2,7 +2,6 @@ import { QueryResult, ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
 import Vehicle, { VehicleRow } from "../models/vehicle";
 import IRepository from "./IRepository";
-import { buildMatchString } from "../utils/match";
 import { LIMIT_MAX } from "../config/limiterConfig";
 
 
@@ -174,34 +173,34 @@ export const makeSQLQuery = (query: VehicleQuery): { query: string, values: any[
     let whereClauses: string[] = [];
     let values: any[] = [];
 
-    if (query.licensePlate) {
-        whereClauses.push(`LicensePlate LIKE ?`);
-        values.push(buildMatchString(query.licensePlate));
-    }
-    if (query.model) {
-        whereClauses.push(`Model LIKE ?`);
-        values.push(buildMatchString(query.model));
-    }
-    if (query.manufacturer) {
-        whereClauses.push(`Manufacturer LIKE ?`);
-        values.push(buildMatchString(query.manufacturer));
-    }
-    if (query.yearManufactured !== undefined) {
-        whereClauses.push(`YearManufactured = ?`);
-        values.push(query.yearManufactured);
-    }
-    if (query.color) {
-        whereClauses.push(`Color LIKE ?`);
-        values.push(buildMatchString(query.color));
-    }
-    if (query.engine) {
-        whereClauses.push(`Engine LIKE ?`);
-        values.push(buildMatchString(query.engine));
-    }
-    if (query.remarks) {
-        whereClauses.push(`Remarks LIKE ?`);
-        values.push(buildMatchString(query.remarks));
-    }
+    // if (query.licensePlate) {
+    //     whereClauses.push(`LicensePlate LIKE ?`);
+    //     values.push(like(query.licensePlate));
+    // }
+    // if (query.model) {
+    //     whereClauses.push(`Model LIKE ?`);
+    //     values.push(like(query.model));
+    // }
+    // if (query.manufacturer) {
+    //     whereClauses.push(`Manufacturer LIKE ?`);
+    //     values.push(like(query.manufacturer));
+    // }
+    // if (query.yearManufactured !== undefined) {
+    //     whereClauses.push(`YearManufactured = ?`);
+    //     values.push(query.yearManufactured);
+    // }
+    // if (query.color) {
+    //     whereClauses.push(`Color LIKE ?`);
+    //     values.push(like(query.color));
+    // }
+    // if (query.engine) {
+    //     whereClauses.push(`Engine LIKE ?`);
+    //     values.push(like(query.engine));
+    // }
+    // if (query.remarks) {
+    //     whereClauses.push(`Remarks LIKE ?`);
+    //     values.push(like(query.remarks));
+    // }
 
     if (whereClauses.length > 0) {
         q += " WHERE " + whereClauses.join(" AND ");

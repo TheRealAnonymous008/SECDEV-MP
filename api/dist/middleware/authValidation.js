@@ -1,12 +1,9 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkRefreshToken = exports.checkAccessToken = void 0;
 const jwt = require("jsonwebtoken");
 const authConfig_1 = require("../config/authConfig");
-const refreshToken_1 = __importDefault(require("../utils/refreshToken"));
+const tokenUtils_1 = require("../utils/tokenUtils");
 const clearRefreshToken = (res) => {
     res.clearCookie("jwt");
 };
@@ -49,7 +46,7 @@ const validateToken = (req, res, next) => {
             }
             catch (error) {
                 handleRefreshTokenExpired(res, error);
-                token = (0, refreshToken_1.default)(refToken);
+                token = (0, tokenUtils_1.refreshToken)(refToken);
                 if (token) {
                     handleAccessTokenExpired(res, token);
                     next();

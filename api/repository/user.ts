@@ -5,7 +5,7 @@ import IRepository from "./IRepository";
 import { Multer } from "multer";
 import { SESSION_EXPIRE_TIME } from "../config/authConfig";
 import { LIMIT_MAX } from "../config/limiterConfig";
-import { buildMatchString } from "../utils/match";
+import { queryBuilder } from "../utils/dbUtils";
 
 const crypto = require("crypto")
 
@@ -308,19 +308,19 @@ export const makeSQLQuery = (query: UserQuery): { query: string, values: any[] }
 
     if (query.name) {
         whereClauses.push(`CONCAT(FirstName, LastName) LIKE ?`);
-        values.push(buildMatchString(query.name));
+        values.push(queryBuilder.like(query.name));
     }
     if (query.email) {
         whereClauses.push(`Email LIKE ?`);
-        values.push(buildMatchString(query.email));
+        values.push(queryBuilder.like(query.email));
     }
     if (query.mobileNumber) {
         whereClauses.push(`MobileNumber LIKE ?`);
-        values.push(buildMatchString(query.mobileNumber));
+        values.push(queryBuilder.like(query.mobileNumber));
     }
     if (query.username) {
         whereClauses.push(`Username LIKE ?`);
-        values.push(buildMatchString(query.username));
+        values.push(queryBuilder.like(query.username));
     }
 
     if (whereClauses.length > 0) {

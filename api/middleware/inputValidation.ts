@@ -95,6 +95,14 @@ export function validateInteger(str : string) {
     throw new Error("Invalid number format.");
 }
 
+export function validateNonNegative(str : string) {
+    const x = validateInteger(str)
+    if (x >= 0){
+        return x
+    }
+    throw new Error("Expected Non-negative Integer")
+}
+
 export function validateLimit(str) {
     const limit = validateInteger(str)
     if (limit <= 0){

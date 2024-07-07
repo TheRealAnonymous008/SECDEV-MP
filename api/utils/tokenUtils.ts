@@ -1,9 +1,29 @@
 import jwt = require('jsonwebtoken');
-import { ACCESS_SECRETS, JWT_EXPIRE_TIME, JWT_ISSUER, REFRESH_EXPIRE_TIME, getRandomAccessSecret, getRandomRefreshSecret } from "../config/authConfig";
-import User from '../models/user';
-import { randomUUID } from 'crypto';
-import { UserRepository } from '../repository/user';
+import { JWT_EXPIRE_TIME, JWT_ISSUER, REFRESH_EXPIRE_TIME, getRandomAccessSecret, getRandomRefreshSecret } from "../config/authConfig";
+import { checkRefreshToken } from '../middleware/authValidation';
 import { RoleIds } from '../models/enum';
+import User from '../models/user';
+import { UserRepository } from '../repository/user';
+
+export const refreshToken = (refreshjwt : string) : string => {
+
+    const decoded = checkRefreshToken(refreshjwt);
+
+    if(decoded) {
+        return jwt.sign(
+            {
+                id : decoded.id,
+                role: decoded.role,
+            },
+            getRandomRefreshSecret(),
+            {
+                expiresIn: JWT_EXPIRE_TIME,
+                issuer: decoded.accessIssuer,
+            },);
+    }
+
+    return "";
+}
 
 var uid = require('uid-safe')
 
@@ -32,7 +52,7 @@ const makeRefreshToken = async (user, token, sessionId, callback) => {
     )
 }
 
-const signToken = async (user : User,  callback: (error: Error | null, token: string | null, refreshToken: string | null) => void): Promise<void> => {
+export const signToken = async (user : User,  callback: (error: Error | null, token: string | null, refreshToken: string | null) => void): Promise<void> => {
     const timeSinceEpoch = new Date().getTime();
     const expirationTime = timeSinceEpoch + Number(JWT_EXPIRE_TIME) * 10000;
     const sessionId = uid.sync(24)
@@ -65,5 +85,3 @@ const signToken = async (user : User,  callback: (error: Error | null, token: st
         callback(error, null, null);
     }
 };
-
-export default signToken;

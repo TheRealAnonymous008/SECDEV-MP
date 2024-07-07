@@ -16,7 +16,7 @@ exports.makeSQLQuery = exports.hashSessionId = exports.UserRepository = void 0;
 const connection_1 = __importDefault(require("../config/connection"));
 const authConfig_1 = require("../config/authConfig");
 const limiterConfig_1 = require("../config/limiterConfig");
-const match_1 = require("../utils/match");
+const dbUtils_1 = require("../utils/dbUtils");
 const crypto = require("crypto");
 exports.UserRepository = {
     register(user) {
@@ -239,19 +239,19 @@ const makeSQLQuery = (query) => {
     let values = [];
     if (query.name) {
         whereClauses.push(`CONCAT(FirstName, LastName) LIKE ?`);
-        values.push((0, match_1.buildMatchString)(query.name));
+        values.push(dbUtils_1.queryBuilder.like(query.name));
     }
     if (query.email) {
         whereClauses.push(`Email LIKE ?`);
-        values.push((0, match_1.buildMatchString)(query.email));
+        values.push(dbUtils_1.queryBuilder.like(query.email));
     }
     if (query.mobileNumber) {
         whereClauses.push(`MobileNumber LIKE ?`);
-        values.push((0, match_1.buildMatchString)(query.mobileNumber));
+        values.push(dbUtils_1.queryBuilder.like(query.mobileNumber));
     }
     if (query.username) {
         whereClauses.push(`Username LIKE ?`);
-        values.push((0, match_1.buildMatchString)(query.username));
+        values.push(dbUtils_1.queryBuilder.like(query.username));
     }
     if (whereClauses.length > 0) {
         q += " WHERE " + whereClauses.join(" AND ");

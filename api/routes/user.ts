@@ -15,7 +15,7 @@ router.post('/create', validateToken, validateRole([RoleIds.ADMIN]), authz.regis
 router.post('/update', validateToken, validateRole([RoleIds.ADMIN]), controller.update);
 router.delete('/delete', validateToken, validateRole([RoleIds.ADMIN]), controller.remove);
 router.post('/upload', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW, RoleIds.VIEW_EDIT]), uploadHandler.single("image"), controller.upload)
-// router.get('/filter', validateToken, validateRole(ALL_ROLES), controller.filter);
+router.get('/filter', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW, RoleIds.VIEW_EDIT]), controller.filter);
 
 export default router;
 

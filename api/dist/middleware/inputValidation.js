@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateImage = exports.assertNotNullOrEmpty = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateLimit = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
+exports.validateImage = exports.assertNotNullOrEmpty = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateLimit = exports.validateNonNegative = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
 const enum_1 = require("../models/enum");
 const sanitize_html_1 = __importDefault(require("sanitize-html"));
 const limiterConfig_1 = require("../config/limiterConfig");
@@ -86,6 +86,14 @@ function validateInteger(str) {
     throw new Error("Invalid number format.");
 }
 exports.validateInteger = validateInteger;
+function validateNonNegative(str) {
+    const x = validateInteger(str);
+    if (x >= 0) {
+        return x;
+    }
+    throw new Error("Expected Non-negative Integer");
+}
+exports.validateNonNegative = validateNonNegative;
 function validateLimit(str) {
     const limit = validateInteger(str);
     if (limit <= 0) {

@@ -36,13 +36,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Bcrypt = require("bcryptjs");
-const signToken_1 = __importDefault(require("../utils/signToken"));
 const enum_1 = require("../models/enum");
 const user_1 = require("../repository/user");
 const inputValidation = __importStar(require("../middleware/inputValidation"));
 const jwt_decode_1 = __importDefault(require("jwt-decode"));
 const logger_1 = __importDefault(require("../logging/logger"));
 const logConfig_1 = require("../config/logConfig");
+const tokenUtils_1 = require("../utils/tokenUtils");
 const SALT_ROUNDS = 14;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -91,7 +91,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                         }).end();
                     }
                     else if (result) {
-                        yield (0, signToken_1.default)(user, (err, token, refreshToken) => {
+                        yield (0, tokenUtils_1.signToken)(user, (err, token, refreshToken) => {
                             if (err) {
                                 console.log(err);
                                 res.status(500).json({
