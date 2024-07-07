@@ -4,7 +4,7 @@ import { CustomerQuery, CustomerRepository } from '../repository/customer';
 import { CustomerRow } from '../models/customer';
 import { baseValidation, validateEmail, validateInteger, validateLimit, validateMobileNumber, validateName, validateWord } from '../middleware/inputValidation';
 
-const all = async (req: express.Request, res: express.Response) => {
+const all = (req: express.Request, res: express.Response) => {
     CustomerRepository.retrieveAll()
         .then((result) => {
             res.json({
@@ -20,8 +20,7 @@ const all = async (req: express.Request, res: express.Response) => {
         })
 }
 
-const id = async (req: express.Request, res: express.Response) => {
-
+const id = (req: express.Request, res: express.Response) => {
     try {
         let id = validateInteger(req.query.id.toString())
         CustomerRepository.retrieveById(id)
@@ -44,7 +43,7 @@ const id = async (req: express.Request, res: express.Response) => {
     }
 }
 
-const create = async (req: express.Request, res: express.Response) => {
+const create = (req: express.Request, res: express.Response) => {
     try {
         const customer : CustomerRow = {
             FirstName: validateName(req.body.firstName),
@@ -77,7 +76,7 @@ const create = async (req: express.Request, res: express.Response) => {
     }
 }
 
-const update = async (req: express.Request, res: express.Response) => {
+const update = (req: express.Request, res: express.Response) => {
     try {
         const customer : CustomerRow = {
             FirstName: validateName(req.body.firstName),

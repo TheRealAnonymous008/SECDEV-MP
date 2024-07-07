@@ -4,7 +4,7 @@ import { VehicleQuery, VehicleRepository } from '../repository/vehicle';
 import { VehicleRow } from '../models/vehicle';
 import { baseValidation, validateInteger, validateLicensePlate, validateLimit, validateWord } from '../middleware/inputValidation';
 
-const all = async (req: express.Request, res: express.Response) => {
+const all = (req: express.Request, res: express.Response) => {
     VehicleRepository.retrieveAll()
     .then((result) => {
         res.json({
@@ -19,7 +19,7 @@ const all = async (req: express.Request, res: express.Response) => {
     })
 }
 
-const id = async (req: express.Request, res: express.Response) => {
+const id = (req: express.Request, res: express.Response) => {
     try {
         let id = validateInteger(req.query.id.toString())
         VehicleRepository.retrieveById(id)
@@ -41,7 +41,7 @@ const id = async (req: express.Request, res: express.Response) => {
     }
 }
 
-const create = async (req: express.Request, res: express.Response) => {
+const create = (req: express.Request, res: express.Response) => {
     try {
         const vehicle : VehicleRow = {
             LicensePlate: validateLicensePlate(req.body.licensePlate),
@@ -72,7 +72,7 @@ const create = async (req: express.Request, res: express.Response) => {
     }
 }
 
-const update = async (req: express.Request, res: express.Response) => {
+const update = (req: express.Request, res: express.Response) => {
     try {
         const vehicle : VehicleRow = {
             LicensePlate: validateLicensePlate(req.body.licensePlate),
@@ -125,7 +125,7 @@ const remove = (req: express.Request, res: express.Response) => {
     }
 }
 
-const filter = async (req: express.Request, res: express.Response) => {
+const filter = (req: express.Request, res: express.Response) => {
     try {
         const query = makeQuery(req)
         VehicleRepository.filter(query)

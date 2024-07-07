@@ -11,7 +11,7 @@ import { signToken } from '../utils/tokenUtils';
 
 const SALT_ROUNDS = 14
 
-const register = async (req : express.Request, res : express.Response) => {
+const register = (req : express.Request, res : express.Response) => {
     try {
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS)
         const password = inputValidation.validatePassword(req.body.password)
@@ -46,7 +46,7 @@ const register = async (req : express.Request, res : express.Response) => {
 
 }
 
-const login = async (req : express.Request, res : express.Response) => {
+const login = (req : express.Request, res : express.Response) => {
     logger.log(LogLevel.AUDIT, "Hello")
     try {
         let username = inputValidation.validateUsername(req.body.username)
@@ -149,13 +149,21 @@ const handshake = (req : express.Request, res : express.Response) => {
     }
 }
 
-const logout = async (req : express.Request, res : express.Response) => {
+const logout = (req : express.Request, res : express.Response) => {
     try {
         const token = req.cookies.jwt
         const sessionId : any = jwtDecode(token)["id"]
-        await UserRepository.deleteSession(sessionId).catch((err) => {console.log(err)});
+        UserRepository
+            .deleteSession(sessionId)
+            .then((v) => {
+                res.clearCookie("jwt")
+                    .clearCookie("jwtacc")
+                    .end();
+            })
+            .catch((err) => {
+                console.log(err)
+            });
         
-        res.clearCookie("jwt").clearCookie("jwtacc").end();
     } catch(err) {
         console.log(err)
         res.status(500).end()

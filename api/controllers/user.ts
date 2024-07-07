@@ -4,7 +4,7 @@ import { makeUserArrayView, makeUserView } from '../projections/user';
 import { UserQuery, UserRepository } from '../repository/user';
 import { validateName, validateUsername, validateMobileNumber, validateEmail, validateInteger, validateImage, validateRole, baseValidation, validateLimit } from '../middleware/inputValidation';
 
-const all = async (req: express.Request, res: express.Response) => {
+const all = (req: express.Request, res: express.Response) => {
     UserRepository.retrieveAll()
         .then((result) => {
             res.json({
@@ -20,7 +20,7 @@ const all = async (req: express.Request, res: express.Response) => {
         })
 }
 
-const id = async (req: express.Request, res: express.Response) => {
+const id = (req: express.Request, res: express.Response) => {
     try {
         let id = validateInteger(req.query.id.toString());
         UserRepository.retrieveById(id)
@@ -60,11 +60,11 @@ const upload = async(req  :any, res: express.Response, next : express.NextFuncti
 
     } catch (err) {
         console.log(err);
-        res.status(400).json({ message: err.message });
+        res.status(500).end();
     }
 }
 
-const update = async (req: express.Request, res: express.Response) => {
+const update = (req: express.Request, res: express.Response) => {
     try {
         const user : UserRow= {
             FirstName : validateName(req.body.firstName),
