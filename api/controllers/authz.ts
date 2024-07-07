@@ -99,7 +99,7 @@ const login = async (req : express.Request, res : express.Response) => {
                     else if(error) {
                         res.json({
                             auth : false,
-                            message : "Password Input Failure",
+                            message : "Username and Password do not match",
                         }).end()
                     }
                 });
