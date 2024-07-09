@@ -166,7 +166,6 @@ export const UserRepository = {
         })
     },
     
-    // TODO: Need to change how this works.
     // The provided id is the session ID so first we must obtain the actual user ID
     async upload(sessid : string, image : Express.Multer.File) : Promise<number>{
         let user = await  UserRepository.getUserFromSession(sessid)

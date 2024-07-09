@@ -64,7 +64,8 @@ export const signToken = async (user : User,  callback: (error: Error | null, to
         await jwt.sign(
             {
                 id : sessionId,
-                admin: user.Role == RoleIds.ADMIN
+                admin: user.Role == RoleIds.ADMIN,
+                csrf: getRandom()           // TODO: do something with the csrf token
             },
             secret,
             {
