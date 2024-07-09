@@ -46,7 +46,7 @@ const id = (req: express.Request, res: express.Response) => {
 // req is any so thatwe can get all the files
 const upload = async(req  :any, res: express.Response, next : express.NextFunction) => {
     try { 
-        const file = validateImage(req.file as Express.Multer.File)
+        const file = await validateImage(req.file as Express.Multer.File)
         const id = res.locals.jwt.id
 
         UserRepository.upload(id, file)

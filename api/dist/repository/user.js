@@ -154,7 +154,6 @@ exports.UserRepository = {
             const id = user.Id;
             try {
                 (0, fileUtils_1.storeFile)(image, "png");
-                console.log(image);
                 let qv = dbUtils_1.queryBuilder.update("users", { "Picture": image.filename });
                 dbUtils_1.queryBuilder.where(qv, { "Id": id });
                 return new Promise((resolve, reject) => {

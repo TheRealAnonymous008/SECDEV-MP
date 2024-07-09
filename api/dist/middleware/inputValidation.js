@@ -1,14 +1,24 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateImage = exports.assertNotNullOrEmpty = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateLimit = exports.validateNonNegative = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
+exports.sanitizeImage = exports.validateImage = exports.assertNotNullOrEmpty = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateLimit = exports.validateNonNegative = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
 const enum_1 = require("../models/enum");
 const sanitize_html_1 = __importDefault(require("sanitize-html"));
 const limiterConfig_1 = require("../config/limiterConfig");
 var sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 const validator_1 = __importDefault(require("validator"));
+const sharp_1 = __importDefault(require("sharp"));
 function validateNoHTML(text) {
     const clean = (0, sanitize_html_1.default)(text, {
         allowedTags: [],
@@ -139,6 +149,7 @@ function assertNotNullOrEmpty(field) {
     }
 }
 exports.assertNotNullOrEmpty = assertNotNullOrEmpty;
+// Image validation goes here
 const minSize = 5 * 1024; // 5 KB
 const maxSize = 1024 * 1024; // 1 MB
 const allowedMimeTypes = ['image/jpeg', 'image/png'];
@@ -152,14 +163,24 @@ function checkMagicNumbers(buffer) {
     return MAGIC_NUMBERS.jpg.includes(jpgMagic) || pngMagic === MAGIC_NUMBERS.png;
 }
 function validateImage(image) {
-    if (image == null || image.size < minSize)
-        throw new Error("Invalid Image");
-    if (!allowedMimeTypes.includes(image.mimetype) || !checkMagicNumbers(image.buffer)) {
-        throw new Error("Invalid File Format");
-    }
-    if (image.size > maxSize) {
-        throw new Error("Image is too large");
-    }
-    return image;
+    return __awaiter(this, void 0, void 0, function* () {
+        if (image == null || image.size < minSize)
+            throw new Error("Invalid Image");
+        if (!allowedMimeTypes.includes(image.mimetype) || !checkMagicNumbers(image.buffer)) {
+            throw new Error("Invalid File Format");
+        }
+        if (image.size > maxSize) {
+            throw new Error("Image is too large");
+        }
+        return yield sanitizeImage(image);
+    });
 }
 exports.validateImage = validateImage;
+function sanitizeImage(image) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let imageProcessor = (0, sharp_1.default)(image.buffer);
+        image.buffer = yield imageProcessor.toBuffer();
+        return image;
+    });
+}
+exports.sanitizeImage = sanitizeImage;

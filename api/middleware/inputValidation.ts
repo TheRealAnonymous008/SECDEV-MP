@@ -5,6 +5,7 @@ import { LIMIT_MAX } from "../config/limiterConfig";
 var sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 
 import validator from "validator";
+import sharp from "sharp";
 
 export function validateNoHTML(text) {
     const clean = sanitizeHtml(text, {
@@ -154,6 +155,9 @@ export function assertNotNullOrEmpty(field) {
     }
 }
 
+
+// Image validation goes here
+
 const minSize = 5 * 1024; // 5 KB
 const maxSize = 1024 * 1024; // 1 MB
 const allowedMimeTypes = ['image/jpeg', 'image/png'];
@@ -168,7 +172,7 @@ function checkMagicNumbers(buffer) {
     return MAGIC_NUMBERS.jpg.includes(jpgMagic) || pngMagic === MAGIC_NUMBERS.png;
 }
 
-export function validateImage(image) {
+export async function validateImage(image) {
     if (image == null || image.size < minSize)
         throw new Error("Invalid Image");
 
@@ -180,6 +184,12 @@ export function validateImage(image) {
         throw new Error("Image is too large");
     }
 
-    return image;   
+    return await sanitizeImage(image);   
+}
+
+export async function sanitizeImage(image : Express.Multer.File) {
+    let imageProcessor = sharp(image.buffer)
+    image.buffer = await imageProcessor.toBuffer();
+    return image
 }
 
