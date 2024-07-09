@@ -3,6 +3,7 @@ import { ACCESS_SECRETS, JWT_EXPIRE_TIME, JWT_ISSUER, REFRESH_EXPIRE_TIME, REFRE
 import { RoleIds } from '../models/enum';
 import User from '../models/user';
 import { UserRepository } from '../repository/user';
+import { getRandom, getTimestamp } from './cryptoUtils';
 
 export const refreshToken = (refreshjwt : string) : string => {
 
@@ -24,7 +25,6 @@ export const refreshToken = (refreshjwt : string) : string => {
     return "";
 }
 
-var uid = require('uid-safe')
 
 const makeRefreshToken = async (user, token, sessionId, callback) => {
     await jwt.sign(
@@ -52,9 +52,9 @@ const makeRefreshToken = async (user, token, sessionId, callback) => {
 }
 
 export const signToken = async (user : User,  callback: (error: Error | null, token: string | null, refreshToken: string | null) => void): Promise<void> => {
-    const timeSinceEpoch = new Date().getTime();
+    const timeSinceEpoch = getTimestamp();
     const expirationTime = timeSinceEpoch + Number(JWT_EXPIRE_TIME) * 10000;
-    const sessionId = uid.sync(24)
+    const sessionId = getRandom()
 
 
     try {

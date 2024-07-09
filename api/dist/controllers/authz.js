@@ -44,7 +44,7 @@ const logger_1 = __importDefault(require("../utils/logger"));
 const logConfig_1 = require("../config/logConfig");
 const tokenUtils_1 = require("../utils/tokenUtils");
 const SALT_ROUNDS = 14;
-const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const register = (req, res) => {
     try {
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
         const password = inputValidation.validatePassword(req.body.password);
@@ -75,8 +75,8 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(err);
         res.status(500).end();
     }
-});
-const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+const login = (req, res) => {
     logger_1.default.log(logConfig_1.LogLevel.AUDIT, "Hello");
     try {
         let username = inputValidation.validateUsername(req.body.username);
@@ -125,7 +125,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     else if (error) {
                         res.json({
                             auth: false,
-                            message: "Password Input Failure",
+                            message: "Username and Password do not match",
                         }).end();
                     }
                 }));
@@ -150,7 +150,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(err);
         res.status(500).end();
     }
-});
+};
 const handshake = (req, res) => {
     try {
         const sessionId = res.locals.jwt.id;
@@ -172,16 +172,24 @@ const handshake = (req, res) => {
         res.status(500).end();
     }
 };
-const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const logout = (req, res) => {
     try {
         const token = req.cookies.jwt;
         const sessionId = (0, jwt_decode_1.default)(token)["id"];
-        yield user_1.UserRepository.deleteSession(sessionId).catch((err) => { console.log(err); });
-        res.clearCookie("jwt").clearCookie("jwtacc").end();
+        user_1.UserRepository
+            .deleteSession(sessionId)
+            .then((v) => {
+            res.clearCookie("jwt")
+                .clearCookie("jwtacc")
+                .end();
+        })
+            .catch((err) => {
+            console.log(err);
+        });
     }
     catch (err) {
         console.log(err);
         res.status(500).end();
     }
-});
+};
 exports.default = { register, login, logout, handshake };

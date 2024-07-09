@@ -14,6 +14,7 @@ const jwt = require("jsonwebtoken");
 const authConfig_1 = require("../config/authConfig");
 const enum_1 = require("../models/enum");
 const user_1 = require("../repository/user");
+const cryptoUtils_1 = require("./cryptoUtils");
 const refreshToken = (refreshjwt) => {
     const decoded = (0, exports.checkRefreshToken)(refreshjwt);
     if (decoded) {
@@ -28,7 +29,6 @@ const refreshToken = (refreshjwt) => {
     return "";
 };
 exports.refreshToken = refreshToken;
-var uid = require('uid-safe');
 const makeRefreshToken = (user, token, sessionId, callback) => __awaiter(void 0, void 0, void 0, function* () {
     yield jwt.sign({
         id: sessionId,
@@ -49,9 +49,9 @@ const makeRefreshToken = (user, token, sessionId, callback) => __awaiter(void 0,
     });
 });
 const signToken = (user, callback) => __awaiter(void 0, void 0, void 0, function* () {
-    const timeSinceEpoch = new Date().getTime();
+    const timeSinceEpoch = (0, cryptoUtils_1.getTimestamp)();
     const expirationTime = timeSinceEpoch + Number(authConfig_1.JWT_EXPIRE_TIME) * 10000;
-    const sessionId = uid.sync(24);
+    const sessionId = (0, cryptoUtils_1.getRandom)();
     try {
         yield user_1.UserRepository.addSession(user.Id, sessionId);
         const secret = (0, authConfig_1.getRandomAccessSecret)();

@@ -1,18 +1,9 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const vehicle_1 = require("../projections/vehicle");
 const vehicle_2 = require("../repository/vehicle");
 const inputValidation_1 = require("../middleware/inputValidation");
-const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const all = (req, res) => {
     vehicle_2.VehicleRepository.retrieveAll()
         .then((result) => {
         res.json({
@@ -25,8 +16,8 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(err);
         res.status(500).end();
     });
-});
-const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+const id = (req, res) => {
     try {
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         vehicle_2.VehicleRepository.retrieveById(id)
@@ -47,8 +38,8 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(error);
         res.status(500).end();
     }
-});
-const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+const create = (req, res) => {
     try {
         const vehicle = {
             LicensePlate: (0, inputValidation_1.validateLicensePlate)(req.body.licensePlate),
@@ -77,8 +68,8 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(error);
         res.status(500).end();
     }
-});
-const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+const update = (req, res) => {
     try {
         const vehicle = {
             LicensePlate: (0, inputValidation_1.validateLicensePlate)(req.body.licensePlate),
@@ -108,7 +99,7 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(error);
         res.status(500).end();
     }
-});
+};
 const remove = (req, res) => {
     try {
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
@@ -130,7 +121,7 @@ const remove = (req, res) => {
         res.status(500).end();
     }
 };
-const filter = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const filter = (req, res) => {
     try {
         const query = makeQuery(req);
         vehicle_2.VehicleRepository.filter(query)
@@ -150,7 +141,7 @@ const filter = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(err);
         res.status(500);
     }
-});
+};
 const makeQuery = (req) => {
     const licensePlate = (0, inputValidation_1.baseValidation)(req.query.licensePlate);
     const model = (0, inputValidation_1.baseValidation)(req.query.model);

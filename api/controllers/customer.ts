@@ -110,7 +110,7 @@ const update = (req: express.Request, res: express.Response) => {
     }
 }
 
-const remove = async (req: express.Request, res: express.Response) => {
+const remove = (req: express.Request, res: express.Response) => {
     try {
         let id = validateInteger(req.query.id.toString())
 

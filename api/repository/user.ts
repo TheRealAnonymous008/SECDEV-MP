@@ -4,7 +4,8 @@ import connection from "../config/connection";
 import { SESSION_EXPIRE_TIME } from "../config/authConfig";
 import { LIMIT_MAX } from "../config/limiterConfig";
 import { queryBuilder, QueryValuePair } from "../utils/dbUtils";
-import { hashSessionId } from "../utils/cryptoUtils";
+import { getRandom, getTimestamp, hashSessionId } from "../utils/cryptoUtils";
+import { storeFile } from "../utils/fileUtils";
 
 
 const tableName = "users";
@@ -38,7 +39,7 @@ export const UserRepository = {
     addSession(id : number, sessionId : string) : Promise<boolean>{
         // Make sure to hash the session ID
         sessionId = hashSessionId(sessionId);
-        const sessionTime = new Date().getTime()
+        const sessionTime = getTimestamp()
         
         let qv = queryBuilder.insert("sessions", {
             "SessionId": sessionId,
@@ -63,7 +64,7 @@ export const UserRepository = {
         let qv = queryBuilder.select("sessions", ["UserId"])
 
         sessionId = hashSessionId(sessionId);
-        const currentTime = new Date().getTime()
+        const currentTime = getTimestamp()
         queryBuilder.where(qv, {"SessionId": sessionId})
 
         return new Promise((resolve, reject) => {
@@ -137,7 +138,7 @@ export const UserRepository = {
     },
 
     retrieveById(id :  number) : Promise<User | undefined> {
-        let qv = queryBuilder.select(tableName, [
+        let qv = queryBuilder.select("users u", [
             "u.Id", 
             "u.FirstName",
             "u.LastName",
@@ -170,50 +171,25 @@ export const UserRepository = {
     async upload(sessid : string, image : Express.Multer.File) : Promise<number>{
         let user = await  UserRepository.getUserFromSession(sessid)
         const id = user.Id;
-        let query = `INSERT INTO picture(Picture) VALUES(?)`
-
-        return new Promise((resolve, reject) => {
-            connection.execute<ResultSetHeader>(
-                query,
-                [image],
-                (err, res) => {
-                    if (err) reject(err);
-                    else{
-                        const fk = res.insertId;
-                        // Cleanup a bit by removing the old BLOB if the user had this 
-                        query = `SELECT PictureId from users WHERE Id = ?`
-                        connection.execute<User[]>(
-                            query, 
-                            [id],
-                            (err, res) => {
-                                if (err) reject(err);
-                                if (res.length > 0) {
-                                    query = `DELETE FROM picture WHERE Id = ?`,
-                                    [res[0].PictureId]
-                                    connection.execute<ResultSetHeader>(
-                                        query, 
-                                        (err, res) => {
-                                            if (err) reject(err);
-                                        }
-                                    )
-                                }
-                            }
-                        )
-
-                        query = `UPDATE users SET PictureId = ? WHERE Id = ?`,
-                        connection.execute<ResultSetHeader>(
-                            query,
-                            [fk, id],
-                            (err, res) => {
-                                if(err) reject(err);
-                                resolve(fk)
-                            }
-                        )
-
+        try {
+            storeFile(image, "png")
+            let qv = queryBuilder.update("users", {"Picture":  image.filename})
+            queryBuilder.where(qv, {"Id" : id})
+            return new Promise((resolve, reject) => {
+                connection.execute<ResultSetHeader>(
+                    qv.query,
+                    qv.values,
+                    (err, res) => {
+                        if (err) reject(err);
+                        else{
+                            resolve(res.insertId);
+                        }
                     }
-                }
-            )
-        })
+                )
+            })
+        } catch(err){
+            console.log(err);
+        }
     },
 
     update(id : number, object : UserRow) : Promise<number> {

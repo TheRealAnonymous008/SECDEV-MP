@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = require("../projections/user");
 const user_2 = require("../repository/user");
 const inputValidation_1 = require("../middleware/inputValidation");
-const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const all = (req, res) => {
     user_2.UserRepository.retrieveAll()
         .then((result) => {
         res.json({
@@ -25,8 +25,8 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(err);
         res.status(500).end();
     });
-});
-const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+const id = (req, res) => {
     try {
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         user_2.UserRepository.retrieveById(id)
@@ -47,7 +47,7 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(error);
         res.status(500).end();
     }
-});
+};
 // req is any so thatwe can get all the files
 const upload = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -62,10 +62,10 @@ const upload = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
     }
     catch (err) {
         console.log(err);
-        res.status(400).json({ message: err.message });
+        res.status(500).end();
     }
 });
-const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const update = (req, res) => {
     try {
         const user = {
             FirstName: (0, inputValidation_1.validateName)(req.body.firstName),
@@ -94,7 +94,7 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(err);
         res.status(500);
     }
-});
+};
 const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());

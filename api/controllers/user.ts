@@ -51,8 +51,7 @@ const upload = async(req  :any, res: express.Response, next : express.NextFuncti
 
         UserRepository.upload(id, file)
             .then((result) => 
-                res.status(200).end()
-        )
+                res.status(200).end())
             .catch((err) => {
                 console.log(err)
                 res.status(500).end()

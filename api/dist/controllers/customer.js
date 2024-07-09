@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const customer_1 = require("../projections/customer");
 const customer_2 = require("../repository/customer");
 const inputValidation_1 = require("../middleware/inputValidation");
-const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const all = (req, res) => {
     customer_2.CustomerRepository.retrieveAll()
         .then((result) => {
         res.json({
@@ -25,8 +25,8 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(err);
         res.status(500).end();
     });
-});
-const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+const id = (req, res) => {
     try {
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         customer_2.CustomerRepository.retrieveById(id)
@@ -47,8 +47,8 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(error);
         res.status(500).end();
     }
-});
-const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+const create = (req, res) => {
     try {
         const customer = {
             FirstName: (0, inputValidation_1.validateName)(req.body.firstName),
@@ -77,8 +77,8 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(err);
         res.status(500);
     }
-});
-const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+const update = (req, res) => {
     try {
         const customer = {
             FirstName: (0, inputValidation_1.validateName)(req.body.firstName),
@@ -108,8 +108,8 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(err);
         res.status(500);
     }
-});
-const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+};
+const remove = (req, res) => {
     try {
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         customer_2.CustomerRepository.delete(id)
@@ -129,7 +129,7 @@ const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(err);
         res.status(500);
     }
-});
+};
 const filter = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const query = makeQuery(req);

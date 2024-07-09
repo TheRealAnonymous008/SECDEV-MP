@@ -29,18 +29,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `autoworks`.`Picture`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `autoworks`.`Picture` ;
-
-CREATE TABLE IF NOT EXISTS `autoworks`.`Picture` (
-  `Id` INT NOT NULL AUTO_INCREMENT,
-  `Picture` LONGBLOB NOT NULL,
-  PRIMARY KEY (`Id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `autoworks`.`Users`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `autoworks`.`Users` ;
@@ -55,20 +43,14 @@ CREATE TABLE IF NOT EXISTS `autoworks`.`Users` (
   `Role` INT NOT NULL,
   `MobileNumber` VARCHAR(45) NOT NULL,
   `Email` VARCHAR(45) NOT NULL,
-  `PictureId` INT NULL,
+  `Picture` VARCHAR(100) NULL,
   PRIMARY KEY (`Id`),
   UNIQUE INDEX `Id_UNIQUE` (`Id` ASC) VISIBLE,
   INDEX `fk_Users_RoleEnum1_idx` (`Role` ASC) VISIBLE,
   UNIQUE INDEX `Username_UNIQUE` (`Username` ASC) VISIBLE,
-  INDEX `fk_Users_Picture1_idx` (`PictureId` ASC) VISIBLE,
   CONSTRAINT `fk_Users_RoleEnum1`
     FOREIGN KEY (`Role`)
     REFERENCES `autoworks`.`RoleEnum` (`Id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Users_Picture1`
-    FOREIGN KEY (`PictureId`)
-    REFERENCES `autoworks`.`Picture` (`Id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

@@ -18,6 +18,7 @@ const authConfig_1 = require("../config/authConfig");
 const limiterConfig_1 = require("../config/limiterConfig");
 const dbUtils_1 = require("../utils/dbUtils");
 const cryptoUtils_1 = require("../utils/cryptoUtils");
+const fileUtils_1 = require("../utils/fileUtils");
 const tableName = "users";
 exports.UserRepository = {
     register(user) {
@@ -44,7 +45,7 @@ exports.UserRepository = {
     addSession(id, sessionId) {
         // Make sure to hash the session ID
         sessionId = (0, cryptoUtils_1.hashSessionId)(sessionId);
-        const sessionTime = new Date().getTime();
+        const sessionTime = (0, cryptoUtils_1.getTimestamp)();
         let qv = dbUtils_1.queryBuilder.insert("sessions", {
             "SessionId": sessionId,
             "UserId": id,
@@ -63,7 +64,7 @@ exports.UserRepository = {
     getUserFromSession(sessionId) {
         let qv = dbUtils_1.queryBuilder.select("sessions", ["UserId"]);
         sessionId = (0, cryptoUtils_1.hashSessionId)(sessionId);
-        const currentTime = new Date().getTime();
+        const currentTime = (0, cryptoUtils_1.getTimestamp)();
         dbUtils_1.queryBuilder.where(qv, { "SessionId": sessionId });
         return new Promise((resolve, reject) => {
             connection_1.default.execute(qv.query, qv.values, (err, res) => __awaiter(this, void 0, void 0, function* () {
@@ -122,7 +123,7 @@ exports.UserRepository = {
         });
     },
     retrieveById(id) {
-        let qv = dbUtils_1.queryBuilder.select(tableName, [
+        let qv = dbUtils_1.queryBuilder.select("users u", [
             "u.Id",
             "u.FirstName",
             "u.LastName",
@@ -151,36 +152,24 @@ exports.UserRepository = {
         return __awaiter(this, void 0, void 0, function* () {
             let user = yield exports.UserRepository.getUserFromSession(sessid);
             const id = user.Id;
-            let query = `INSERT INTO picture(Picture) VALUES(?)`;
-            return new Promise((resolve, reject) => {
-                connection_1.default.execute(query, [image], (err, res) => {
-                    if (err)
-                        reject(err);
-                    else {
-                        const fk = res.insertId;
-                        // Cleanup a bit by removing the old BLOB if the user had this 
-                        query = `SELECT PictureId from users WHERE Id = ?`;
-                        connection_1.default.execute(query, [id], (err, res) => {
-                            if (err)
-                                reject(err);
-                            if (res.length > 0) {
-                                query = `DELETE FROM picture WHERE Id = ?`,
-                                    [res[0].PictureId];
-                                connection_1.default.execute(query, (err, res) => {
-                                    if (err)
-                                        reject(err);
-                                });
-                            }
-                        });
-                        query = `UPDATE users SET PictureId = ? WHERE Id = ?`,
-                            connection_1.default.execute(query, [fk, id], (err, res) => {
-                                if (err)
-                                    reject(err);
-                                resolve(fk);
-                            });
-                    }
+            try {
+                (0, fileUtils_1.storeFile)(image, "png");
+                console.log(image);
+                let qv = dbUtils_1.queryBuilder.update("users", { "Picture": image.filename });
+                dbUtils_1.queryBuilder.where(qv, { "Id": id });
+                return new Promise((resolve, reject) => {
+                    connection_1.default.execute(qv.query, qv.values, (err, res) => {
+                        if (err)
+                            reject(err);
+                        else {
+                            resolve(res.insertId);
+                        }
+                    });
                 });
-            });
+            }
+            catch (err) {
+                console.log(err);
+            }
         });
     },
     update(id, object) {
