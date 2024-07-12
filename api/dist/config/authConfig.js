@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SESSION_EXPIRE_TIME = exports.getRandomRefreshSecret = exports.getRandomAccessSecret = exports.REFRESH_SECRETS = exports.ACCESS_SECRETS = exports.REFRESH_EXPIRE_TIME = exports.JWT_ISSUER = exports.JWT_EXPIRE_TIME = void 0;
+exports.COOKIE_SETTINGS = exports.SESSION_EXPIRE_TIME = exports.getRandomRefreshSecret = exports.getRandomAccessSecret = exports.REFRESH_SECRETS = exports.ACCESS_SECRETS = exports.REFRESH_EXPIRE_TIME = exports.JWT_ISSUER = exports.JWT_EXPIRE_TIME = void 0;
 const crypto_1 = require("crypto");
 exports.JWT_EXPIRE_TIME = process.env.JWT_EXPIRE_TIME;
 exports.JWT_ISSUER = process.env.JWT_ISSUER;
@@ -16,3 +16,8 @@ const getRandomRefreshSecret = () => {
 };
 exports.getRandomRefreshSecret = getRandomRefreshSecret;
 exports.SESSION_EXPIRE_TIME = parseInt(process.env.SESSION_EXPIRE_TIME);
+exports.COOKIE_SETTINGS = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+};

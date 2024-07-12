@@ -53,7 +53,8 @@ const upload = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
     try {
         const file = yield (0, inputValidation_1.validateImage)(req.file);
         const id = res.locals.jwt.id;
-        user_2.UserRepository.upload(id, file)
+        const csrf = res.locals.jwt.csrf;
+        user_2.UserRepository.upload(id, csrf, file)
             .then((result) => res.status(200).end())
             .catch((err) => {
             console.log(err);

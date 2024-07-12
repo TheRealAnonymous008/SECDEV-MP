@@ -172,7 +172,8 @@ CREATE TABLE IF NOT EXISTS `autoworks`.`Sessions` (
   `SessionId` VARCHAR(128) NOT NULL,
   `UserId` INT UNSIGNED NOT NULL,
   `SessionTime` BIGINT NOT NULL,
-  PRIMARY KEY (`SessionId`, `UserId`, `SessionTime`),
+  `Csrf` VARCHAR(128) NOT NULL,
+  PRIMARY KEY (`SessionId`, `UserId`, `SessionTime`, `Csrf`),
   INDEX `fk_user_session_idx` (`UserId` ASC) VISIBLE,
   CONSTRAINT `fk_user_session`
     FOREIGN KEY (`UserId`)

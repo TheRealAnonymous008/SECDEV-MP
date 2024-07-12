@@ -7,7 +7,8 @@ import * as inputValidation from '../middleware/inputValidation';
 import jwtDecode from 'jwt-decode';
 import logger from '../utils/logger';
 import { LogLevel } from '../config/logConfig';
-import { signToken } from '../utils/tokenUtils';
+import { initializeSession, signToken } from '../utils/tokenUtils';
+import { COOKIE_SETTINGS } from '../config/authConfig';
 
 const SALT_ROUNDS = 14
 
@@ -62,7 +63,8 @@ const login = (req : express.Request, res : express.Response) => {
                         }).end()
                     } 
                     else if (result) {
-                        await signToken(user, (err, token, refreshToken) => {
+                        const data = await initializeSession(user)
+                        await signToken(data, (err, token, refreshToken) => {
                             if (err) {
                                 console.log(err)
                                 res.status(500).json({
@@ -73,19 +75,9 @@ const login = (req : express.Request, res : express.Response) => {
                             }
                             else if (token) {
                                 if(refreshToken) {
-                                    res = res.cookie('jwt', refreshToken, 
-                                    {
-
-                                        httpOnly:true,
-                                        secure: true,
-                                        sameSite: "lax",
-                                    })
-                                    res.cookie('jwtacc', token, 
-                                    {
-                                        httpOnly: true,
-                                        secure: true,
-                                        sameSite: "lax",
-                                    })
+                                    res = res.cookie('jwt', refreshToken, COOKIE_SETTINGS)
+                                    res.cookie('jwtacc', token, COOKIE_SETTINGS)
+                                    res.cookie('csrf', data.csrf, COOKIE_SETTINGS)
                                     res.json({
                                         auth : true,
                                         message : "Authenticated",

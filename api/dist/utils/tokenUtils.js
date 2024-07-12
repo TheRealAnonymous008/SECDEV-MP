@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkRefreshToken = exports.checkAccessToken = exports.signToken = exports.refreshToken = void 0;
+exports.checkRefreshToken = exports.checkAccessToken = exports.signToken = exports.initializeSession = exports.refreshToken = void 0;
 const jwt = require("jsonwebtoken");
 const authConfig_1 = require("../config/authConfig");
 const enum_1 = require("../models/enum");
@@ -29,10 +29,10 @@ const refreshToken = (refreshjwt) => {
     return "";
 };
 exports.refreshToken = refreshToken;
-const makeRefreshToken = (user, token, sessionId, callback) => __awaiter(void 0, void 0, void 0, function* () {
+const makeRefreshToken = (token, data, callback) => __awaiter(void 0, void 0, void 0, function* () {
     yield jwt.sign({
-        id: sessionId,
-        role: user.Role,
+        id: data.id,
+        admin: data.admin,
         accessIssuer: authConfig_1.JWT_ISSUER,
     }, (0, authConfig_1.getRandomRefreshSecret)(), {
         expiresIn: authConfig_1.REFRESH_EXPIRE_TIME
@@ -48,16 +48,25 @@ const makeRefreshToken = (user, token, sessionId, callback) => __awaiter(void 0,
         }
     });
 });
-const signToken = (user, callback) => __awaiter(void 0, void 0, void 0, function* () {
+const initializeSession = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const sessionId = (0, cryptoUtils_1.getRandom)();
+    const csrf = (0, cryptoUtils_1.getRandom)();
+    yield user_1.UserRepository.addSession(user.Id, sessionId, csrf);
+    return {
+        id: sessionId,
+        admin: user.Role == enum_1.RoleIds.ADMIN,
+        csrf: csrf
+    };
+});
+exports.initializeSession = initializeSession;
+const signToken = (data, callback) => __awaiter(void 0, void 0, void 0, function* () {
     const timeSinceEpoch = (0, cryptoUtils_1.getTimestamp)();
     const expirationTime = timeSinceEpoch + Number(authConfig_1.JWT_EXPIRE_TIME) * 10000;
-    const sessionId = (0, cryptoUtils_1.getRandom)();
     try {
-        yield user_1.UserRepository.addSession(user.Id, sessionId);
         const secret = (0, authConfig_1.getRandomAccessSecret)();
         yield jwt.sign({
-            id: sessionId,
-            admin: user.Role == enum_1.RoleIds.ADMIN
+            id: data.id,
+            admin: data.admin,
         }, secret, {
             expiresIn: authConfig_1.JWT_EXPIRE_TIME,
             issuer: authConfig_1.JWT_ISSUER,
@@ -66,7 +75,7 @@ const signToken = (user, callback) => __awaiter(void 0, void 0, void 0, function
                 callback(error, null, null);
             }
             else if (token) {
-                yield makeRefreshToken(user, token, sessionId, callback);
+                yield makeRefreshToken(token, data, callback);
             }
         }));
     }
@@ -82,10 +91,12 @@ const checkAccessToken = (token) => {
             decoded = jwt.verify(token, authConfig_1.ACCESS_SECRETS[i], { issuer: authConfig_1.JWT_ISSUER });
         }
         catch (err) {
-            // Do nothing
         }
         if (decoded != null)
             break;
+    }
+    if (decoded == null) {
+        console.log("Error: Access Token Invalid");
     }
     return decoded;
 };
@@ -101,6 +112,9 @@ const checkRefreshToken = (token) => {
         }
         if (decoded != null)
             break;
+    }
+    if (decoded == null) {
+        console.log("Error: Refresh Token Invalid");
     }
     return decoded;
 };

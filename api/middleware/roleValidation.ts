@@ -1,17 +1,35 @@
 import { NextFunction, Request, Response } from "express";
 import { UserRepository } from "../repository/user";
+import { RoleIds } from "../models/enum";
+import { COOKIE_SETTINGS } from "../config/authConfig";
 
 const validateRole = (allowedRoles : number[]) => {
     return (req : Request, res : Response, next : NextFunction) => {
         const sessionId = res.locals.jwt.id
+        const csrf = req.cookies.csrf
         
-        UserRepository.getUserFromSession(sessionId)
+        UserRepository.getUserFromSession(sessionId, csrf)
             .then((user) =>{
                 if (user == undefined) {
                     return 
                 }
                 else if (allowedRoles.includes(user.Role)){
-                    next()
+                    // After this refresh the csrf token for non-view requests
+                    if (! allowedRoles.includes(RoleIds.VIEW)) {
+                        console.log(allowedRoles)
+                        UserRepository.refreshCSRF(sessionId)
+                            .then((csrf) => {
+                                res.cookie('csrf', csrf, COOKIE_SETTINGS);
+                                next()
+                            })
+                            .catch((err) => {
+                                console.log(err)
+                                res.status(500)
+                            })
+                    } else {
+                        console.log("This ran")
+                        next()
+                    }
                 }
                 else {
                     res.status(403).json({
@@ -26,6 +44,7 @@ const validateRole = (allowedRoles : number[]) => {
                 });
             })
     }
+
 }
 
 export default validateRole;

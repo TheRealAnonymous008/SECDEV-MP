@@ -42,14 +42,16 @@ exports.UserRepository = {
             });
         });
     },
-    addSession(id, sessionId) {
+    addSession(id, sessionId, csrf) {
         // Make sure to hash the session ID
-        sessionId = (0, cryptoUtils_1.hashSessionId)(sessionId);
+        sessionId = (0, cryptoUtils_1.hashId)(sessionId);
+        csrf = (0, cryptoUtils_1.hashId)(csrf);
         const sessionTime = (0, cryptoUtils_1.getTimestamp)();
         let qv = dbUtils_1.queryBuilder.insert("sessions", {
             "SessionId": sessionId,
             "UserId": id,
-            "SessionTime": sessionTime
+            "SessionTime": sessionTime,
+            "Csrf": csrf,
         });
         return new Promise((resolve, reject) => {
             connection_1.default.execute(qv.query, qv.values, (err, res) => {
@@ -61,11 +63,18 @@ exports.UserRepository = {
             });
         });
     },
-    getUserFromSession(sessionId) {
+    // We include the CSRF validation here. It is as if every request requires us to validate with the csrf token as well
+    getUserFromSession(sessionId, csrf) {
         let qv = dbUtils_1.queryBuilder.select("sessions", ["UserId"]);
-        sessionId = (0, cryptoUtils_1.hashSessionId)(sessionId);
+        sessionId = (0, cryptoUtils_1.hashId)(sessionId);
         const currentTime = (0, cryptoUtils_1.getTimestamp)();
-        dbUtils_1.queryBuilder.where(qv, { "SessionId": sessionId });
+        if (csrf) {
+            csrf = (0, cryptoUtils_1.hashId)(csrf);
+            dbUtils_1.queryBuilder.where(qv, { "SessionId": sessionId, "Csrf": csrf });
+        }
+        else {
+            dbUtils_1.queryBuilder.where(qv, { "SessionId": sessionId });
+        }
         return new Promise((resolve, reject) => {
             connection_1.default.execute(qv.query, qv.values, (err, res) => __awaiter(this, void 0, void 0, function* () {
                 if (err)
@@ -80,6 +89,22 @@ exports.UserRepository = {
                         const x = yield exports.UserRepository.retrieveById(res[0].UserId);
                         resolve(x);
                     }
+                }
+            }));
+        });
+    },
+    // Mechanism for refreshing the CSRF token 
+    refreshCSRF(sessionId) {
+        let csrf = (0, cryptoUtils_1.getRandom)();
+        let qv = dbUtils_1.queryBuilder.update("sessions", { "Csrf": (0, cryptoUtils_1.hashId)(csrf) });
+        sessionId = (0, cryptoUtils_1.hashId)(sessionId);
+        dbUtils_1.queryBuilder.where(qv, { "SessionId": sessionId });
+        return new Promise((resolve, reject) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => __awaiter(this, void 0, void 0, function* () {
+                if (err)
+                    reject(err);
+                else {
+                    resolve(csrf);
                 }
             }));
         });
@@ -146,11 +171,10 @@ exports.UserRepository = {
             });
         });
     },
-    // TODO: Need to change how this works.
     // The provided id is the session ID so first we must obtain the actual user ID
-    upload(sessid, image) {
+    upload(sessid, csrf, image) {
         return __awaiter(this, void 0, void 0, function* () {
-            let user = yield exports.UserRepository.getUserFromSession(sessid);
+            let user = yield exports.UserRepository.getUserFromSession(sessid, csrf);
             const id = user.Id;
             try {
                 (0, fileUtils_1.storeFile)(image, "png");
@@ -208,7 +232,7 @@ exports.UserRepository = {
         });
     },
     deleteSession(sessionId) {
-        sessionId = (0, cryptoUtils_1.hashSessionId)(sessionId);
+        sessionId = (0, cryptoUtils_1.hashId)(sessionId);
         let query = `DELETE FROM sessions WHERE SessionId = ?`;
         return new Promise((resolve, reject) => {
             connection_1.default.execute(query, [sessionId], (err, res) => {

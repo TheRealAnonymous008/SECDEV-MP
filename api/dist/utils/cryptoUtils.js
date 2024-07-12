@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTimestamp = exports.getRandom = exports.hashSessionId = void 0;
+exports.getTimestamp = exports.getRandom = exports.hashId = void 0;
 const crypto = require("crypto");
 const uid = require('uid-safe');
-function hashSessionId(sessionId) {
+function hashId(sessionId) {
     const sessionIdBuffer = Buffer.from(sessionId);
     const hash = crypto.createHash('sha256');
     hash.update(sessionIdBuffer);
     return hash.digest('hex');
 }
-exports.hashSessionId = hashSessionId;
+exports.hashId = hashId;
 function getRandom() {
     return uid.sync(24);
 }

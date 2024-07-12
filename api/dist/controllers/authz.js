@@ -43,6 +43,7 @@ const jwt_decode_1 = __importDefault(require("jwt-decode"));
 const logger_1 = __importDefault(require("../utils/logger"));
 const logConfig_1 = require("../config/logConfig");
 const tokenUtils_1 = require("../utils/tokenUtils");
+const authConfig_1 = require("../config/authConfig");
 const SALT_ROUNDS = 14;
 const register = (req, res) => {
     try {
@@ -91,7 +92,8 @@ const login = (req, res) => {
                         }).end();
                     }
                     else if (result) {
-                        yield (0, tokenUtils_1.signToken)(user, (err, token, refreshToken) => {
+                        const data = yield (0, tokenUtils_1.initializeSession)(user);
+                        yield (0, tokenUtils_1.signToken)(data, (err, token, refreshToken) => {
                             if (err) {
                                 console.log(err);
                                 res.status(500).json({
@@ -102,16 +104,9 @@ const login = (req, res) => {
                             }
                             else if (token) {
                                 if (refreshToken) {
-                                    res = res.cookie('jwt', refreshToken, {
-                                        httpOnly: true,
-                                        secure: true,
-                                        sameSite: "lax",
-                                    });
-                                    res.cookie('jwtacc', token, {
-                                        httpOnly: true,
-                                        secure: true,
-                                        sameSite: "lax",
-                                    });
+                                    res = res.cookie('jwt', refreshToken, authConfig_1.COOKIE_SETTINGS);
+                                    res.cookie('jwtacc', token, authConfig_1.COOKIE_SETTINGS);
+                                    res.cookie('csrf', data.csrf, authConfig_1.COOKIE_SETTINGS);
                                     res.json({
                                         auth: true,
                                         message: "Authenticated",

@@ -4,7 +4,7 @@ import connection from "../config/connection";
 import { SESSION_EXPIRE_TIME } from "../config/authConfig";
 import { LIMIT_MAX } from "../config/limiterConfig";
 import { queryBuilder, QueryValuePair } from "../utils/dbUtils";
-import { getRandom, getTimestamp, hashSessionId } from "../utils/cryptoUtils";
+import { getRandom, getTimestamp, hashId } from "../utils/cryptoUtils";
 import { storeFile } from "../utils/fileUtils";
 
 
@@ -36,15 +36,17 @@ export const UserRepository = {
         })
     },
 
-    addSession(id : number, sessionId : string) : Promise<boolean>{
+    addSession(id : number, sessionId : string, csrf: string) : Promise<boolean>{
         // Make sure to hash the session ID
-        sessionId = hashSessionId(sessionId);
+        sessionId = hashId(sessionId);
+        csrf = hashId(csrf)
         const sessionTime = getTimestamp()
         
         let qv = queryBuilder.insert("sessions", {
             "SessionId": sessionId,
             "UserId": id, 
-            "SessionTime": sessionTime 
+            "SessionTime": sessionTime,
+            "Csrf": csrf,
         })
         return new Promise((resolve, reject) => { 
             connection.execute<ResultSetHeader>(
@@ -60,12 +62,20 @@ export const UserRepository = {
         })
     },
 
-    getUserFromSession(sessionId : string) : Promise<User | undefined> {
+    // We include the CSRF validation here. It is as if every request requires us to validate with the csrf token as well
+    getUserFromSession(sessionId : string, csrf? : string) : Promise<User | undefined> {
         let qv = queryBuilder.select("sessions", ["UserId"])
 
-        sessionId = hashSessionId(sessionId);
+        sessionId = hashId(sessionId);
+
         const currentTime = getTimestamp()
-        queryBuilder.where(qv, {"SessionId": sessionId})
+        if (csrf) {
+            csrf = hashId(csrf)
+            queryBuilder.where(qv, {"SessionId": sessionId, "Csrf" : csrf})
+        }
+        else {
+            queryBuilder.where(qv, {"SessionId": sessionId})
+        }
 
         return new Promise((resolve, reject) => {
             connection.execute<SessionEntry[]>(
@@ -83,6 +93,27 @@ export const UserRepository = {
                             const x = await UserRepository.retrieveById(res[0].UserId);
                             resolve(x);
                         }
+                    }
+                }
+            )
+        })
+    },
+
+    // Mechanism for refreshing the CSRF token 
+    refreshCSRF(sessionId : string) : Promise<string | undefined>{ 
+        let csrf = getRandom()
+        let qv = queryBuilder.update("sessions", {"Csrf" : hashId(csrf)})
+        sessionId = hashId(sessionId);
+        queryBuilder.where(qv, {"SessionId": sessionId})
+
+        return new Promise((resolve, reject) => {
+            connection.execute(
+                qv.query, 
+                qv.values,
+                async (err, res) => {
+                    if (err) reject(err);
+                    else {
+                        resolve(csrf)
                     }
                 }
             )
@@ -167,8 +198,8 @@ export const UserRepository = {
     },
     
     // The provided id is the session ID so first we must obtain the actual user ID
-    async upload(sessid : string, image : Express.Multer.File) : Promise<number>{
-        let user = await  UserRepository.getUserFromSession(sessid)
+    async upload(sessid : string, csrf : string, image : Express.Multer.File) : Promise<number>{
+        let user = await  UserRepository.getUserFromSession(sessid, csrf)
         const id = user.Id;
         try {
             storeFile(image, "png")
@@ -240,7 +271,7 @@ export const UserRepository = {
     },
 
     deleteSession(sessionId : string) : Promise<number> {
-        sessionId = hashSessionId(sessionId);
+        sessionId = hashId(sessionId);
         
         let query = `DELETE FROM sessions WHERE SessionId = ?`
             return new Promise((resolve, reject) => {

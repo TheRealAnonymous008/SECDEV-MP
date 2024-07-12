@@ -48,8 +48,9 @@ const upload = async(req  :any, res: express.Response, next : express.NextFuncti
     try { 
         const file = await validateImage(req.file as Express.Multer.File)
         const id = res.locals.jwt.id
+        const csrf = res.locals.jwt.csrf
 
-        UserRepository.upload(id, file)
+        UserRepository.upload(id, csrf, file)
             .then((result) => 
                 res.status(200).end())
             .catch((err) => {

@@ -1,7 +1,7 @@
 const crypto = require("crypto")
 const uid = require('uid-safe')
 
-export function hashSessionId(sessionId : string ) {
+export function hashId(sessionId : string ) {
     const sessionIdBuffer = Buffer.from(sessionId);
     const hash = crypto.createHash('sha256');
     hash.update(sessionIdBuffer);

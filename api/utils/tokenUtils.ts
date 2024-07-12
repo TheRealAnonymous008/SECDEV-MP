@@ -25,12 +25,18 @@ export const refreshToken = (refreshjwt : string) : string => {
     return "";
 }
 
+interface TokenData {
+    id : string,
+    admin: boolean,
+    csrf : string
+}
 
-const makeRefreshToken = async (user, token, sessionId, callback) => {
+
+const makeRefreshToken = async (token, data : TokenData, callback) => {
     await jwt.sign(
         {
-            id : sessionId,
-            role: user.Role,
+            id : data.id,
+            admin: data.admin,
             accessIssuer: JWT_ISSUER,
         },
         getRandomRefreshSecret(),
@@ -51,21 +57,27 @@ const makeRefreshToken = async (user, token, sessionId, callback) => {
     )
 }
 
-export const signToken = async (user : User,  callback: (error: Error | null, token: string | null, refreshToken: string | null) => void): Promise<void> => {
+export const initializeSession = async(user : User) => {
+    const sessionId = getRandom()
+    const csrf = getRandom();
+    await UserRepository.addSession(user.Id, sessionId, csrf);
+
+    return {
+        id : sessionId,
+        admin: user.Role == RoleIds.ADMIN,
+        csrf: csrf
+    }
+}
+
+export const signToken = async (data : TokenData,  callback: (error: Error | null, token: string | null, refreshToken: string | null) => void): Promise<void> => {
     const timeSinceEpoch = getTimestamp();
     const expirationTime = timeSinceEpoch + Number(JWT_EXPIRE_TIME) * 10000;
-    const sessionId = getRandom()
-
-
     try {
-        await UserRepository.addSession(user.Id, sessionId);
         const secret = getRandomAccessSecret()
-
         await jwt.sign(
             {
-                id : sessionId,
-                admin: user.Role == RoleIds.ADMIN,
-                csrf: getRandom()           // TODO: do something with the csrf token
+                id : data.id,
+                admin: data.admin,
             },
             secret,
             {
@@ -76,16 +88,16 @@ export const signToken = async (user : User,  callback: (error: Error | null, to
                 if (error) {
                     callback(error, null, null);
                 } else if (token) {
-                    await makeRefreshToken(user, token, sessionId,  callback);
+                    await makeRefreshToken(token, data, callback);
                 }
 
             }
         );
+
     } catch (error) {
         callback(error, null, null);
     }
 };
-
 
 export const checkAccessToken = (token) => {
     let decoded = null 
@@ -94,11 +106,14 @@ export const checkAccessToken = (token) => {
             decoded = jwt.verify(token, ACCESS_SECRETS[i], {issuer : JWT_ISSUER})
         }
         catch(err){
-            // Do nothing
+
         }
 
         if (decoded != null)
             break
+    }
+    if (decoded == null){
+        console.log("Error: Access Token Invalid")
     }
     return decoded
 }
@@ -117,6 +132,8 @@ export const checkRefreshToken = (token) => {
         if (decoded != null)
             break
     }
-
+    if (decoded == null){
+        console.log("Error: Refresh Token Invalid")
+    }
     return decoded
 }
