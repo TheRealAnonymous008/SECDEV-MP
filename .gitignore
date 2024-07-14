@@ -186,3 +186,4 @@ client/obj/Debug/client.esproj.FileListAbsolute.txt
 
 # certs
 *.pems
+*.pem
