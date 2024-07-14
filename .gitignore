@@ -183,3 +183,6 @@ client/obj/Debug/client.esproj.FileListAbsolute.txt
 
 # Local Netlify folder
 .netlify
+
+# certs
+*.pems
