@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { ConvertDate } from "../../utils/ConvertDate";
 import { ModalWrapper } from "../base/ModalBase";
-import { InvoiceRequest } from "./InvoiceDetails"
+import { InvoiceRequest } from "./InvoiceDetails";
+import { ENDPOINTS } from "../../api/endpoints";
 
 const DEFAULT_INVOICE = {
     agentCommission: 0,
@@ -9,12 +10,14 @@ const DEFAULT_INVOICE = {
     agentFirstName: "",
     amount: 0,
     datePaid: new Date(),
-    deductible: 0
+    deductible: 0,
+    pdfFile: null
 }
 
 export const InvoiceSubform = (props: {setValue : any, errors : any, default? : InvoiceRequest}) => {
     const errors = props.errors;
     const [invoice, setInvoice] = useState<InvoiceRequest>(props.default ? props.default : DEFAULT_INVOICE);
+    const [selectedPdf, setSelectedPdf] = useState<File | null>(null);
 
     useEffect(() => {
         if (props.default) {
@@ -26,7 +29,7 @@ export const InvoiceSubform = (props: {setValue : any, errors : any, default? : 
     }, [props.default])
 
     const onSubmit = () => {
-        props.setValue(invoice);
+        props.setValue({...invoice, pdfFile: selectedPdf});
         setIsVisible(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }
@@ -106,6 +109,19 @@ export const InvoiceSubform = (props: {setValue : any, errors : any, default? : 
                 />
                 {errors.invoice?.agentCommission && <p>Agent Commission has wrong format</p>}
             </div>
+
+            <div>
+                <label htmlFor="pdfUpload">PDF File</label>
+                <input type="file" name="pdfFile" id="pdfUpload" accept=".pdf"
+                    onChange={(e) => {
+                        if (e.target.files && e.target.files.length > 0) {
+                            setSelectedPdf(e.target.files[0]);
+                        }
+                    }}
+                />
+                {selectedPdf && <p>Selected PDF: {selectedPdf.name}</p>}
+            </div>
+            
             <br />
             <br />
             
