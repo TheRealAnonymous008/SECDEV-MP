@@ -18,6 +18,8 @@ export const InvoiceSubform = (props: {setValue : any, errors : any, default? : 
     const errors = props.errors;
     const [invoice, setInvoice] = useState<InvoiceRequest>(props.default ? props.default : DEFAULT_INVOICE);
     const [selectedPdf, setSelectedPdf] = useState<File | null>(null);
+    const [showPdfViewer, setShowPdfViewer] = useState<boolean>(false);
+    const [pdfSrc, setPdfSrc] = useState<string>('');
 
     useEffect(() => {
         if (props.default) {
@@ -35,6 +37,14 @@ export const InvoiceSubform = (props: {setValue : any, errors : any, default? : 
     }
 
     const [isVisible, setIsVisible] = useState<boolean>(false);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setSelectedPdf(e.target.files[0]);
+            setPdfSrc(URL.createObjectURL(e.target.files[0])); // Create URL for PDF
+            setShowPdfViewer(true);
+        }
+    };
 
     return (
         <ModalWrapper front={"Add Invoice"} isVisible={isVisible} setIsVisible={setIsVisible}>
@@ -113,15 +123,16 @@ export const InvoiceSubform = (props: {setValue : any, errors : any, default? : 
             <div>
                 <label htmlFor="pdfUpload">PDF File</label>
                 <input type="file" name="pdfFile" id="pdfUpload" accept=".pdf"
-                    onChange={(e) => {
-                        if (e.target.files && e.target.files.length > 0) {
-                            setSelectedPdf(e.target.files[0]);
-                        }
-                    }}
+                    onChange={handleFileChange}
                 />
                 {selectedPdf && <p>Selected PDF: {selectedPdf.name}</p>}
+                {showPdfViewer && (
+                    <div style={{ marginTop: '20px', border: '1px solid #ccc', padding: '10px' }}>
+                        <iframe title="Uploaded PDF" src={pdfSrc} width="100%" height="400px"></iframe>
+                    </div>
+                )}
             </div>
-            
+
             <br />
             <br />
             
