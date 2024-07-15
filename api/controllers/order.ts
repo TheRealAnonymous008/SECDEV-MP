@@ -1,8 +1,9 @@
 import express = require('express');
 import { CustomerRepository } from '../repository/customer';
-import { validateInteger } from '../middleware/inputValidation';
+import { baseValidation, validateEmail, validateInteger, validateLimit, validateMobileNumber, validateName, validateWord } from '../middleware/inputValidation';
 import { OrderRespository } from '../repository/order';
 import { makeOrderArrayView, makeOrderView } from '../projections/order';
+import { OrderRow } from '../models/order';
 
 const all = async (req: express.Request, res: express.Response) => {
     OrderRespository.retrieveAll()
@@ -20,25 +21,112 @@ const all = async (req: express.Request, res: express.Response) => {
 }
 
 const id = async (req: express.Request, res: express.Response) => {
-
     try {
-        let id = validateInteger(req.query.id.toString())
-        CustomerRepository.retrieveById(id)
+        let id = validateInteger(req.query.id.toString());
+        OrderRespository.retrieveById(id)
             .then((result) => {
                 if (result.length == 0){
                     res.status(404).end();
-                    return
+                    return;
                 }
                 res.json(makeOrderView(result));
                 res.status(200).end();
             })
             .catch((err) => {
-                        
                 console.log(err);
                 res.status(500).end();
             })
     } catch (error) {
         console.log(error);
+        res.status(500).end();
+    }
+}
+
+const create = async (req: express.Request, res: express.Response) => {
+    try {
+        const order: OrderRow = {
+            Status: validateWord(req.body.status),
+            TimeIn: req.body.timeIn,  // Assuming the time is in a valid format
+            TimeOut: req.body.timeOut, // Assuming the time is in a valid format
+            CustomerId: validateWord(req.body.customerId),
+            TypeId: validateWord(req.body.typeId),
+            VehicleId: validateWord(req.body.vehicleId),
+            EstimateNumber: validateWord(req.body.estimateNumber),
+            ScopeOfWork: baseValidation(req.body.scopeOfWork),  // Free field, SQL injection and XSS prevention assumed
+            IsVerified: req.body.isVerified === 'true'
+        };
+
+        OrderRespository.insert(order)
+            .then((result) => {
+                if (result == undefined){
+                    res.status(500).end();
+                    return;
+                }
+                res.json(makeOrderView({...order, Id: result}));
+                res.status(200).end();
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).end();
+            })
+    } catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
+}
+
+const update = async (req: express.Request, res: express.Response) => {
+    try {
+        const order: OrderRow = {
+            Status: validateWord(req.body.status),
+            TimeIn: req.body.timeIn,
+            TimeOut: req.body.timeOut,
+            CustomerId: validateWord(req.body.customerId),
+            TypeId: validateWord(req.body.typeId),
+            VehicleId: validateWord(req.body.vehicleId),
+            EstimateNumber: validateWord(req.body.estimateNumber),
+            ScopeOfWork: baseValidation(req.body.scopeOfWork),
+            IsVerified: req.body.isVerified === 'true'
+        };
+        let id = validateInteger(req.query.id.toString());
+
+        OrderRespository.update(id, order)
+            .then((result) => {
+                if (result == undefined){
+                    res.status(500).end();
+                    return;
+                }
+                res.json(makeOrderView({...order, Id: result}));
+                res.status(200).end();
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).end();
+            })
+    } catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
+}
+
+const remove = async (req: express.Request, res: express.Response) => {
+    try {
+        let id = validateInteger(req.query.id.toString());
+
+        OrderRespository.delete(id)
+            .then((result) => {
+                if (result == undefined){
+                    res.status(500).end();
+                    return;
+                }
+                res.status(200).end();
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).end();
+            })
+    } catch (err) {
+        console.log(err);
         res.status(500).end();
     }
 }
@@ -134,4 +222,4 @@ const id = async (req: express.Request, res: express.Response) => {
 //     }
 // }
 
-export default {all, id};
+export default {all, id, create, update, remove};

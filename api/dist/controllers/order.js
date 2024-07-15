@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const customer_1 = require("../repository/customer");
 const inputValidation_1 = require("../middleware/inputValidation");
 const order_1 = require("../repository/order");
 const order_2 = require("../projections/order");
@@ -30,7 +29,7 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
-        customer_1.CustomerRepository.retrieveById(id)
+        order_1.OrderRespository.retrieveById(id)
             .then((result) => {
             if (result.length == 0) {
                 res.status(404).end();
@@ -46,6 +45,92 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (error) {
         console.log(error);
+        res.status(500).end();
+    }
+});
+const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const order = {
+            Status: (0, inputValidation_1.validateWord)(req.body.status),
+            TimeIn: req.body.timeIn,
+            TimeOut: req.body.timeOut,
+            CustomerId: (0, inputValidation_1.validateWord)(req.body.customerId),
+            TypeId: (0, inputValidation_1.validateWord)(req.body.typeId),
+            VehicleId: (0, inputValidation_1.validateWord)(req.body.vehicleId),
+            EstimateNumber: (0, inputValidation_1.validateWord)(req.body.estimateNumber),
+            ScopeOfWork: req.body.scopeOfWork,
+            IsVerified: req.body.isVerified === 'true'
+        };
+        order_1.OrderRespository.insert(order)
+            .then((result) => {
+            if (result == undefined) {
+                res.status(500).end();
+                return;
+            }
+            res.json((0, order_2.makeOrderView)(Object.assign(Object.assign({}, order), { Id: result })));
+            res.status(200).end();
+        })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
+});
+const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const order = {
+            Status: (0, inputValidation_1.validateWord)(req.body.status),
+            TimeIn: req.body.timeIn,
+            TimeOut: req.body.timeOut,
+            CustomerId: (0, inputValidation_1.validateWord)(req.body.customerId),
+            TypeId: (0, inputValidation_1.validateWord)(req.body.typeId),
+            VehicleId: (0, inputValidation_1.validateWord)(req.body.vehicleId),
+            EstimateNumber: (0, inputValidation_1.validateWord)(req.body.estimateNumber),
+            ScopeOfWork: req.body.scopeOfWork,
+            IsVerified: req.body.isVerified === 'true'
+        };
+        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        order_1.OrderRespository.update(id, order)
+            .then((result) => {
+            if (result == undefined) {
+                res.status(500).end();
+                return;
+            }
+            res.json((0, order_2.makeOrderView)(Object.assign(Object.assign({}, order), { Id: result })));
+            res.status(200).end();
+        })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
+});
+const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        order_1.OrderRespository.delete(id)
+            .then((result) => {
+            if (result == undefined) {
+                res.status(500).end();
+                return;
+            }
+            res.status(200).end();
+        })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (err) {
+        console.log(err);
         res.status(500).end();
     }
 });
@@ -131,4 +216,4 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 //         res.status(500);
 //     }
 // }
-exports.default = { all, id };
+exports.default = { all, id, create, update, remove };
