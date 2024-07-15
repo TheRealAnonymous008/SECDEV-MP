@@ -58,7 +58,7 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             TypeId: (0, inputValidation_1.validateWord)(req.body.typeId),
             VehicleId: (0, inputValidation_1.validateWord)(req.body.vehicleId),
             EstimateNumber: (0, inputValidation_1.validateWord)(req.body.estimateNumber),
-            ScopeOfWork: req.body.scopeOfWork,
+            ScopeOfWork: (0, inputValidation_1.baseValidation)(req.body.scopeOfWork),
             IsVerified: req.body.isVerified === 'true'
         };
         order_1.OrderRespository.insert(order)
@@ -90,7 +90,7 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             TypeId: (0, inputValidation_1.validateWord)(req.body.typeId),
             VehicleId: (0, inputValidation_1.validateWord)(req.body.vehicleId),
             EstimateNumber: (0, inputValidation_1.validateWord)(req.body.estimateNumber),
-            ScopeOfWork: req.body.scopeOfWork,
+            ScopeOfWork: (0, inputValidation_1.baseValidation)(req.body.scopeOfWork),
             IsVerified: req.body.isVerified === 'true'
         };
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
