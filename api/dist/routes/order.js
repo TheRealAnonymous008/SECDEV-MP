@@ -11,9 +11,9 @@ const authValidation_1 = __importDefault(require("../middleware/authValidation")
 const router = express.Router();
 router.get('/all', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN, enum_1.RoleIds.VIEW_EDIT, enum_1.RoleIds.VIEW]), order_1.default.all);
 router.get('/id', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN, enum_1.RoleIds.VIEW_EDIT, enum_1.RoleIds.VIEW]), order_1.default.id);
-// router.post('/create', validateToken, validateRole([Roles.ADMIN, Roles.VIEW_EDIT]), controller.create);
-// router.post('/update', validateToken, validateRole([Roles.ADMIN, Roles.VIEW_EDIT]), controller.update);
-// router.delete('/delete', validateToken, validateRole([Roles.ADMIN, Roles.VIEW_EDIT]), controller.remove);
-// router.get('/filter', validateToken, validateRole(ALL_ROLES), controller.filter);
-// router.post('/verify', validateToken, validateRole([Roles.ADMIN]), controller.verify);
+router.post('/create', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN, enum_1.RoleIds.VIEW_EDIT]), order_1.default.create);
+router.post('/update', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN, enum_1.RoleIds.VIEW_EDIT]), order_1.default.update);
+router.delete('/delete', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN, enum_1.RoleIds.VIEW_EDIT]), order_1.default.remove);
+//router.get('/filter', validateToken, validateRole(ALL_ROLES), controller.filter);
+//router.post('/verify', validateToken, validateRole([Roles.ADMIN]), controller.verify);
 exports.default = router;
