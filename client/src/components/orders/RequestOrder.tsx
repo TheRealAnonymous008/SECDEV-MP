@@ -212,10 +212,11 @@ export const RequestOrder = (props : {setResponse : Function, default? : OrderRe
                 }}
                     default={watch("invoice")}  errors={errors} />
                 <br />
-
-                <ExpenseSubform setData={(expenses: Expense[]) => {
+                
+                {/* Deactivating expenses for now */}
+                {/* <ExpenseSubform setData={(expenses: Expense[]) => {
                     setValue("expenses", expenses)
-                }} default={watch("expenses")}/>
+                }} default={watch("expenses")}/> */}
 
                 <br />
                 <br />
