@@ -3,6 +3,8 @@ import { UserRow } from '../models/user';
 import { makeUserArrayView, makeUserView } from '../projections/user';
 import { UserQuery, UserRepository } from '../repository/user';
 import { validateName, validateUsername, validateMobileNumber, validateEmail, validateInteger, validateImage, validateRole, baseValidation, validateLimit } from '../middleware/inputValidation';
+import Bcrypt = require('bcryptjs');
+import { getRandom } from '../utils/cryptoUtils';
 
 const all = (req: express.Request, res: express.Response) => {
     UserRepository.retrieveAll()
@@ -41,6 +43,43 @@ const id = (req: express.Request, res: express.Response) => {
         console.log(error);
         res.status(500).end();
     }
+}
+
+const SALT_ROUNDS = 14
+
+const create = (req : express.Request, res : express.Response) => {
+    try {
+        const salt = Bcrypt.genSaltSync(SALT_ROUNDS)
+        const password = getRandom()
+        const user : UserRow= {
+            FirstName : validateName(req.body.firstName),
+            LastName : validateName(req.body.lastName),
+            Username : validateUsername(req.body.username),
+            MobileNumber : validateMobileNumber(req.body.mobileNumber),
+            Email : validateEmail(req.body.email),
+            Salt: salt,
+            Password : Bcrypt.hashSync(password, salt),
+            Role : validateRole(req.body.role)
+        }
+        
+        UserRepository.register(user)
+            .then((result) => {
+                if (result == undefined){
+                    res.status(500).end();
+                    return
+                }
+                res.status(200).end();
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).end();
+            })
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).end();
+    }
+
 }
 
 // req is any so thatwe can get all the files
@@ -164,4 +203,4 @@ const makeQuery = (req : express.Request) : UserQuery => {
     }
 }
 
-export default {all, id, upload, update, remove, filter};
+export default {all, id, create, upload, update, remove, filter};

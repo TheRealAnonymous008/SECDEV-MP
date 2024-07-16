@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = require("../projections/user");
 const user_2 = require("../repository/user");
 const inputValidation_1 = require("../middleware/inputValidation");
+const Bcrypt = require("bcryptjs");
+const cryptoUtils_1 = require("../utils/cryptoUtils");
 const all = (req, res) => {
     user_2.UserRepository.retrieveAll()
         .then((result) => {
@@ -45,6 +47,39 @@ const id = (req, res) => {
     }
     catch (error) {
         console.log(error);
+        res.status(500).end();
+    }
+};
+const SALT_ROUNDS = 14;
+const create = (req, res) => {
+    try {
+        const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
+        const password = (0, cryptoUtils_1.getRandom)();
+        const user = {
+            FirstName: (0, inputValidation_1.validateName)(req.body.firstName),
+            LastName: (0, inputValidation_1.validateName)(req.body.lastName),
+            Username: (0, inputValidation_1.validateUsername)(req.body.username),
+            MobileNumber: (0, inputValidation_1.validateMobileNumber)(req.body.mobileNumber),
+            Email: (0, inputValidation_1.validateEmail)(req.body.email),
+            Salt: salt,
+            Password: Bcrypt.hashSync(password, salt),
+            Role: (0, inputValidation_1.validateRole)(req.body.role)
+        };
+        user_2.UserRepository.register(user)
+            .then((result) => {
+            if (result == undefined) {
+                res.status(500).end();
+                return;
+            }
+            res.status(200).end();
+        })
+            .catch((err) => {
+            console.log(err);
+            res.status(500).end();
+        });
+    }
+    catch (err) {
+        console.log(err);
         res.status(500).end();
     }
 };
@@ -156,4 +191,4 @@ const makeQuery = (req) => {
         skip: (skip) ? skip : null,
     };
 };
-exports.default = { all, id, upload, update, remove, filter };
+exports.default = { all, id, create, upload, update, remove, filter };

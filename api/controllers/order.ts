@@ -43,13 +43,14 @@ const id = async (req: express.Request, res: express.Response) => {
 
 const create = async (req: express.Request, res: express.Response) => {
     try {
+        console.log(req.body)
         const order: OrderRow = {
             Status: validateWord(req.body.status),
             TimeIn: validateDate(req.body.timeIn),
             TimeOut: validateDate(req.body.timeOut),
-            CustomerId: validateWord(req.body.customerId),
+            CustomerId: validateInteger(req.body.customer),
             TypeId: validateWord(req.body.typeId),
-            VehicleId: validateWord(req.body.vehicleId),
+            VehicleId: validateInteger(req.body.vehicle),
             EstimateNumber: validateWord(req.body.estimateNumber),
             ScopeOfWork: baseValidation(req.body.scopeOfWork),  // Free field, SQL injection and XSS prevention assumed
             IsVerified: req.body.isVerified === 'true'

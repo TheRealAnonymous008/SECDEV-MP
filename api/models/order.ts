@@ -5,9 +5,9 @@ export default interface Order extends RowDataPacket {
     Status?: string, 
     TimeIn?: string, 
     TimeOut?: string, 
-    CustomerId?: string,
+    CustomerId?: number,
     TypeId?: string, 
-    VehicleId?: string,
+    VehicleId?: number,
     EstimateNumber? : string, 
     ScopeOfWork?: string, 
     IsVerified?: boolean
@@ -17,9 +17,9 @@ export interface OrderRow {
     Status?: string, 
     TimeIn?: Date, 
     TimeOut?: Date, 
-    CustomerId?: string,
+    CustomerId?: number,
     TypeId?: string, 
-    VehicleId?: string,
+    VehicleId?: number,
     EstimateNumber? : string, 
     ScopeOfWork?: string, 
     IsVerified?: boolean

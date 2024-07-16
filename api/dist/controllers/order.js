@@ -50,13 +50,14 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log(req.body);
         const order = {
             Status: (0, inputValidation_1.validateWord)(req.body.status),
             TimeIn: (0, inputValidation_1.validateDate)(req.body.timeIn),
             TimeOut: (0, inputValidation_1.validateDate)(req.body.timeOut),
-            CustomerId: (0, inputValidation_1.validateWord)(req.body.customerId),
+            CustomerId: (0, inputValidation_1.validateInteger)(req.body.customer),
             TypeId: (0, inputValidation_1.validateWord)(req.body.typeId),
-            VehicleId: (0, inputValidation_1.validateWord)(req.body.vehicleId),
+            VehicleId: (0, inputValidation_1.validateInteger)(req.body.vehicle),
             EstimateNumber: (0, inputValidation_1.validateWord)(req.body.estimateNumber),
             ScopeOfWork: (0, inputValidation_1.baseValidation)(req.body.scopeOfWork),
             IsVerified: req.body.isVerified === 'true'

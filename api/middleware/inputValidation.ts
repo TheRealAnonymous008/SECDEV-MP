@@ -1,4 +1,4 @@
-import { ALL_ROLES, RoleIds } from "../models/enum";
+import { ALL_ROLES, RoleIds, Roles } from "../models/enum";
 
 import sanitizeHtml from 'sanitize-html';
 import { LIMIT_MAX } from "../config/limiterConfig";
@@ -132,11 +132,11 @@ export function validateRole(role) {
     role = baseValidation(role);
 
     const roleKey = role.toUpperCase();
-    if (Object.keys(RoleIds).includes(roleKey)) {
-        return RoleIds[roleKey];
+    if (! ALL_ROLES.includes(roleKey)) {
+        throw new Error("Invalid Role");
     }
+    return ALL_ROLES.indexOf(roleKey) + 1;
 
-    throw new Error("Invalid Role");
 }
 
 export function validateLicensePlate(str){
@@ -155,11 +155,14 @@ export function validateLicensePlate(str){
 export function validateDate(str) {
     assertNotNullOrEmpty(str);
     str = baseValidation(str);
+    const date = new Date(str);
+    const status = !isNaN(date.getTime()) && date instanceof Date;
 
-    if (! validator.isDate(str)){
-        throw new Error("Invalid Date")
+    if (!status) {
+        throw new Error("Invalid Date Time Format")
     }
-    return new Date(str);
+
+    return str
 }
 
 export function validateJWT(str) {

@@ -129,10 +129,10 @@ function validateRole(role) {
     assertNotNullOrEmpty(role);
     role = baseValidation(role);
     const roleKey = role.toUpperCase();
-    if (Object.keys(enum_1.RoleIds).includes(roleKey)) {
-        return enum_1.RoleIds[roleKey];
+    if (!enum_1.ALL_ROLES.includes(roleKey)) {
+        throw new Error("Invalid Role");
     }
-    throw new Error("Invalid Role");
+    return enum_1.ALL_ROLES.indexOf(roleKey) + 1;
 }
 exports.validateRole = validateRole;
 function validateLicensePlate(str) {
@@ -148,10 +148,12 @@ exports.validateLicensePlate = validateLicensePlate;
 function validateDate(str) {
     assertNotNullOrEmpty(str);
     str = baseValidation(str);
-    if (!validator_1.default.isDate(str)) {
-        throw new Error("Invalid Date");
+    const date = new Date(str);
+    const status = !isNaN(date.getTime()) && date instanceof Date;
+    if (!status) {
+        throw new Error("Invalid Date Time Format");
     }
-    return new Date(str);
+    return str;
 }
 exports.validateDate = validateDate;
 function validateJWT(str) {
