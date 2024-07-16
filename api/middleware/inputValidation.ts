@@ -149,6 +149,23 @@ export function validateLicensePlate(str){
     return str;
 }
 
+export function validateDateTime(str) {
+    assertNotNullOrEmpty(str);
+    str = baseValidation(str);
+
+    return str;
+}
+
+export function validateJWT(str) {
+    assertNotNullOrEmpty(str);
+    str = baseValidation(str);
+
+    if (! validator.isJWT(str)){
+        throw new Error("Not JWT")
+    }
+    return str;
+}
+
 export function assertNotNullOrEmpty(field) {
     if (field == null || field == undefined || field == "" ){
         throw new Error("Field is empty")
@@ -164,6 +181,7 @@ const allowedMimeTypes = ['image/jpeg', 'image/png'];
 const MAGIC_NUMBERS = {
     jpg: ['ffd8ffe0', 'ffd8ffe1', 'ffd8ffe2', 'ffd8ffe3', 'ffd8ffe8'],
     png: '89504e470d0a1a0a',
+    pdf: ''
 };
 
 function checkMagicNumbers(buffer) {
@@ -185,6 +203,23 @@ export async function validateImage(image) {
     }
 
     return await sanitizeImage(image);   
+}
+
+export async function validatePdf(pdf) {
+    if (pdf == null || pdf.size < minSize) {
+        throw new Error("Invalid PDF");
+    }
+
+    
+    if (!allowedMimeTypes.includes(pdf.mimetype) || !checkMagicNumbers(pdf.buffer)) {
+        throw new Error("Invalid File Format");
+    }
+
+    if (pdf.size > maxSize) {
+        throw new Error("PDF is too large");
+    }
+
+    return await pdf;
 }
 
 export async function sanitizeImage(image : Express.Multer.File) {

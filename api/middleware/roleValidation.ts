@@ -16,7 +16,6 @@ const validateRole = (allowedRoles : number[]) => {
                 else if (allowedRoles.includes(user.Role)){
                     // After this refresh the csrf token for non-view requests
                     if (req.method != "GET") {
-                        console.log(allowedRoles)
                         UserRepository.refreshCSRF(sessionId)
                             .then((csrf) => {
                                 res.cookie('csrf', csrf, COOKIE_SETTINGS);

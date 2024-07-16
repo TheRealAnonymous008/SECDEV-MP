@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tokenUtils_1 = require("../utils/tokenUtils");
+const inputValidation_1 = require("./inputValidation");
 const clearRefreshToken = (res) => {
     res.clearCookie("jwt");
 };
@@ -25,8 +26,8 @@ const handleAccessTokenExpired = (res, token) => {
     res.locals.jwt = (0, tokenUtils_1.checkAccessToken)(token);
 };
 const validateToken = (req, res, next) => {
-    const refToken = req.cookies.jwt;
-    let token = req.cookies.jwtacc;
+    const refToken = (0, inputValidation_1.validateJWT)(req.cookies.jwt);
+    let token = (0, inputValidation_1.validateJWT)(req.cookies.jwtacc);
     if (token && refToken) {
         try {
             const decoded = (0, tokenUtils_1.checkAccessToken)(token);

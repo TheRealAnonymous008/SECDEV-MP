@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { checkAccessToken, checkRefreshToken, refreshToken } from "../utils/tokenUtils";
+import { validateJWT } from "./inputValidation";
 
 const clearRefreshToken = (res : Response) => {
     res.clearCookie("jwt")
@@ -32,8 +33,9 @@ const handleAccessTokenExpired = (res: Response, token : any ) => {
 
 
 const validateToken = (req : Request, res : Response, next : NextFunction) => {
-    const refToken = req.cookies.jwt;
-    let token = req.cookies.jwtacc
+    const refToken = validateJWT(req.cookies.jwt);
+    let token = validateJWT(req.cookies.jwtacc);
+
     if(token && refToken) {
         try {
             const decoded = checkAccessToken(token)

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sanitizeImage = exports.validateImage = exports.assertNotNullOrEmpty = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateLimit = exports.validateNonNegative = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
+exports.sanitizeImage = exports.validatePdf = exports.validateImage = exports.assertNotNullOrEmpty = exports.validateJWT = exports.validateDateTime = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateLimit = exports.validateNonNegative = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
 const enum_1 = require("../models/enum");
 const sanitize_html_1 = __importDefault(require("sanitize-html"));
 const limiterConfig_1 = require("../config/limiterConfig");
@@ -143,6 +143,21 @@ function validateLicensePlate(str) {
     return str;
 }
 exports.validateLicensePlate = validateLicensePlate;
+function validateDateTime(str) {
+    assertNotNullOrEmpty(str);
+    str = baseValidation(str);
+    return str;
+}
+exports.validateDateTime = validateDateTime;
+function validateJWT(str) {
+    assertNotNullOrEmpty(str);
+    str = baseValidation(str);
+    if (!validator_1.default.isJWT(str)) {
+        throw new Error("Not JWT");
+    }
+    return str;
+}
+exports.validateJWT = validateJWT;
 function assertNotNullOrEmpty(field) {
     if (field == null || field == undefined || field == "") {
         throw new Error("Field is empty");
@@ -156,6 +171,7 @@ const allowedMimeTypes = ['image/jpeg', 'image/png'];
 const MAGIC_NUMBERS = {
     jpg: ['ffd8ffe0', 'ffd8ffe1', 'ffd8ffe2', 'ffd8ffe3', 'ffd8ffe8'],
     png: '89504e470d0a1a0a',
+    pdf: ''
 };
 function checkMagicNumbers(buffer) {
     const jpgMagic = buffer.toString('hex', 0, 4);
@@ -176,6 +192,21 @@ function validateImage(image) {
     });
 }
 exports.validateImage = validateImage;
+function validatePdf(pdf) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (pdf == null || pdf.size < minSize) {
+            throw new Error("Invalid PDF");
+        }
+        if (!allowedMimeTypes.includes(pdf.mimetype) || !checkMagicNumbers(pdf.buffer)) {
+            throw new Error("Invalid File Format");
+        }
+        if (pdf.size > maxSize) {
+            throw new Error("PDF is too large");
+        }
+        return yield pdf;
+    });
+}
+exports.validatePdf = validatePdf;
 function sanitizeImage(image) {
     return __awaiter(this, void 0, void 0, function* () {
         let imageProcessor = (0, sharp_1.default)(image.buffer);
