@@ -1,6 +1,5 @@
 import express = require('express');
-import { CustomerRepository } from '../repository/customer';
-import { baseValidation, validateDate, validateEmail, validateInteger, validateLimit, validateMobileNumber, validateName, validateWord } from '../middleware/inputValidation';
+import { baseValidation, validateDate, validateInteger, validateWord } from '../middleware/inputValidation';
 import { OrderRespository } from '../repository/order';
 import { makeOrderArrayView, makeOrderView } from '../projections/order';
 import { OrderRow } from '../models/order';
