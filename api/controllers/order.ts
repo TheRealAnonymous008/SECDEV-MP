@@ -1,6 +1,6 @@
 import express = require('express');
 import { CustomerRepository } from '../repository/customer';
-import { baseValidation, validateEmail, validateInteger, validateLimit, validateMobileNumber, validateName, validateWord } from '../middleware/inputValidation';
+import { baseValidation, validateDate, validateEmail, validateInteger, validateLimit, validateMobileNumber, validateName, validateWord } from '../middleware/inputValidation';
 import { OrderRespository } from '../repository/order';
 import { makeOrderArrayView, makeOrderView } from '../projections/order';
 import { OrderRow } from '../models/order';
@@ -46,8 +46,8 @@ const create = async (req: express.Request, res: express.Response) => {
     try {
         const order: OrderRow = {
             Status: validateWord(req.body.status),
-            TimeIn: req.body.timeIn,  // Assuming the time is in a valid format
-            TimeOut: req.body.timeOut, // Assuming the time is in a valid format
+            TimeIn: validateDate(req.body.timeIn),
+            TimeOut: validateDate(req.body.timeOut),
             CustomerId: validateWord(req.body.customerId),
             TypeId: validateWord(req.body.typeId),
             VehicleId: validateWord(req.body.vehicleId),
@@ -55,6 +55,10 @@ const create = async (req: express.Request, res: express.Response) => {
             ScopeOfWork: baseValidation(req.body.scopeOfWork),  // Free field, SQL injection and XSS prevention assumed
             IsVerified: req.body.isVerified === 'true'
         };
+
+        if (order.TimeIn > order.TimeOut){
+            throw new Error("Invalid Time In and Time Out")
+        }
 
         OrderRespository.insert(order)
             .then((result) => {
@@ -79,15 +83,20 @@ const update = async (req: express.Request, res: express.Response) => {
     try {
         const order: OrderRow = {
             Status: validateWord(req.body.status),
-            TimeIn: req.body.timeIn,
-            TimeOut: req.body.timeOut,
+            TimeIn: validateDate(req.body.timeIn),
+            TimeOut: validateDate(req.body.timeOut),
             CustomerId: validateWord(req.body.customerId),
             TypeId: validateWord(req.body.typeId),
             VehicleId: validateWord(req.body.vehicleId),
             EstimateNumber: validateWord(req.body.estimateNumber),
-            ScopeOfWork: baseValidation(req.body.scopeOfWork),
+            ScopeOfWork: baseValidation(req.body.scopeOfWork),  // Free field, SQL injection and XSS prevention assumed
             IsVerified: req.body.isVerified === 'true'
         };
+
+        if (order.TimeIn > order.TimeOut){
+            throw new Error("Invalid Time In and Time Out")
+        }
+        
         let id = validateInteger(req.query.id.toString());
 
         OrderRespository.update(id, order)

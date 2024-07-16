@@ -149,11 +149,14 @@ export function validateLicensePlate(str){
     return str;
 }
 
-export function validateDateTime(str) {
+export function validateDate(str) {
     assertNotNullOrEmpty(str);
     str = baseValidation(str);
 
-    return str;
+    if (! validator.isDate(str)){
+        throw new Error("Invalid Date")
+    }
+    return new Date(str);
 }
 
 export function validateJWT(str) {
