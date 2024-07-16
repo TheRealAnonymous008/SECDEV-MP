@@ -1,4 +1,4 @@
-import { ALL_ROLES } from "../models/enum";
+import { ALL_ROLES, RoleIds } from "../models/enum";
 
 import sanitizeHtml from 'sanitize-html';
 import { LIMIT_MAX } from "../config/limiterConfig";
@@ -126,14 +126,17 @@ export function validatePassword(str) {
     return str
 }
 
-export function validateRole(str) {
-    assertNotNullOrEmpty(str)
-    str = baseValidation(str)
+export function validateRole(role) {
+    
+    assertNotNullOrEmpty(role);
+    role = baseValidation(role);
 
-    if (ALL_ROLES.includes(str))
-        return str 
+    const roleKey = role.toUpperCase();
+    if (Object.keys(RoleIds).includes(roleKey)) {
+        return RoleIds[roleKey];
+    }
 
-    throw new Error("Invalid Role")
+    throw new Error("Invalid Role");
 }
 
 export function validateLicensePlate(str){

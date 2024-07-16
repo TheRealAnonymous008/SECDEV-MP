@@ -125,11 +125,15 @@ function validatePassword(str) {
     return str;
 }
 exports.validatePassword = validatePassword;
-function validateRole(str) {
-    assertNotNullOrEmpty(str);
-    str = baseValidation(str);
-    if (enum_1.ALL_ROLES.includes(str))
-        return str;
+function validateRole(role) {
+    assertNotNullOrEmpty(role);
+    role = baseValidation(role);
+    console.log(role);
+    console.log(validator_1.default.isInt(role.toString()));
+    const roleKey = role.toUpperCase();
+    if (Object.keys(enum_1.RoleIds).includes(roleKey)) {
+        return enum_1.RoleIds[roleKey];
+    }
     throw new Error("Invalid Role");
 }
 exports.validateRole = validateRole;
