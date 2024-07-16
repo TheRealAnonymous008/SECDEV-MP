@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = require("../repository/user");
-const enum_1 = require("../models/enum");
 const authConfig_1 = require("../config/authConfig");
 const validateRole = (allowedRoles) => {
     return (req, res, next) => {
@@ -14,7 +13,8 @@ const validateRole = (allowedRoles) => {
             }
             else if (allowedRoles.includes(user.Role)) {
                 // After this refresh the csrf token for non-view requests
-                if (!allowedRoles.includes(enum_1.RoleIds.VIEW)) {
+                console.log(req.method);
+                if (req.method != "GET") {
                     console.log(allowedRoles);
                     user_1.UserRepository.refreshCSRF(sessionId)
                         .then((csrf) => {
