@@ -150,6 +150,7 @@ const logout = (req : express.Request, res : express.Response) => {
             .then((v) => {
                 res.clearCookie("jwt")
                     .clearCookie("jwtacc")
+                    .clearCookie("csrf")
                     .end();
             })
             .catch((err) => {

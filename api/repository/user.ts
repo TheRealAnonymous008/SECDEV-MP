@@ -86,13 +86,14 @@ export const UserRepository = {
                     else {
                         if (res.length == 0)
                             resolve(undefined)
-                        if (currentTime - parseInt(res[0].SessionTime) > SESSION_EXPIRE_TIME) {
+                        else if (currentTime - parseInt(res[0].SessionTime) > SESSION_EXPIRE_TIME) {
                             const x = await UserRepository.deleteSession(sessionId)
                             resolve(undefined)
                         }
                         else {
-                            const x = await UserRepository.retrieveById(res[0].UserId);
-                            resolve(x);
+                            UserRepository.retrieveById(res[0].UserId)
+                                .then((user) => {resolve(user)})
+                                .catch((err) => {console.log(err); reject(err)});
                         }
                     }
                 }

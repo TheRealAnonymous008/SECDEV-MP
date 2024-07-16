@@ -66,14 +66,14 @@ exports.UserRepository = {
     // We include the CSRF validation here. It is as if every request requires us to validate with the csrf token as well
     getUserFromSession(sessionId, csrf) {
         let qv = dbUtils_1.queryBuilder.select("sessions");
-        sessionId = (0, cryptoUtils_1.hashId)(sessionId);
+        const h_sessionId = (0, cryptoUtils_1.hashId)(sessionId);
         const currentTime = (0, cryptoUtils_1.getTimestamp)();
         if (csrf) {
             csrf = (0, cryptoUtils_1.hashId)(csrf);
-            dbUtils_1.queryBuilder.where(qv, { "SessionId": sessionId, "Csrf": csrf });
+            dbUtils_1.queryBuilder.where(qv, { "SessionId": h_sessionId, "Csrf": csrf });
         }
         else {
-            dbUtils_1.queryBuilder.where(qv, { "SessionId": sessionId });
+            dbUtils_1.queryBuilder.where(qv, { "SessionId": h_sessionId });
         }
         return new Promise((resolve, reject) => {
             connection_1.default.execute(qv.query, qv.values, (err, res) => __awaiter(this, void 0, void 0, function* () {
@@ -82,14 +82,14 @@ exports.UserRepository = {
                 else {
                     if (res.length == 0)
                         resolve(undefined);
-                    console.log(res[0]);
-                    console.log(currentTime - parseInt(res[0].SessionTime), authConfig_1.SESSION_EXPIRE_TIME);
-                    if (currentTime - parseInt(res[0].SessionTime) > authConfig_1.SESSION_EXPIRE_TIME) {
+                    else if (currentTime - parseInt(res[0].SessionTime) > authConfig_1.SESSION_EXPIRE_TIME) {
+                        const x = yield exports.UserRepository.deleteSession(sessionId);
                         resolve(undefined);
                     }
                     else {
-                        const x = yield exports.UserRepository.retrieveById(res[0].UserId);
-                        resolve(x);
+                        exports.UserRepository.retrieveById(res[0].UserId)
+                            .then((user) => { resolve(user); })
+                            .catch((err) => { console.log(err); reject(err); });
                     }
                 }
             }));

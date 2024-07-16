@@ -9,7 +9,10 @@ const validateRole = (allowedRoles) => {
         user_1.UserRepository.getUserFromSession(sessionId, csrf)
             .then((user) => {
             if (user == undefined) {
-                return;
+                res.status(401).json({
+                    message: "No session"
+                });
+                res.end();
             }
             else if (allowedRoles.includes(user.Role)) {
                 // After this refresh the csrf token for non-view requests

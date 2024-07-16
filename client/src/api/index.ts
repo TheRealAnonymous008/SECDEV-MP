@@ -11,6 +11,8 @@ export const createAPIEndpoint = (endpoint : string) => {
     let url = BASE_URL + 'api/' + endpoint ;
 
     let token = Cookies.get("jwtacc")
+    console.log(token)
+
     return {
         fetch: (params?: any, headers:any = 
             {'Content-Type': 'application/json'

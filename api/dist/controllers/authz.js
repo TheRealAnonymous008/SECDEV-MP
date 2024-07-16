@@ -176,6 +176,7 @@ const logout = (req, res) => {
             .then((v) => {
             res.clearCookie("jwt")
                 .clearCookie("jwtacc")
+                .clearCookie("csrf")
                 .end();
         })
             .catch((err) => {
