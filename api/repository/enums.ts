@@ -23,10 +23,10 @@ export const RoleEnumRepository = {
         });
     },
 
-    retrieveById(id: number): Promise<IEnum | undefined> {
-        let qv = queryBuilder.select("RoleEnum")
-        queryBuilder.where(qv, { "Id": id });
-
+    retrieveByName(name: string): Promise<IEnum | undefined> {
+        let qv = queryBuilder.select("RoleEnum");
+        queryBuilder.where(qv, { "Name": name });
+    
         return new Promise((resolve, reject) => {
             connection.execute<IEnum[]>(
                 qv.query,
@@ -38,6 +38,7 @@ export const RoleEnumRepository = {
             );
         });
     },
+     
 };
 
 export const StatusEnumRepository = {
@@ -58,10 +59,10 @@ export const StatusEnumRepository = {
         });
     },
 
-    retrieveById(id: number): Promise<IEnum | undefined> {
-        let qv = queryBuilder.select("StatusEnum")
-        queryBuilder.where(qv, { "Id": id });
-
+    retrieveByName(name: string): Promise<IEnum | undefined> {
+        let qv = queryBuilder.select("StatusEnum");
+        queryBuilder.where(qv, { "Name": name });
+    
         return new Promise((resolve, reject) => {
             connection.execute<IEnum[]>(
                 qv.query,
@@ -72,7 +73,7 @@ export const StatusEnumRepository = {
                 }
             );
         });
-    },
+    },    
 };
 
 export const TypeEnumRepository = {
@@ -93,10 +94,10 @@ export const TypeEnumRepository = {
         });
     },
 
-    retrieveById(id: number): Promise<IEnum | undefined> {
-        let qv = queryBuilder.select("TypeEnum")
-        queryBuilder.where(qv, { "Id": id });
-
+    retrieveByName(name: string): Promise<IEnum | undefined> {
+        let qv = queryBuilder.select("TypeEnum");
+        queryBuilder.where(qv, { "Name": name });
+    
         return new Promise((resolve, reject) => {
             connection.execute<IEnum[]>(
                 qv.query,
@@ -108,4 +109,5 @@ export const TypeEnumRepository = {
             );
         });
     },
+    
 };

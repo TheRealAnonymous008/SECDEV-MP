@@ -14,10 +14,10 @@ const getAllRoles = (req, res) => {
         res.status(500).end();
     });
 };
-const getRoleById = (req, res) => {
+const getRoleByName = (req, res) => {
     try {
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
-        enums_1.RoleEnumRepository.retrieveById(id)
+        let name = (0, inputValidation_1.validateWord)(req.query.name.toString());
+        enums_1.RoleEnumRepository.retrieveByName(name)
             .then((result) => {
             if (!result) {
                 res.status(404).end();
@@ -47,10 +47,10 @@ const getAllStatuses = (req, res) => {
         res.status(500).end();
     });
 };
-const getStatusById = (req, res) => {
+const getStatusByName = (req, res) => {
     try {
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
-        enums_1.StatusEnumRepository.retrieveById(id)
+        let name = (0, inputValidation_1.validateWord)(req.query.name.toString());
+        enums_1.StatusEnumRepository.retrieveByName(name)
             .then((result) => {
             if (!result) {
                 res.status(404).end();
@@ -80,10 +80,10 @@ const getAllTypes = (req, res) => {
         res.status(500).end();
     });
 };
-const getTypeById = (req, res) => {
+const getTypeByName = (req, res) => {
     try {
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
-        enums_1.TypeEnumRepository.retrieveById(id)
+        let name = (0, inputValidation_1.validateWord)(req.query.name.toString());
+        enums_1.TypeEnumRepository.retrieveByName(name)
             .then((result) => {
             if (!result) {
                 res.status(404).end();
@@ -102,4 +102,4 @@ const getTypeById = (req, res) => {
         res.status(500).end();
     }
 };
-exports.default = { getAllRoles, getRoleById, getAllStatuses, getStatusById, getAllTypes, getTypeById };
+exports.default = { getAllRoles, getRoleByName, getAllStatuses, getStatusByName, getAllTypes, getTypeByName };

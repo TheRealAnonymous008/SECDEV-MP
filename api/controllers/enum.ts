@@ -1,6 +1,6 @@
 import express = require('express');
 import { RoleEnumRepository, StatusEnumRepository, TypeEnumRepository } from '../repository/enums';
-import { validateInteger } from '../middleware/inputValidation'; 
+import { validateInteger, validateWord } from '../middleware/inputValidation'; 
 import { getEnumNames } from '../models/enums';
 
 const getAllRoles = (req: express.Request, res: express.Response) => {
@@ -15,10 +15,10 @@ const getAllRoles = (req: express.Request, res: express.Response) => {
         });
 };
 
-const getRoleById = (req: express.Request, res: express.Response) => {
+const getRoleByName = (req: express.Request, res: express.Response) => {
     try {
-        let id = validateInteger(req.query.id.toString());
-        RoleEnumRepository.retrieveById(id)
+        let name = validateWord(req.query.name.toString());
+        RoleEnumRepository.retrieveByName(name)
             .then((result) => {
                 if (!result){
                     res.status(404).end();
@@ -49,10 +49,10 @@ const getAllStatuses = (req: express.Request, res: express.Response) => {
         });
 };
 
-const getStatusById = (req: express.Request, res: express.Response) => {
+const getStatusByName = (req: express.Request, res: express.Response) => {
     try {
-        let id = validateInteger(req.query.id.toString());
-        StatusEnumRepository.retrieveById(id)
+        let name = validateWord(req.query.name.toString());
+        StatusEnumRepository.retrieveByName(name)
             .then((result) => {
                 if (!result){
                     res.status(404).end();
@@ -83,10 +83,10 @@ const getAllTypes = (req: express.Request, res: express.Response) => {
         });
 }
 
-const getTypeById = (req: express.Request, res: express.Response) => {
+const getTypeByName = (req: express.Request, res: express.Response) => {
     try {
-        let id = validateInteger(req.query.id.toString());
-        TypeEnumRepository.retrieveById(id)
+        let name = validateWord(req.query.name.toString());
+        TypeEnumRepository.retrieveByName(name)
             .then((result) => {
                 if (!result){
                     res.status(404).end();
@@ -105,4 +105,4 @@ const getTypeById = (req: express.Request, res: express.Response) => {
     }
 }
 
-export default {getAllRoles, getRoleById, getAllStatuses, getStatusById, getAllTypes, getTypeById};
+export default {getAllRoles, getRoleByName, getAllStatuses, getStatusByName, getAllTypes, getTypeByName};

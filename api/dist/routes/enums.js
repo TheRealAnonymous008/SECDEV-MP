@@ -10,15 +10,15 @@ const authValidation_1 = __importDefault(require("../middleware/authValidation")
 const enum_2 = require("../models/enum");
 const router = express.Router();
 router.get('/roles', authValidation_1.default, (0, roleValidation_1.default)([enum_2.RoleIds.ADMIN, enum_2.RoleIds.VIEW_EDIT]), enum_1.default.getAllRoles);
-router.get('/roles/:id', authValidation_1.default, (0, roleValidation_1.default)([enum_2.RoleIds.ADMIN, enum_2.RoleIds.VIEW_EDIT]), (req, res) => {
-    enum_1.default.getRoleById(req, res);
+router.get('/roles/:name', authValidation_1.default, (0, roleValidation_1.default)([enum_2.RoleIds.ADMIN, enum_2.RoleIds.VIEW_EDIT]), (req, res) => {
+    enum_1.default.getRoleByName(req, res);
 });
 router.get('/statuses', authValidation_1.default, (0, roleValidation_1.default)([enum_2.RoleIds.ADMIN, enum_2.RoleIds.VIEW_EDIT]), enum_1.default.getAllStatuses);
-router.get('/statuses/:id', authValidation_1.default, (0, roleValidation_1.default)([enum_2.RoleIds.ADMIN, enum_2.RoleIds.VIEW_EDIT]), (req, res) => {
-    enum_1.default.getStatusById(req, res);
+router.get('/statuses/:name', authValidation_1.default, (0, roleValidation_1.default)([enum_2.RoleIds.ADMIN, enum_2.RoleIds.VIEW_EDIT]), (req, res) => {
+    enum_1.default.getStatusByName(req, res);
 });
 router.get('/types', authValidation_1.default, (0, roleValidation_1.default)([enum_2.RoleIds.ADMIN, enum_2.RoleIds.VIEW_EDIT]), enum_1.default.getAllTypes);
-router.get('/types/:id', authValidation_1.default, (0, roleValidation_1.default)([enum_2.RoleIds.ADMIN, enum_2.RoleIds.VIEW_EDIT]), (req, res) => {
-    enum_1.default.getTypeById(req, res);
+router.get('/types/:name', authValidation_1.default, (0, roleValidation_1.default)([enum_2.RoleIds.ADMIN, enum_2.RoleIds.VIEW_EDIT]), (req, res) => {
+    enum_1.default.getTypeByName(req, res);
 });
 exports.default = router;

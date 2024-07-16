@@ -21,9 +21,9 @@ exports.RoleEnumRepository = {
             });
         });
     },
-    retrieveById(id) {
+    retrieveByName(name) {
         let qv = dbUtils_1.queryBuilder.select("RoleEnum");
-        dbUtils_1.queryBuilder.where(qv, { "Id": id });
+        dbUtils_1.queryBuilder.where(qv, { "Name": name });
         return new Promise((resolve, reject) => {
             connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
@@ -48,9 +48,9 @@ exports.StatusEnumRepository = {
             });
         });
     },
-    retrieveById(id) {
+    retrieveByName(name) {
         let qv = dbUtils_1.queryBuilder.select("StatusEnum");
-        dbUtils_1.queryBuilder.where(qv, { "Id": id });
+        dbUtils_1.queryBuilder.where(qv, { "Name": name });
         return new Promise((resolve, reject) => {
             connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
@@ -75,9 +75,9 @@ exports.TypeEnumRepository = {
             });
         });
     },
-    retrieveById(id) {
+    retrieveByName(name) {
         let qv = dbUtils_1.queryBuilder.select("TypeEnum");
-        dbUtils_1.queryBuilder.where(qv, { "Id": id });
+        dbUtils_1.queryBuilder.where(qv, { "Name": name });
         return new Promise((resolve, reject) => {
             connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
