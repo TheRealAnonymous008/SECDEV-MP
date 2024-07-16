@@ -52,8 +52,8 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const order = {
             Status: (0, inputValidation_1.validateWord)(req.body.status),
-            TimeIn: req.body.timeIn,
-            TimeOut: req.body.timeOut,
+            TimeIn: (0, inputValidation_1.validateDate)(req.body.timeIn),
+            TimeOut: (0, inputValidation_1.validateDate)(req.body.timeOut),
             CustomerId: (0, inputValidation_1.validateWord)(req.body.customerId),
             TypeId: (0, inputValidation_1.validateWord)(req.body.typeId),
             VehicleId: (0, inputValidation_1.validateWord)(req.body.vehicleId),
@@ -61,6 +61,9 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             ScopeOfWork: (0, inputValidation_1.baseValidation)(req.body.scopeOfWork),
             IsVerified: req.body.isVerified === 'true'
         };
+        if (order.TimeIn > order.TimeOut) {
+            throw new Error("Invalid Time In and Time Out");
+        }
         order_1.OrderRespository.insert(order)
             .then((result) => {
             if (result == undefined) {
@@ -84,8 +87,8 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const order = {
             Status: (0, inputValidation_1.validateWord)(req.body.status),
-            TimeIn: req.body.timeIn,
-            TimeOut: req.body.timeOut,
+            TimeIn: (0, inputValidation_1.validateDate)(req.body.timeIn),
+            TimeOut: (0, inputValidation_1.validateDate)(req.body.timeOut),
             CustomerId: (0, inputValidation_1.validateWord)(req.body.customerId),
             TypeId: (0, inputValidation_1.validateWord)(req.body.typeId),
             VehicleId: (0, inputValidation_1.validateWord)(req.body.vehicleId),
@@ -93,6 +96,9 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             ScopeOfWork: (0, inputValidation_1.baseValidation)(req.body.scopeOfWork),
             IsVerified: req.body.isVerified === 'true'
         };
+        if (order.TimeIn > order.TimeOut) {
+            throw new Error("Invalid Time In and Time Out");
+        }
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         order_1.OrderRespository.update(id, order)
             .then((result) => {

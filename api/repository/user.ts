@@ -64,17 +64,17 @@ export const UserRepository = {
 
     // We include the CSRF validation here. It is as if every request requires us to validate with the csrf token as well
     getUserFromSession(sessionId : string, csrf? : string) : Promise<User | undefined> {
-        let qv = queryBuilder.select("sessions", ["UserId"])
+        let qv = queryBuilder.select("sessions")
 
-        sessionId = hashId(sessionId);
+        const h_sessionId = hashId(sessionId);
 
         const currentTime = getTimestamp()
         if (csrf) {
             csrf = hashId(csrf)
-            queryBuilder.where(qv, {"SessionId": sessionId, "Csrf" : csrf})
+            queryBuilder.where(qv, {"SessionId": h_sessionId, "Csrf" : csrf})
         }
         else {
-            queryBuilder.where(qv, {"SessionId": sessionId})
+            queryBuilder.where(qv, {"SessionId": h_sessionId})
         }
 
         return new Promise((resolve, reject) => {
@@ -86,7 +86,8 @@ export const UserRepository = {
                     else {
                         if (res.length == 0)
                             resolve(undefined)
-                        else if (currentTime - parseInt(res[0].SessionTime) > SESSION_EXPIRE_TIME) {
+                        if (currentTime - parseInt(res[0].SessionTime) > SESSION_EXPIRE_TIME) {
+                            const x = await UserRepository.deleteSession(sessionId)
                             resolve(undefined)
                         }
                         else {

@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { UserRepository } from "../repository/user";
-import { RoleIds } from "../models/enum";
 import { COOKIE_SETTINGS } from "../config/authConfig";
 
 const validateRole = (allowedRoles : number[]) => {
@@ -11,7 +10,10 @@ const validateRole = (allowedRoles : number[]) => {
         UserRepository.getUserFromSession(sessionId, csrf)
             .then((user) =>{
                 if (user == undefined) {
-                    return 
+                    res.status(401).json({
+                        message: "No session"
+                    })
+                    res.end()
                 }
                 else if (allowedRoles.includes(user.Role)){
                     // After this refresh the csrf token for non-view requests

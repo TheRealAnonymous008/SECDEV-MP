@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sanitizeImage = exports.validatePdf = exports.validateImage = exports.assertNotNullOrEmpty = exports.validateJWT = exports.validateDateTime = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateLimit = exports.validateNonNegative = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
+exports.sanitizeImage = exports.validatePdf = exports.validateImage = exports.assertNotNullOrEmpty = exports.validateJWT = exports.validateDate = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateLimit = exports.validateNonNegative = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
 const enum_1 = require("../models/enum");
 const sanitize_html_1 = __importDefault(require("sanitize-html"));
 const limiterConfig_1 = require("../config/limiterConfig");
@@ -143,12 +143,15 @@ function validateLicensePlate(str) {
     return str;
 }
 exports.validateLicensePlate = validateLicensePlate;
-function validateDateTime(str) {
+function validateDate(str) {
     assertNotNullOrEmpty(str);
     str = baseValidation(str);
-    return str;
+    if (!validator_1.default.isDate(str)) {
+        throw new Error("Invalid Date");
+    }
+    return new Date(str);
 }
-exports.validateDateTime = validateDateTime;
+exports.validateDate = validateDate;
 function validateJWT(str) {
     assertNotNullOrEmpty(str);
     str = baseValidation(str);

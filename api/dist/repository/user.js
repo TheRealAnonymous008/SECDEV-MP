@@ -65,7 +65,7 @@ exports.UserRepository = {
     },
     // We include the CSRF validation here. It is as if every request requires us to validate with the csrf token as well
     getUserFromSession(sessionId, csrf) {
-        let qv = dbUtils_1.queryBuilder.select("sessions", ["UserId"]);
+        let qv = dbUtils_1.queryBuilder.select("sessions");
         sessionId = (0, cryptoUtils_1.hashId)(sessionId);
         const currentTime = (0, cryptoUtils_1.getTimestamp)();
         if (csrf) {
@@ -82,7 +82,9 @@ exports.UserRepository = {
                 else {
                     if (res.length == 0)
                         resolve(undefined);
-                    else if (currentTime - parseInt(res[0].SessionTime) > authConfig_1.SESSION_EXPIRE_TIME) {
+                    console.log(res[0]);
+                    console.log(currentTime - parseInt(res[0].SessionTime), authConfig_1.SESSION_EXPIRE_TIME);
+                    if (currentTime - parseInt(res[0].SessionTime) > authConfig_1.SESSION_EXPIRE_TIME) {
                         resolve(undefined);
                     }
                     else {
