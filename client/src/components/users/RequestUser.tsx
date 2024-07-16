@@ -35,8 +35,6 @@ export const RequestUser = (props : {setResponse : Function, default? : UserRequ
             setValue("role", props.default.role)
             setValue("username", props.default.username)
             setValue("email", props.default.email)
-            setValue("password", props.default.password)
-            setValue("confirmPassword", props.default.confirmPassword)
             setValue("mobileNumber", props.default.mobileNumber);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -82,24 +80,6 @@ export const RequestUser = (props : {setResponse : Function, default? : UserRequ
                     <input {...register("mobileNumber", {required : true })}
                         type="text" name="mobileNumber" defaultValue={props.default?.mobileNumber}/>
                     {errors.mobileNumber && <p>Mobile number is required and must be 11 digits</p>}
-                </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input {...register("password", {required : true, pattern: regexes.passwordRegex })} type="password" name="password"/>
-                    {errors.password && <p>Password is required</p>}
-                </div>
-                <div>
-                    <label htmlFor="confirmPassword">Confirm Password</label>
-                    <input {...register("confirmPassword", {required : true, 
-                        validate: {
-                            matchesPreviousPassword: (value) => {
-                                const { password } = watch();
-                                return password === value || "Passwords should match";
-                            }
-                        }
-                    })}
-                        type="password" name="password"/>
-                    {errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
                 </div>
                 <div>
                     <label>User Role</label>
