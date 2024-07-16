@@ -49,7 +49,8 @@ export const InvoiceSubform = (props: {setValue : any, errors : any, default? : 
     return (
         <ModalWrapper front={"Add Invoice"} isVisible={isVisible} setIsVisible={setIsVisible}>
             <div style={{ maxHeight: '80vh', overflowY: 'auto', padding: '20px' }}>
-                <div>
+                {/* Deactivating invoice fields except pdf for now */}
+                {/* <div>
                     <br />
                     <label htmlFor="invoiceAmount">Invoice Amount</label>
                     <input type='text' name="invoice.amount" id="invoice.amount"
@@ -92,7 +93,7 @@ export const InvoiceSubform = (props: {setValue : any, errors : any, default? : 
                         }
                     />
                     {errors.invoice?.agentLastName && <p>Agent last name has wrong format</p>}
-                </div>
+                </div> 
 
                 <div>
                     <label htmlFor="datePaid">Date Paid</label>
@@ -120,6 +121,7 @@ export const InvoiceSubform = (props: {setValue : any, errors : any, default? : 
                     />
                     {errors.invoice?.agentCommission && <p>Agent Commission has wrong format</p>}
                 </div>
+                */}
 
                 <div>
                     <label htmlFor="pdfUpload">PDF File</label>
