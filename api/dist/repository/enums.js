@@ -24,28 +24,42 @@ const createEnumRepository = (tableName) => {
                 let qv = dbUtils_1.queryBuilder.select(this.tableName);
                 dbUtils_1.queryBuilder.limit(qv, limit);
                 dbUtils_1.queryBuilder.skip(qv, offset);
-                return new Promise((resolve, reject) => {
-                    connection_1.default.execute(qv.query, qv.values, (err, res) => {
-                        if (err)
-                            reject(err);
-                        else
-                            resolve(res);
+                try {
+                    const res = yield new Promise((resolve, reject) => {
+                        connection_1.default.execute(qv.query, qv.values, (err, results) => {
+                            if (err)
+                                reject(err);
+                            else
+                                resolve(results);
+                        });
                     });
-                });
+                    return res;
+                }
+                catch (error) {
+                    console.error(`Error retrieving all from ${this.tableName}:`, error);
+                    throw error;
+                }
             });
         },
         retrieveByName(name) {
             return __awaiter(this, void 0, void 0, function* () {
                 let qv = dbUtils_1.queryBuilder.select(this.tableName);
                 dbUtils_1.queryBuilder.where(qv, { "Name": name });
-                return new Promise((resolve, reject) => {
-                    connection_1.default.execute(qv.query, qv.values, (err, res) => {
-                        if (err)
-                            reject(err);
-                        else
-                            resolve(res.length > 0 ? res[0] : undefined);
+                try {
+                    const res = yield new Promise((resolve, reject) => {
+                        connection_1.default.execute(qv.query, qv.values, (err, results) => {
+                            if (err)
+                                reject(err);
+                            else
+                                resolve(results);
+                        });
                     });
-                });
+                    return res.length > 0 ? res[0] : undefined;
+                }
+                catch (error) {
+                    console.error(`Error retrieving ${name} from ${this.tableName}:`, error);
+                    throw error;
+                }
             });
         },
     };
