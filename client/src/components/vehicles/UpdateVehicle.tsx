@@ -12,6 +12,8 @@ export const UpdateVehicle = (props : {vehicle : Vehicle, observer : Function}) 
     const [isVisible, setIsVisible] = useState<boolean>(false);
     
     useEffect(() => {
+        if (data == undefined)
+            return;
         if (isRole("VIEW")) {
             return;
         }

@@ -12,6 +12,9 @@ export const UpdateOrder = (props : {order : Order, observer : Function}) => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
     
     useEffect(() => {
+        if (data == undefined){
+            return 
+        }
         if (isRole("VIEW")) 
             return;
         createAPIEndpoint(ENDPOINTS.updateOrder).post(data, {id: props.order.id})
