@@ -3,14 +3,14 @@ export const makeVehicleView = (document) => {
         return {};
     
     return {
-        id : document._id,
-        licensePlate: document.licensePlate,
-        manufacturer: document.manufacturer,
-        model: document.model,
-        yearManufactured: document.yearManufactured,
-        color: document.color,
-        engine: document.engine,
-        remarks: document.remarks
+        id : document.Id,
+        licensePlate: document.LicensePlate,
+        manufacturer: document.Manufacturer,
+        model: document.Model,
+        yearManufactured: document.YearManufactured,
+        color: document.Color,
+        engine: document.Engine,
+        remarks: document.Remarks
 
     };
 }

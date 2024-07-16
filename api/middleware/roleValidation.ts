@@ -27,7 +27,6 @@ const validateRole = (allowedRoles : number[]) => {
                                 res.status(500)
                             })
                     } else {
-                        console.log("This ran")
                         next()
                     }
                 }

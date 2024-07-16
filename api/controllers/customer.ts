@@ -99,7 +99,6 @@ const update = (req: express.Request, res: express.Response) => {
                 res.status(200).end();
             })
             .catch((err) => {
-                        
                 console.log(err);
                 res.status(500).end();
             })

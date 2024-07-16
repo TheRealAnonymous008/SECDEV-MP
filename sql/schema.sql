@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `autoworks`.`Vehicle` (
   `LicensePlate` VARCHAR(8) NULL,
   `Manufacturer` VARCHAR(45) NULL,
   `Model` VARCHAR(45) NULL,
-  `YearManufactured` DATETIME NULL,
+  `YearManufactured` INT NULL,
   `Color` VARCHAR(45) NULL,
   `Engine` VARCHAR(45) NULL,
   `Remarks` VARCHAR(256) NULL,
