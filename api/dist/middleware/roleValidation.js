@@ -27,7 +27,6 @@ const validateRole = (allowedRoles) => {
                     });
                 }
                 else {
-                    console.log("This ran");
                     next();
                 }
             }

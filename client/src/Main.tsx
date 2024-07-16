@@ -36,7 +36,7 @@ export const Main = () => {
                 console.log(response)
                 if (response.status != 403){
                     setIsLoggedIn(true)
-                    setIsAdmin(response.data.Role == "ADMIN")
+                    setIsAdmin(response.data.Role == 1)
                     navigate(ROUTES.orders)
                 }
                 else {
