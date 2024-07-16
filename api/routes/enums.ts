@@ -1,13 +1,22 @@
-// import express = require('express');
-// import controller from "../controllers/enums";
-// import { ALL_ROLES, Roles } from '../models/mongodb/enum';
-// import validateRole from '../middleware/roleValidation';
-// import validateToken from '../middleware/authValidation';
+import express = require('express');
+import enumsController from "../controllers/enum";
+import validateRole from '../middleware/roleValidation';
+import validateToken from '../middleware/authValidation';
+import { RoleIds } from "../models/enum";
 
-// const router = express.Router();
+const router = express.Router();
 
-// router.get('/user/roles', validateToken, validateRole(ALL_ROLES), controller.roles);
-// router.get('/order/statuses', validateToken, validateRole(ALL_ROLES), controller.statuses); 
-// router.get('/order/types', validateToken, validateRole(ALL_ROLES), controller.types); 
+router.get('/roles', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW_EDIT]), enumsController.getAllRoles);
+router.get('/roles/:id', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW_EDIT]), (req, res) => {
+    enumsController.getRoleById(req, res);
+});
+router.get('/statuses', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW_EDIT]), enumsController.getAllStatuses);
+router.get('/statuses/:id', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW_EDIT]), (req, res) => {
+    enumsController.getStatusById(req, res);
+});
+router.get('/types', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW_EDIT]), enumsController.getAllTypes);
+router.get('/types/:id', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW_EDIT]), (req, res) => {
+    enumsController.getTypeById(req, res);
+});
 
-// export default router;
+export default router;
