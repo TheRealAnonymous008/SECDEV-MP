@@ -2,10 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const enums_1 = require("../repository/enums");
 const inputValidation_1 = require("../middleware/inputValidation");
+const enums_2 = require("../models/enums");
 const getAllRoles = (req, res) => {
     enums_1.RoleEnumRepository.retrieveAll()
         .then((result) => {
-        res.json(result);
+        res.json((0, enums_2.getEnumNames)(result));
         res.status(200).end();
     })
         .catch((err) => {
@@ -38,7 +39,7 @@ const getRoleById = (req, res) => {
 const getAllStatuses = (req, res) => {
     enums_1.StatusEnumRepository.retrieveAll()
         .then((result) => {
-        res.json(result);
+        res.json((0, enums_2.getEnumNames)(result));
         res.status(200).end();
     })
         .catch((err) => {
@@ -71,7 +72,7 @@ const getStatusById = (req, res) => {
 const getAllTypes = (req, res) => {
     enums_1.TypeEnumRepository.retrieveAll()
         .then((result) => {
-        res.json(result);
+        res.json((0, enums_2.getEnumNames)(result));
         res.status(200).end();
     })
         .catch((err) => {

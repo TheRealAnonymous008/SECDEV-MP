@@ -1,11 +1,12 @@
 import express = require('express');
 import { RoleEnumRepository, StatusEnumRepository, TypeEnumRepository } from '../repository/enums';
 import { validateInteger } from '../middleware/inputValidation'; 
+import { getEnumNames } from '../models/enums';
 
 const getAllRoles = (req: express.Request, res: express.Response) => {
     RoleEnumRepository.retrieveAll()
         .then((result) => {
-            res.json(result);
+            res.json(getEnumNames(result));
             res.status(200).end();
         })
         .catch((err) => {
@@ -39,7 +40,7 @@ const getRoleById = (req: express.Request, res: express.Response) => {
 const getAllStatuses = (req: express.Request, res: express.Response) => {
     StatusEnumRepository.retrieveAll()
         .then((result) => {
-            res.json(result);
+            res.json(getEnumNames(result));
             res.status(200).end();
         })
         .catch((err) => {
@@ -73,7 +74,7 @@ const getStatusById = (req: express.Request, res: express.Response) => {
 const getAllTypes = (req: express.Request, res: express.Response) => {
     TypeEnumRepository.retrieveAll()
         .then((result) => {
-            res.json(result);
+            res.json(getEnumNames(result));
             res.status(200).end();
         })
         .catch((err) => {

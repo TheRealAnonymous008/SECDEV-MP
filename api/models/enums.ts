@@ -1,19 +1,14 @@
 import { RowDataPacket } from "mysql2";
 
-export interface IRoleEnum extends RowDataPacket {
+export interface IEnum extends RowDataPacket {
     Id: number;
     Name: string;
 }
 
-export interface IStatusEnum extends RowDataPacket {
-    Id: number;
-    Name: string;
+export const getEnumNames = (enums: IEnum[]) => {
+    return enums.map((value) => {return value.Name})
 }
 
-export interface ITypeEnum extends RowDataPacket {
-    Id: number;
-    Name: string;
-}
 
 // export interface IRoleIds {
 //     ADMIN: number;

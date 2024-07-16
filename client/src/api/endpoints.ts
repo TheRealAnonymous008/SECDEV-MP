@@ -5,9 +5,9 @@ export const ENDPOINTS = {
     refreshToken: 'authz/refresh',
     logout: 'authz/logout',
 
-    orderTypes: 'order/types',
-    orderStatuses: 'order/statuses',
-    userRoles: 'user/roles',
+    orderTypes: '/types',
+    orderStatuses: '/statuses',
+    userRoles: '/roles',
 
     users: 'user/all',
     uploadImage: 'user/upload',

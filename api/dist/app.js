@@ -58,7 +58,7 @@ const customer_1 = __importDefault(require("./routes/customer"));
 const user_1 = __importDefault(require("./routes/user"));
 const vehicle_1 = __importDefault(require("./routes/vehicle"));
 const order_1 = __importDefault(require("./routes/order"));
-//import enumRoutes from './routes/enums';
+const enums_1 = __importDefault(require("./routes/enums"));
 // TOOD: Put all routes here
 // route calls
 app.use('/api/user', user_1.default);
@@ -66,7 +66,7 @@ app.use('/api/authz', authz_1.default);
 app.use('/api/vehicle', vehicle_1.default);
 app.use('/api/order', order_1.default);
 app.use('/api/customer', customer_1.default);
-//app.use('/api', enumRoutes);
+app.use('/api', enums_1.default);
 //app.use('/', indexRoute);
 app.use((err, req, res, next) => {
     if (err.status === 400) {

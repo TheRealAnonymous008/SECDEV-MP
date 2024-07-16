@@ -3,16 +3,16 @@ import connection from "../config/connection";
 import IRepository from "./IRepository";
 import { LIMIT_MAX } from "../config/limiterConfig";
 import { queryBuilder, QueryValuePair } from "../utils/dbUtils";
-import { IRoleEnum, IStatusEnum, ITypeEnum } from '../models/enums';
+import { IEnum } from "../models/enums";
 
 export const RoleEnumRepository = {
-    retrieveAll(limit: number = LIMIT_MAX, offset?: number): Promise<IRoleEnum[]> {
-        let qv = queryBuilder.select("autoworks.RoleEnum");
+    retrieveAll(limit: number = LIMIT_MAX, offset?: number): Promise<IEnum[]> {
+        let qv = queryBuilder.select("RoleEnum");
         queryBuilder.limit(qv, limit);
         queryBuilder.skip(qv, offset);
 
         return new Promise((resolve, reject) => {
-            connection.execute<IRoleEnum[]>(
+            connection.execute<IEnum[]>(
                 qv.query,
                 qv.values,
                 (err, res) => {
@@ -23,12 +23,12 @@ export const RoleEnumRepository = {
         });
     },
 
-    retrieveById(id: number): Promise<IRoleEnum | undefined> {
-        let qv = queryBuilder.select("autoworks.RoleEnum")
+    retrieveById(id: number): Promise<IEnum | undefined> {
+        let qv = queryBuilder.select("RoleEnum")
         queryBuilder.where(qv, { "Id": id });
 
         return new Promise((resolve, reject) => {
-            connection.execute<IRoleEnum[]>(
+            connection.execute<IEnum[]>(
                 qv.query,
                 qv.values,
                 (err, res) => {
@@ -41,13 +41,13 @@ export const RoleEnumRepository = {
 };
 
 export const StatusEnumRepository = {
-    retrieveAll(limit: number = LIMIT_MAX, offset?: number): Promise<IStatusEnum[]> {
-        let qv = queryBuilder.select("autoworks.StatusEnum");
+    retrieveAll(limit: number = LIMIT_MAX, offset?: number): Promise<IEnum[]> {
+        let qv = queryBuilder.select("StatusEnum");
         queryBuilder.limit(qv, limit);
         queryBuilder.skip(qv, offset);
 
         return new Promise((resolve, reject) => {
-            connection.execute<IStatusEnum[]>(
+            connection.execute<IEnum[]>(
                 qv.query,
                 qv.values,
                 (err, res) => {
@@ -58,12 +58,12 @@ export const StatusEnumRepository = {
         });
     },
 
-    retrieveById(id: number): Promise<IStatusEnum | undefined> {
-        let qv = queryBuilder.select("autoworks.StatusEnum")
+    retrieveById(id: number): Promise<IEnum | undefined> {
+        let qv = queryBuilder.select("StatusEnum")
         queryBuilder.where(qv, { "Id": id });
 
         return new Promise((resolve, reject) => {
-            connection.execute<IStatusEnum[]>(
+            connection.execute<IEnum[]>(
                 qv.query,
                 qv.values,
                 (err, res) => {
@@ -76,13 +76,13 @@ export const StatusEnumRepository = {
 };
 
 export const TypeEnumRepository = {
-    retrieveAll(limit: number = LIMIT_MAX, offset?: number): Promise<ITypeEnum[]> {
-        let qv = queryBuilder.select("autoworks.TypeEnum");
+    retrieveAll(limit: number = LIMIT_MAX, offset?: number): Promise<IEnum[]> {
+        let qv = queryBuilder.select("TypeEnum");
         queryBuilder.limit(qv, limit);
         queryBuilder.skip(qv, offset);
 
         return new Promise((resolve, reject) => {
-            connection.execute<ITypeEnum[]>(
+            connection.execute<IEnum[]>(
                 qv.query,
                 qv.values,
                 (err, res) => {
@@ -93,12 +93,12 @@ export const TypeEnumRepository = {
         });
     },
 
-    retrieveById(id: number): Promise<ITypeEnum | undefined> {
-        let qv = queryBuilder.select("autoworks.TypeEnum")
+    retrieveById(id: number): Promise<IEnum | undefined> {
+        let qv = queryBuilder.select("TypeEnum")
         queryBuilder.where(qv, { "Id": id });
 
         return new Promise((resolve, reject) => {
-            connection.execute<ITypeEnum[]>(
+            connection.execute<IEnum[]>(
                 qv.query,
                 qv.values,
                 (err, res) => {

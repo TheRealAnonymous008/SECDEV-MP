@@ -9,7 +9,7 @@ const limiterConfig_1 = require("../config/limiterConfig");
 const dbUtils_1 = require("../utils/dbUtils");
 exports.RoleEnumRepository = {
     retrieveAll(limit = limiterConfig_1.LIMIT_MAX, offset) {
-        let qv = dbUtils_1.queryBuilder.select("autoworks.RoleEnum");
+        let qv = dbUtils_1.queryBuilder.select("RoleEnum");
         dbUtils_1.queryBuilder.limit(qv, limit);
         dbUtils_1.queryBuilder.skip(qv, offset);
         return new Promise((resolve, reject) => {
@@ -22,7 +22,7 @@ exports.RoleEnumRepository = {
         });
     },
     retrieveById(id) {
-        let qv = dbUtils_1.queryBuilder.select("autoworks.RoleEnum");
+        let qv = dbUtils_1.queryBuilder.select("RoleEnum");
         dbUtils_1.queryBuilder.where(qv, { "Id": id });
         return new Promise((resolve, reject) => {
             connection_1.default.execute(qv.query, qv.values, (err, res) => {
@@ -36,7 +36,7 @@ exports.RoleEnumRepository = {
 };
 exports.StatusEnumRepository = {
     retrieveAll(limit = limiterConfig_1.LIMIT_MAX, offset) {
-        let qv = dbUtils_1.queryBuilder.select("autoworks.StatusEnum");
+        let qv = dbUtils_1.queryBuilder.select("StatusEnum");
         dbUtils_1.queryBuilder.limit(qv, limit);
         dbUtils_1.queryBuilder.skip(qv, offset);
         return new Promise((resolve, reject) => {
@@ -49,7 +49,7 @@ exports.StatusEnumRepository = {
         });
     },
     retrieveById(id) {
-        let qv = dbUtils_1.queryBuilder.select("autoworks.StatusEnum");
+        let qv = dbUtils_1.queryBuilder.select("StatusEnum");
         dbUtils_1.queryBuilder.where(qv, { "Id": id });
         return new Promise((resolve, reject) => {
             connection_1.default.execute(qv.query, qv.values, (err, res) => {
@@ -63,7 +63,7 @@ exports.StatusEnumRepository = {
 };
 exports.TypeEnumRepository = {
     retrieveAll(limit = limiterConfig_1.LIMIT_MAX, offset) {
-        let qv = dbUtils_1.queryBuilder.select("autoworks.TypeEnum");
+        let qv = dbUtils_1.queryBuilder.select("TypeEnum");
         dbUtils_1.queryBuilder.limit(qv, limit);
         dbUtils_1.queryBuilder.skip(qv, offset);
         return new Promise((resolve, reject) => {
@@ -76,7 +76,7 @@ exports.TypeEnumRepository = {
         });
     },
     retrieveById(id) {
-        let qv = dbUtils_1.queryBuilder.select("autoworks.TypeEnum");
+        let qv = dbUtils_1.queryBuilder.select("TypeEnum");
         dbUtils_1.queryBuilder.where(qv, { "Id": id });
         return new Promise((resolve, reject) => {
             connection_1.default.execute(qv.query, qv.values, (err, res) => {
