@@ -5,6 +5,7 @@ import { isRole } from "../../utils/CheckRole";
 import { DeleteUser } from "./DeleteUser";
 import { UpdateUser } from "./UpdateUser";
 import { User } from "./UserDetails";
+import { roleMap } from "../../utils/RoleMapping";
 
 export const UserRecord = (props : { user: User, rerenderFlag: Function}) => {
     const [user, setUser] = useState<User | null>(props.user);
@@ -20,7 +21,10 @@ export const UserRecord = (props : { user: User, rerenderFlag: Function}) => {
     const onUpdate = () => {
         createAPIEndpoint(ENDPOINTS.getUser).fetch({id : props.user.id})
         .then((response) => {
-            setUser(response.data);
+            const roleKey = response.data.role as unknown as number;
+            const updateUser = {...response.data, role: roleMap[roleKey]};
+
+            setUser(updateUser);
         })
     };
 
