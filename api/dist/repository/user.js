@@ -218,17 +218,23 @@ exports.UserRepository = {
         });
     },
     delete(id) {
-        let qv1 = dbUtils_1.queryBuilder.delete("sessions");
-        dbUtils_1.queryBuilder.where(qv1, { "UserId": id });
-        let qv2 = dbUtils_1.queryBuilder.delete(tableName);
-        dbUtils_1.queryBuilder.where(qv2, { "Id": id });
+        let qv1 = dbUtils_1.queryBuilder.delete(tableName);
+        dbUtils_1.queryBuilder.where(qv1, { "Id": id });
+        let qv2 = dbUtils_1.queryBuilder.delete("sessions");
+        dbUtils_1.queryBuilder.where(qv2, { "UserId": id });
         let qv = dbUtils_1.queryBuilder.concat(qv1, qv2);
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(qv.query, qv.values, (err, res) => {
+            connection_1.default.execute(qv1.query, qv1.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
-                    resolve(id);
+                    connection_1.default.execute(qv2.query, qv2.values, (err, res) => {
+                        if (err)
+                            reject(err);
+                        else {
+                            resolve(id);
+                        }
+                    });
                 }
             });
         });

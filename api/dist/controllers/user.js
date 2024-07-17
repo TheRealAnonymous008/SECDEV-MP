@@ -103,7 +103,7 @@ const upload = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
 });
 const update = (req, res) => {
     try {
-        const user = {
+        let user = {
             FirstName: (0, inputValidation_1.validateName)(req.body.firstName),
             LastName: (0, inputValidation_1.validateName)(req.body.lastName),
             Username: (0, inputValidation_1.validateUsername)(req.body.username),

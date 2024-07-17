@@ -19,6 +19,8 @@ export const UpdateUser = (props : {user : User, observer : Function}) => {
         createAPIEndpoint(ENDPOINTS.updateUser).post(data, {id: props.user.id})
         .then(function (response) {
             props.observer();
+            console.log(response.data.user)
+            setData(response.data.user)
             setIsVisible(false);
         })
         .catch(function (error) {

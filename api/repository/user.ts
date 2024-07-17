@@ -250,22 +250,34 @@ export const UserRepository = {
     },
 
     delete(id : number) : Promise<number> {
-        let qv1 = queryBuilder.delete("sessions")
-        queryBuilder.where(qv1, {"UserId" : id})
+        
+        let qv1 = queryBuilder.delete(tableName)
+        queryBuilder.where(qv1, {"Id" : id})
 
-        let qv2 = queryBuilder.delete(tableName)
-        queryBuilder.where(qv2, {"Id" : id})
+        let qv2 = queryBuilder.delete("sessions")
+        queryBuilder.where(qv2, {"UserId" : id})
+
 
         let qv = queryBuilder.concat(qv1, qv2)
 
         return new Promise((resolve, reject) => {
             connection.execute<ResultSetHeader>(
-                qv.query,
-                qv.values,
+                qv1.query,
+                qv1.values,
                 (err, res) => {
                     if (err) reject(err);
                     else{
-                        resolve(id)
+
+                        connection.execute<ResultSetHeader>(
+                            qv2.query,
+                            qv2.values,
+                            (err, res) => {
+                                if (err) reject(err);
+                                else {
+                                    resolve(id)
+                                }
+                            }
+                        )
                     }
                 }
             )

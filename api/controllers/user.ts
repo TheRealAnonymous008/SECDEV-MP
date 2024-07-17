@@ -105,7 +105,7 @@ const upload = async(req  :any, res: express.Response, next : express.NextFuncti
 
 const update = (req: express.Request, res: express.Response) => {
     try {
-        const user : UserRow= {
+        let user : UserRow= {
             FirstName : validateName(req.body.firstName),
             LastName: validateName(req.body.lastName),
             Username : validateUsername(req.body.username),

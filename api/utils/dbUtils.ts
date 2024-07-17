@@ -148,7 +148,10 @@ const skip = (qv : QueryValuePair, skip : number) : QueryValuePair => {
 
 const concat = (q1 : QueryValuePair, q2: QueryValuePair) : QueryValuePair => {
     return {
-        query: q1.query + "; " + q2.query,
+        query: `
+        ${q1.query}; 
+        ${q2.query};
+        `,
         values: q1.values.concat(q2.values)
     }
 }
