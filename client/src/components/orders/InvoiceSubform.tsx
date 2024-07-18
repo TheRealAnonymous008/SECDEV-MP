@@ -3,6 +3,7 @@ import { ConvertDate } from "../../utils/ConvertDate";
 import { ModalWrapper } from "../base/ModalBase";
 import { InvoiceRequest } from "./InvoiceDetails";
 import { ENDPOINTS } from "../../api/endpoints";
+import { createAPIEndpoint } from "../../api";
 
 const DEFAULT_INVOICE: InvoiceRequest = {
     pdfFile: null
@@ -25,10 +26,24 @@ export const InvoiceSubform = (props: {setValue : any, errors : any, default? : 
     }, [props.default])
 
     const onSubmit = () => {
-        props.setValue({...invoice, pdfFile: selectedPdf});
+        props.setValue({pdfFile: selectedPdf});
         setIsVisible(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }
+    };
+
+    // const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    //     event.preventDefault();
+    //     if(selectedPdf) {
+    //         const formData = new FormData();
+    //         formData.append('pdfFile', selectedPdf);
+    //         createAPIEndpoint(ENDPOINTS.uploadInvoice).upload(formData)
+    //             .then((response) => {
+    //                 props.setValue("invoice.pdfFile", response.data);
+    //             })
+    //             .catch((err) => {
+    //                 console.log(err);
+    //             });
+    //     }
+    // };
 
     const [isVisible, setIsVisible] = useState<boolean>(false);
 
