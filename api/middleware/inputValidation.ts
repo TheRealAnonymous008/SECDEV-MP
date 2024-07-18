@@ -196,29 +196,36 @@ export function assertNotNullOrEmpty(field) {
 // Image validation goes here
 
 const minSize = 5 * 1024; // 5 KB
-const maxSize = 1024 * 1024; // 1 MB
+const maxSizeImage = 1024 * 1024; // 1 MB
+const maxSizePdf = 5 * 1024 * 1024 // 5 MB
+
 const allowedMimeTypes = ['image/jpeg', 'image/png'];
 const MAGIC_NUMBERS = {
     jpg: ['ffd8ffe0', 'ffd8ffe1', 'ffd8ffe2', 'ffd8ffe3', 'ffd8ffe8'],
     png: '89504e470d0a1a0a',
-    pdf: ''
+    pdf: ['255044462d,  dfbf34ebce']
 };
 
-function checkMagicNumbers(buffer) {
+function checkMagicNumbersImage(buffer) {
     const jpgMagic = buffer.toString('hex', 0, 4);
     const pngMagic = buffer.toString('hex', 0, 8);
     return MAGIC_NUMBERS.jpg.includes(jpgMagic) || pngMagic === MAGIC_NUMBERS.png;
+}
+
+function checkMagicNumbersPdf(buffer){
+    const pdfMagic = buffer.toString('hex', 0, 5);
+    return MAGIC_NUMBERS.pdf.includes(pdfMagic)
 }
 
 export async function validateImage(image) {
     if (image == null || image.size < minSize)
         throw new Error("Invalid Image");
 
-    if (!allowedMimeTypes.includes(image.mimetype) || !checkMagicNumbers(image.buffer)) {
+    if (!allowedMimeTypes.includes(image.mimetype) || !checkMagicNumbersImage(image.buffer)) {
         throw new Error("Invalid File Format");
     }
 
-    if (image.size > maxSize) {
+    if (image.size > maxSizeImage) {
         throw new Error("Image is too large");
     }
 
@@ -231,11 +238,11 @@ export async function validatePdf(pdf) {
     }
 
     
-    if (!allowedMimeTypes.includes(pdf.mimetype) || !checkMagicNumbers(pdf.buffer)) {
+    if (!allowedMimeTypes.includes(pdf.mimetype) || !checkMagicNumbersPdf(pdf.buffer)) {
         throw new Error("Invalid File Format");
     }
 
-    if (pdf.size > maxSize) {
+    if (pdf.size > maxSizePdf) {
         throw new Error("PDF is too large");
     }
 

@@ -10,7 +10,8 @@ export default interface Order extends RowDataPacket {
     VehicleId?: number,
     EstimateNumber? : string, 
     ScopeOfWork?: string, 
-    IsVerified?: boolean
+    IsVerified?: boolean,
+    Invoice?: string
 }
 
 export interface OrderRow {
@@ -22,5 +23,6 @@ export interface OrderRow {
     VehicleId?: number,
     EstimateNumber? : string, 
     ScopeOfWork?: string, 
-    IsVerified?: boolean
+    IsVerified?: boolean,
+    Invoice?: Express.Multer.File
 } 

@@ -136,6 +136,7 @@ CREATE TABLE IF NOT EXISTS `autoworks`.`Order` (
   `EstimateNumber` VARCHAR(45) NULL,
   `ScopeOfWork` VARCHAR(1024) NULL,
   `IsVerified` TINYINT NOT NULL,
+  `Invoice` VARCHAR(100) NULL,
   PRIMARY KEY (`ID`),
   INDEX `fk_Order_Customer_idx` (`CustomerId` ASC) VISIBLE,
   INDEX `fk_Order_Vehicle1_idx` (`VehicleId` ASC) VISIBLE,

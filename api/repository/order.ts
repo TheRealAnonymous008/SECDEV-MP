@@ -7,6 +7,7 @@ import Order, { OrderRow } from "../models/order";
 import { LIMIT_MAX } from "../config/limiterConfig";
 import { queryBuilder, QueryValuePair } from "../utils/dbUtils";
 import { RoleEnumRepository, StatusEnumRepository, TypeEnumRepository } from "./enums";
+import { storeFile } from "../utils/fileUtils";
 
 const ORDER_TABLE_NAME = "order";
 
@@ -50,30 +51,40 @@ export const OrderRespository: IRepository<Order> = {
 
     async insert(object: OrderRow): Promise<number> {
         // It is assumed status and Time are IDs
-        let qv = queryBuilder.insert(ORDER_TABLE_NAME, {
-            Status: (await StatusEnumRepository.retrieveByName(object.Status)).Id,
-            TimeIn: object.TimeIn,
-            TimeOut: object.TimeOut,
-            CustomerId: object.CustomerId,
-            TypeId: (await TypeEnumRepository.retrieveByName(object.TypeId)).Id,
-            VehicleId: object.VehicleId,
-            EstimateNumber: object.EstimateNumber,
-            ScopeOfWork: object.ScopeOfWork,
-            IsVerified: object.IsVerified
-        });
+        try {
+            if (object.Invoice){
+                storeFile(object.Invoice, "pdf");
+            }
 
-        return new Promise((resolve, reject) => {
-            connection.execute<ResultSetHeader>(
-                qv.query,
-                qv.values,
-                (err, res) => {
-                    if (err) reject(err);
-                    else {
-                        resolve(res.insertId);
+            let qv = queryBuilder.insert(ORDER_TABLE_NAME, {
+                Status: (await StatusEnumRepository.retrieveByName(object.Status)).Id,
+                TimeIn: object.TimeIn,
+                TimeOut: object.TimeOut,
+                CustomerId: object.CustomerId,
+                TypeId: (await TypeEnumRepository.retrieveByName(object.TypeId)).Id,
+                VehicleId: object.VehicleId,
+                EstimateNumber: object.EstimateNumber,
+                ScopeOfWork: object.ScopeOfWork,
+                IsVerified: object.IsVerified,
+                Invoice: object.Invoice.filename,
+            });
+
+            return new Promise((resolve, reject) => {
+                connection.execute<ResultSetHeader>(
+                    qv.query,
+                    qv.values,
+                    (err, res) => {
+                        if (err) reject(err);
+                        else {
+                            resolve(res.insertId);
+                        }
                     }
-                }
-            );
-        });
+                );
+            });
+        }
+        catch (e) {
+            console.log(e);
+        }
     },
 
     async update(id: number, object: OrderRow): Promise<number> {
