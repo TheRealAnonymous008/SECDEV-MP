@@ -1,5 +1,5 @@
 export interface InvoiceRequest {
-    pdfFile: File | null;
+    pdfFile: File | string | null;
 }
 
 export interface Invoice {
