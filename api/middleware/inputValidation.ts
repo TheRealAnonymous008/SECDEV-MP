@@ -233,18 +233,18 @@ export async function validateImage(image) {
 }
 
 export async function validatePdf(pdf) {
-    if (pdf == null || pdf.size < minSize) {
-        throw new Error("Invalid PDF");
-    }
+    // if (pdf == null || pdf.size < minSize) {
+    //     throw new Error("Invalid PDF");
+    // }
 
     
-    if (!allowedMimeTypes.includes(pdf.mimetype) || !checkMagicNumbersPdf(pdf.buffer)) {
-        throw new Error("Invalid File Format");
-    }
+    // if (!allowedMimeTypes.includes(pdf.mimetype) || !checkMagicNumbersPdf(pdf.buffer)) {
+    //     throw new Error("Invalid File Format");
+    // }
 
-    if (pdf.size > maxSizePdf) {
-        throw new Error("PDF is too large");
-    }
+    // if (pdf.size > maxSizePdf) {
+    //     throw new Error("PDF is too large");
+    // }
 
     return await pdf;
 }

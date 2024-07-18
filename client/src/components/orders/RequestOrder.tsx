@@ -68,14 +68,14 @@ export const RequestOrder = (props : {setResponse : Function, default? : OrderRe
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.default]);
 
-    useEffect(() => {
-        if (!props.default) {
-            setValue("invoice.deductible", 0);
-            setValue("invoice.amount", 0);
-            setValue("invoice.agentCommission", 0);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    // useEffect(() => {
+    //     if (!props.default) {
+    //         setValue("invoice.deductible", 0);
+    //         setValue("invoice.amount", 0);
+    //         setValue("invoice.agentCommission", 0);
+    //     }
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [])
 
     return (
         <FormDivStyle>

@@ -17,6 +17,7 @@ const connection_1 = __importDefault(require("../config/connection"));
 const limiterConfig_1 = require("../config/limiterConfig");
 const dbUtils_1 = require("../utils/dbUtils");
 const enums_1 = require("./enums");
+const fileUtils_1 = require("../utils/fileUtils");
 const ORDER_TABLE_NAME = "order";
 exports.OrderRespository = {
     retrieveAll(limit = limiterConfig_1.LIMIT_MAX, offset) {
@@ -49,26 +50,35 @@ exports.OrderRespository = {
     insert(object) {
         return __awaiter(this, void 0, void 0, function* () {
             // It is assumed status and Time are IDs
-            let qv = dbUtils_1.queryBuilder.insert(ORDER_TABLE_NAME, {
-                Status: (yield enums_1.StatusEnumRepository.retrieveByName(object.Status)).Id,
-                TimeIn: object.TimeIn,
-                TimeOut: object.TimeOut,
-                CustomerId: object.CustomerId,
-                TypeId: (yield enums_1.TypeEnumRepository.retrieveByName(object.TypeId)).Id,
-                VehicleId: object.VehicleId,
-                EstimateNumber: object.EstimateNumber,
-                ScopeOfWork: object.ScopeOfWork,
-                IsVerified: object.IsVerified
-            });
-            return new Promise((resolve, reject) => {
-                connection_1.default.execute(qv.query, qv.values, (err, res) => {
-                    if (err)
-                        reject(err);
-                    else {
-                        resolve(res.insertId);
-                    }
+            try {
+                if (object.Invoice) {
+                    (0, fileUtils_1.storeFile)(object.Invoice, "pdf");
+                }
+                let qv = dbUtils_1.queryBuilder.insert(ORDER_TABLE_NAME, {
+                    Status: (yield enums_1.StatusEnumRepository.retrieveByName(object.Status)).Id,
+                    TimeIn: object.TimeIn,
+                    TimeOut: object.TimeOut,
+                    CustomerId: object.CustomerId,
+                    TypeId: (yield enums_1.TypeEnumRepository.retrieveByName(object.TypeId)).Id,
+                    VehicleId: object.VehicleId,
+                    EstimateNumber: object.EstimateNumber,
+                    ScopeOfWork: object.ScopeOfWork,
+                    IsVerified: object.IsVerified,
+                    Invoice: object.Invoice.filename,
                 });
-            });
+                return new Promise((resolve, reject) => {
+                    connection_1.default.execute(qv.query, qv.values, (err, res) => {
+                        if (err)
+                            reject(err);
+                        else {
+                            resolve(res.insertId);
+                        }
+                    });
+                });
+            }
+            catch (e) {
+                console.log(e);
+            }
         });
     },
     update(id, object) {

@@ -1,18 +1,8 @@
 export interface InvoiceRequest {
-    amount: number,
-    deductible: number,
-    agentFirstName: string,
-    agentLastName: string,
-    datePaid : Date,
-    agentCommission : number
+    pdfFile: File | null;
 }
 
 export interface Invoice {
-    id : string,
-    amount: number,
-    deductible: number,
-    agentFirstName: string,
-    agentLastName: string,
-    datePaid : string,
-    agentCommission : number
+    id: string;
+    pdfFile: string;
 }

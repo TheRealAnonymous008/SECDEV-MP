@@ -4,15 +4,9 @@ import { ModalWrapper } from "../base/ModalBase";
 import { InvoiceRequest } from "./InvoiceDetails";
 import { ENDPOINTS } from "../../api/endpoints";
 
-const DEFAULT_INVOICE = {
-    agentCommission: 0,
-    agentLastName: "",
-    agentFirstName: "",
-    amount: 0,
-    datePaid: new Date(),
-    deductible: 0,
+const DEFAULT_INVOICE: InvoiceRequest = {
     pdfFile: null
-}
+};
 
 export const InvoiceSubform = (props: {setValue : any, errors : any, default? : InvoiceRequest}) => {
     const errors = props.errors;

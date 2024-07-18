@@ -50,7 +50,7 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(req.body);
+        const file = yield (0, inputValidation_1.validatePdf)(req.file);
         const order = {
             Status: (0, inputValidation_1.baseValidation)(req.body.status),
             TimeIn: (0, inputValidation_1.validateDate)(req.body.timeIn),
@@ -60,6 +60,7 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             VehicleId: (0, inputValidation_1.validateInteger)(req.body.vehicle),
             EstimateNumber: (0, inputValidation_1.validateAlphaNumeric)(req.body.estimateNumber),
             ScopeOfWork: (0, inputValidation_1.baseValidation)(req.body.scopeOfWork),
+            Invoice: file,
             IsVerified: req.body.isVerified === 'true'
         };
         if (order.TimeIn > order.TimeOut) {
