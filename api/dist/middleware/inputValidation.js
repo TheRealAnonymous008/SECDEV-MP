@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sanitizeImage = exports.validatePdf = exports.validateImage = exports.assertNotNullOrEmpty = exports.validateJWT = exports.validateDate = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateLimit = exports.validateNonNegative = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
+exports.sanitizeImage = exports.validatePdf = exports.validateImage = exports.assertNotNullOrEmpty = exports.validateJWT = exports.validateDate = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateLimit = exports.validateNonNegative = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateAlphaNumeric = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
 const enum_1 = require("../models/enum");
 const sanitize_html_1 = __importDefault(require("sanitize-html"));
 const limiterConfig_1 = require("../config/limiterConfig");
@@ -68,6 +68,14 @@ function validateWord(str) {
     throw new Error("Invalid word format");
 }
 exports.validateWord = validateWord;
+function validateAlphaNumeric(str) {
+    assertNotNullOrEmpty(str);
+    str = baseValidation(str);
+    if (validator_1.default.isAlphanumeric(str))
+        return str;
+    throw new Error("Invalid Alpha Format");
+}
+exports.validateAlphaNumeric = validateAlphaNumeric;
 function validateUsername(str) {
     assertNotNullOrEmpty(str);
     str = baseValidation(str);
@@ -150,10 +158,11 @@ function validateDate(str) {
     str = baseValidation(str);
     const date = new Date(str);
     const status = !isNaN(date.getTime()) && date instanceof Date;
+    let formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
     if (!status) {
         throw new Error("Invalid Date Time Format");
     }
-    return str;
+    return formattedDate;
 }
 exports.validateDate = validateDate;
 function validateJWT(str) {

@@ -64,6 +64,16 @@ export function validateWord(str) {
     throw new Error("Invalid word format");
 }
 
+export function validateAlphaNumeric(str) {
+    assertNotNullOrEmpty(str)
+    str = baseValidation(str)
+
+    if (validator.isAlphanumeric(str))
+        return str 
+
+    throw new Error("Invalid Alpha Format")
+}
+
 export function validateUsername(str : string) {
     assertNotNullOrEmpty(str)
     str = baseValidation(str)
@@ -157,12 +167,13 @@ export function validateDate(str) {
     str = baseValidation(str);
     const date = new Date(str);
     const status = !isNaN(date.getTime()) && date instanceof Date;
+    let formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
 
     if (!status) {
         throw new Error("Invalid Date Time Format")
     }
 
-    return str
+    return formattedDate
 }
 
 export function validateJWT(str) {

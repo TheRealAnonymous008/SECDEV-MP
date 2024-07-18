@@ -15,8 +15,8 @@ export default interface Order extends RowDataPacket {
 
 export interface OrderRow {
     Status?: string, 
-    TimeIn?: Date, 
-    TimeOut?: Date, 
+    TimeIn?: string, 
+    TimeOut?: string, 
     CustomerId?: number,
     TypeId?: string, 
     VehicleId?: number,

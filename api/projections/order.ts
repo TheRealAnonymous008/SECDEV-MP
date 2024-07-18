@@ -1,45 +1,82 @@
-import { makeCustomerView } from "./customer"
-import { makeVehicleView } from "./vehicle"
+import Customer from "../models/customer";
+import Vehicle from "../models/vehicle";
+import { CustomerRepository } from "../repository/customer";
+import { StatusEnumRepository, TypeEnumRepository } from "../repository/enums";
+import { VehicleRepository } from "../repository/vehicle";
+import { makeCustomerView } from "./customer";
+import { makeVehicleView } from "./vehicle";
 
-export const makeOrderView = (document) => {
+export const makeOrderView = async (document) => {
     if (document == null)
         return {};
-    
-    return {
-        id: document._id,
-        isVerified: document.isVerified,
-        status: document.status,
-        timeIn: document.timeIn,
-        timeOut: document.timeOut,
-        customer: makeCustomerView(document.customer),
-        type: document.type,
-        vehicle: makeVehicleView(document.vehicle),
-        invoice: makeInvoiceView(document.invoice),
-        estimateNumber: document.estimateNumber,
-        scopeOfWork: document.scopeOfWork,
-        expenses: document.expenses.map((value) => {
-            return makeExpenseView(value)
-        }),
+
+    const order = {
+        id: document.ID,
+        isVerified: document.IsVerified,
+        status: (await StatusEnumRepository.retrieveById(document.Status)).Name,
+        timeIn: document.TimeIn,
+        timeOut: document.TimeOut,
+        customer: await retrieveCustomer(document.CustomerId),
+        type: (await TypeEnumRepository.retrieveById(document.TypeId)).Name,
+        vehicle: await retrieveVehicle(document.VehicleId),
+        estimateNumber: document.EstimateNumber,
+        scopeOfWork: document.ScopeOfWork,
+        // expenses: document.expenses.map((value) => {
+        //     return makeExpenseView(value)
+        // }),
     };
+    console.log(order)
+    return order;
 }
 
-export const makeOrderArrayView = (documents) => {
-    return documents.map((val) => {
-        return makeOrderView(val)
+export const makeOrderArrayView = async (documents) => {
+    return documents.map(async (val) => {
+        const v = await makeOrderView(val)
+        return v
     });
 }
 
-const makeInvoiceView = (invoice) => {
-    return {
-        id: invoice.id,
-        amount : parseFloat(invoice.amount),
-        deductible : parseFloat(invoice.deductible), 
-        agentFirstName : invoice.agentFirstName,
-        agentLastName : invoice.agentLastName,
-        datePaid : invoice.datePaid,
-        agentCommission : parseFloat(invoice.agentCommission)
-    };
+const retrieveCustomer = async (id : number) : Promise<Customer | null> => {
+    try {
+        return CustomerRepository.retrieveById(id)
+            .then((result) => {
+                if (result.length == 0){
+                    return null
+                }
+                const view = makeCustomerView(result)
+                return view
+            })
+            .catch((err) => {
+                console.log(err);
+                return null
+            })
+    } catch (error) {
+        console.log(error)
+        return null
+    }
 }
+
+
+const retrieveVehicle = async (id : number) : Promise<Vehicle | null> => {
+    try {
+        return VehicleRepository.retrieveById(id)
+            .then((result) => {
+                if (result.length == 0){
+                    return null
+                }
+                const view = makeVehicleView(result)
+                return view
+            })
+            .catch((err) => {
+                console.log(err);
+                return null
+            })
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+}
+
 
 const makeExpenseView = (expense) => {
     return {

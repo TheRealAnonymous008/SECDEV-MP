@@ -37,6 +37,7 @@ export const OrderRecord = (props : { order: Order, rerenderFlag: Function}) => 
     const onUpdate = () => {
         createAPIEndpoint(ENDPOINTS.getOrder).fetch({id : props.order.id})
         .then((response) => {
+            console.log(response.data)  
             setOrder(response.data);
         });
     };
@@ -73,13 +74,14 @@ export const OrderRecord = (props : { order: Order, rerenderFlag: Function}) => 
 
                 <td> {order?.estimateNumber}</td>
                 <td> {order?.scopeOfWork}</td>
+                
                 <td>
                     <p> 
                         {"Total Expenses: " } 
                      
                     <>
                     {
-                        order?.expenses.reduce(
+                        order?.expenses?.reduce(
                             (x, y) => {
                                 return x + y.amount.valueOf();
                             }, 0).toFixed(2)

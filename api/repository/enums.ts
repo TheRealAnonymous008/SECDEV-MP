@@ -11,6 +11,8 @@ interface EnumRepository {
     retrieveAll(limit?: number, offset?: number): Promise<IEnum[]>;
 
     retrieveByName(name: string): Promise<IEnum | undefined>;
+
+    retrieveById(name : string) : Promise<IEnum | undefined>;
 }
 
 const createEnumRepository = (tableName: string): EnumRepository => {
@@ -58,6 +60,28 @@ const createEnumRepository = (tableName: string): EnumRepository => {
                 return res.length > 0 ? res[0] : undefined;
             } catch (error) {
                 console.error(`Error retrieving ${name} from ${this.tableName}:`, error);
+                throw error;
+            }
+        },
+
+        async retrieveById(id: string): Promise<IEnum | undefined> {
+            let qv = queryBuilder.select(this.tableName);
+            queryBuilder.where(qv, { "id": id });
+        
+            try {
+                const res = await new Promise<IEnum[]>((resolve, reject) => {
+                    connection.execute<IEnum[]>(
+                        qv.query,
+                        qv.values,
+                        (err, results) => {
+                            if (err) reject(err);
+                            else resolve(results);
+                        }
+                    );
+                });
+                return res.length > 0 ? res[0] : undefined;
+            } catch (error) {
+                console.error(`Error retrieving ${id} from ${this.tableName}:`, error);
                 throw error;
             }
         },

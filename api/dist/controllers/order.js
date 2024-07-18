@@ -14,13 +14,13 @@ const order_1 = require("../repository/order");
 const order_2 = require("../projections/order");
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     order_1.OrderRespository.retrieveAll()
-        .then((result) => {
+        .then((result) => __awaiter(void 0, void 0, void 0, function* () {
         res.json({
-            data: (0, order_2.makeOrderArrayView)(result),
+            data: yield (0, order_2.makeOrderArrayView)(result),
             count: result.length
         });
         res.status(200).end();
-    })
+    }))
         .catch((err) => {
         console.log(err);
         res.status(500).end();
@@ -30,14 +30,14 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         order_1.OrderRespository.retrieveById(id)
-            .then((result) => {
+            .then((result) => __awaiter(void 0, void 0, void 0, function* () {
             if (result.length == 0) {
                 res.status(404).end();
                 return;
             }
-            res.json((0, order_2.makeOrderView)(result));
+            res.json(yield (0, order_2.makeOrderView)(result));
             res.status(200).end();
-        })
+        }))
             .catch((err) => {
             console.log(err);
             res.status(500).end();
@@ -52,13 +52,13 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log(req.body);
         const order = {
-            Status: (0, inputValidation_1.validateWord)(req.body.status),
+            Status: (0, inputValidation_1.baseValidation)(req.body.status),
             TimeIn: (0, inputValidation_1.validateDate)(req.body.timeIn),
             TimeOut: (0, inputValidation_1.validateDate)(req.body.timeOut),
             CustomerId: (0, inputValidation_1.validateInteger)(req.body.customer),
-            TypeId: (0, inputValidation_1.validateWord)(req.body.typeId),
+            TypeId: (0, inputValidation_1.baseValidation)(req.body.type),
             VehicleId: (0, inputValidation_1.validateInteger)(req.body.vehicle),
-            EstimateNumber: (0, inputValidation_1.validateWord)(req.body.estimateNumber),
+            EstimateNumber: (0, inputValidation_1.validateAlphaNumeric)(req.body.estimateNumber),
             ScopeOfWork: (0, inputValidation_1.baseValidation)(req.body.scopeOfWork),
             IsVerified: req.body.isVerified === 'true'
         };

@@ -45,7 +45,7 @@ export const UpdateOrder = (props : {order : Order, observer : Function}) => {
                 },
                 invoice: {
                     ...props.order.invoice,
-                    datePaid: new Date(props.order?.invoice.datePaid)
+                    datePaid: new Date()
                 },
                 expenses: props.order?.expenses,
                 scopeOfWork: props.order?.scopeOfWork

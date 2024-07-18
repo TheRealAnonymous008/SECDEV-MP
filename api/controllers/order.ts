@@ -1,14 +1,14 @@
 import express = require('express');
-import { baseValidation, validateDate, validateInteger, validateWord } from '../middleware/inputValidation';
+import { baseValidation, validateAlphaNumeric, validateDate, validateInteger, validateWord } from '../middleware/inputValidation';
 import { OrderRespository } from '../repository/order';
 import { makeOrderArrayView, makeOrderView } from '../projections/order';
 import { OrderRow } from '../models/order';
 
 const all = async (req: express.Request, res: express.Response) => {
     OrderRespository.retrieveAll()
-        .then((result) => {
+        .then(async (result) => {
             res.json({
-                data: makeOrderArrayView(result),
+                data: await makeOrderArrayView(result),
                 count : result.length 
             });
             res.status(200).end();
@@ -23,12 +23,12 @@ const id = async (req: express.Request, res: express.Response) => {
     try {
         let id = validateInteger(req.query.id.toString());
         OrderRespository.retrieveById(id)
-            .then((result) => {
+            .then(async (result) => {
                 if (result.length == 0){
                     res.status(404).end();
                     return;
                 }
-                res.json(makeOrderView(result));
+                res.json(await makeOrderView(result));
                 res.status(200).end();
             })
             .catch((err) => {
@@ -45,13 +45,13 @@ const create = async (req: express.Request, res: express.Response) => {
     try {
         console.log(req.body)
         const order: OrderRow = {
-            Status: validateWord(req.body.status),
+            Status: baseValidation(req.body.status),
             TimeIn: validateDate(req.body.timeIn),
             TimeOut: validateDate(req.body.timeOut),
             CustomerId: validateInteger(req.body.customer),
-            TypeId: validateWord(req.body.typeId),
+            TypeId: baseValidation(req.body.type),
             VehicleId: validateInteger(req.body.vehicle),
-            EstimateNumber: validateWord(req.body.estimateNumber),
+            EstimateNumber: validateAlphaNumeric(req.body.estimateNumber),
             ScopeOfWork: baseValidation(req.body.scopeOfWork),  // Free field, SQL injection and XSS prevention assumed
             IsVerified: req.body.isVerified === 'true'
         };

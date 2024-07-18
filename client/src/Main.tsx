@@ -33,7 +33,6 @@ export const Main = () => {
     useAsync(async () => {
         await createAPIEndpoint(ENDPOINTS.handshake).fetch()
             .then((response) => {
-                console.log(response)
                 if (response.status != 403){
                     setIsLoggedIn(true)
                     setIsAdmin(response.data.Role == 1)

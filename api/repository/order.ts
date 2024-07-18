@@ -1,3 +1,4 @@
+
 import { QueryResult, ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
 import Customer, { CustomerRow } from "../models/customer";
@@ -5,6 +6,7 @@ import IRepository from "./IRepository";
 import Order, { OrderRow } from "../models/order";
 import { LIMIT_MAX } from "../config/limiterConfig";
 import { queryBuilder, QueryValuePair } from "../utils/dbUtils";
+import { RoleEnumRepository, StatusEnumRepository, TypeEnumRepository } from "./enums";
 
 const ORDER_TABLE_NAME = "order";
 
@@ -46,13 +48,14 @@ export const OrderRespository: IRepository<Order> = {
         });
     },
 
-    insert(object: OrderRow): Promise<number> {
+    async insert(object: OrderRow): Promise<number> {
+        // It is assumed status and Time are IDs
         let qv = queryBuilder.insert(ORDER_TABLE_NAME, {
-            Status: object.Status,
+            Status: (await StatusEnumRepository.retrieveByName(object.Status)).Id,
             TimeIn: object.TimeIn,
             TimeOut: object.TimeOut,
             CustomerId: object.CustomerId,
-            TypeId: object.TypeId,
+            TypeId: (await TypeEnumRepository.retrieveByName(object.TypeId)).Id,
             VehicleId: object.VehicleId,
             EstimateNumber: object.EstimateNumber,
             ScopeOfWork: object.ScopeOfWork,
@@ -73,13 +76,13 @@ export const OrderRespository: IRepository<Order> = {
         });
     },
 
-    update(id: number, object: OrderRow): Promise<number> {
+    async update(id: number, object: OrderRow): Promise<number> {
         let qv = queryBuilder.update(ORDER_TABLE_NAME, {
-            Status: object.Status,
+            Status: (await StatusEnumRepository.retrieveByName(object.Status)).Id,
             TimeIn: object.TimeIn,
             TimeOut: object.TimeOut,
             CustomerId: object.CustomerId,
-            TypeId: object.TypeId,
+            TypeId: (await TypeEnumRepository.retrieveByName(object.TypeId)).Id,
             VehicleId: object.VehicleId,
             EstimateNumber: object.EstimateNumber,
             ScopeOfWork: object.ScopeOfWork,

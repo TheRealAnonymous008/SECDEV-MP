@@ -62,6 +62,27 @@ const createEnumRepository = (tableName) => {
                 }
             });
         },
+        retrieveById(id) {
+            return __awaiter(this, void 0, void 0, function* () {
+                let qv = dbUtils_1.queryBuilder.select(this.tableName);
+                dbUtils_1.queryBuilder.where(qv, { "id": id });
+                try {
+                    const res = yield new Promise((resolve, reject) => {
+                        connection_1.default.execute(qv.query, qv.values, (err, results) => {
+                            if (err)
+                                reject(err);
+                            else
+                                resolve(results);
+                        });
+                    });
+                    return res.length > 0 ? res[0] : undefined;
+                }
+                catch (error) {
+                    console.error(`Error retrieving ${id} from ${this.tableName}:`, error);
+                    throw error;
+                }
+            });
+        },
     };
 };
 exports.RoleEnumRepository = createEnumRepository("RoleEnum");
