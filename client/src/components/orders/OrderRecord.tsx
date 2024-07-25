@@ -68,9 +68,9 @@ export const OrderRecord = (props : { order: Order, rerenderFlag: Function}) => 
                 <td> {order?.type} </td>
                 <td> {order?.vehicle?.licensePlate }</td>
 
-                <td>
+                {/* <td>
                     <InvoiceDisplay invoice={order?.invoice}/>
-                </td>
+                </td> */}
 
                 <td> {order?.estimateNumber}</td>
                 <td> {order?.scopeOfWork}</td>

@@ -43,9 +43,7 @@ export const UpdateOrder = (props : {order : Order, observer : Function}) => {
                     id: props.order?.vehicle?.id,
                     licensePlate: props.order?.vehicle?.licensePlate
                 },
-                invoice: {
-                    pdfFile: props.order?.invoice?.pdfFile
-                },
+                invoice: props.order?.invoice,
                 expenses: props.order?.expenses,
                 scopeOfWork: props.order?.scopeOfWork
             }}/>

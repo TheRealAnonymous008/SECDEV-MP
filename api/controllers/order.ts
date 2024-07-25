@@ -43,6 +43,7 @@ const id = async (req: express.Request, res: express.Response) => {
 
 const create = async (req: express.Request, res: express.Response) => {
     try {
+        console.log(req)
         const file = await validatePdf(req.file as Express.Multer.File);
 
         const order: OrderRow = {

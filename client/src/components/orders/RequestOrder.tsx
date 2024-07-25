@@ -3,15 +3,12 @@ import { useForm } from "react-hook-form";
 import { createAPIEndpoint } from "../../api";
 import { isAlphaNumeric} from "../../utils/Regex";
 import { CustomerSubform } from "./CustomerSubform";
-import { Expense } from "../expenses/ExpenseDetails";
-import { ExpenseSubform } from "../expenses/ExpenseSubform";
 import { InvoiceSubform } from "./InvoiceSubform";
 import { OrderRequest, OrderRequestDefault } from "./OrderDetails";
 import { VehicleSubform } from "./VehicleSubform";
 import { FormDivStyle } from "../../style/FormStyle";
 import { ENDPOINTS } from "../../api/endpoints";
 import { ConvertDate } from "../../utils/ConvertDate";
-import { InvoiceRequest } from "./InvoiceDetails";
 
 const DEFAULT_STATUS : string = "DEFAULT";
 const DEFAULT_TYPE : string = "DEFAULT";
@@ -207,10 +204,10 @@ export const RequestOrder = (props : {setResponse : Function, default? : OrderRe
                 </div>
                 <br />
 
-                <InvoiceSubform setValue={(invoice : InvoiceRequest) =>{
+                <InvoiceSubform setValue={(invoice : File) =>{
                     setValue("invoice", invoice);
                 }}
-                    default={watch("invoice")}  errors={errors} />
+                errors={errors} />
                 <br />
                 
                 {/* Deactivating expenses for now */}

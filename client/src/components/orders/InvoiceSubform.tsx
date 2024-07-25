@@ -1,32 +1,14 @@
-import { useEffect, useState } from "react";
-import { ConvertDate } from "../../utils/ConvertDate";
+import { useState } from "react";
 import { ModalWrapper } from "../base/ModalBase";
-import { InvoiceRequest } from "./InvoiceDetails";
-import { ENDPOINTS } from "../../api/endpoints";
-import { createAPIEndpoint } from "../../api";
 
-const DEFAULT_INVOICE: InvoiceRequest = {
-    pdfFile: null
-};
-
-export const InvoiceSubform = (props: {setValue : any, errors : any, default? : InvoiceRequest}) => {
+export const InvoiceSubform = (props: {setValue : any, errors : any}) => {
     const errors = props.errors;
-    const [invoice, setInvoice] = useState<InvoiceRequest>(props.default ? props.default : DEFAULT_INVOICE);
     const [selectedPdf, setSelectedPdf] = useState<File | null>(null);
     const [showPdfViewer, setShowPdfViewer] = useState<boolean>(false);
     const [pdfSrc, setPdfSrc] = useState<string>('');
 
-    useEffect(() => {
-        if (props.default) {
-            setInvoice(props.default);
-        } else {
-            setInvoice(DEFAULT_INVOICE);
-        }
-
-    }, [props.default])
-
     const onSubmit = () => {
-        props.setValue({pdfFile: selectedPdf});
+        props.setValue(selectedPdf);
         setIsVisible(false);
     };
 

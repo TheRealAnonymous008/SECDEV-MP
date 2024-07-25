@@ -50,6 +50,7 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log(req);
         const file = yield (0, inputValidation_1.validatePdf)(req.file);
         const order = {
             Status: (0, inputValidation_1.baseValidation)(req.body.status),
