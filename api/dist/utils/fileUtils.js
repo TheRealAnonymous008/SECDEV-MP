@@ -11,9 +11,9 @@ const path_1 = __importDefault(require("path"));
 const FILE_ROOT = process.env.FILE_ROOT;
 const storeFile = (file, ext) => {
     try {
-        file.filename = (0, cryptoUtils_1.getTimestamp)().toString() + (0, cryptoUtils_1.getRandom)();
+        file.filename = (0, cryptoUtils_1.getTimestamp)().toString() + (0, cryptoUtils_1.getRandom)() + "." + ext;
         return new Promise((resolve, reject) => {
-            const filePath = path_1.default.join(FILE_ROOT, './uploads', file.filename + +"." + ext);
+            const filePath = path_1.default.join(FILE_ROOT, './uploads', file.filename);
             fs_1.default.writeFile(filePath, file.buffer, (err) => {
                 if (err) {
                     reject(err);

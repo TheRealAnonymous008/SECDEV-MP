@@ -15,8 +15,9 @@ const order_2 = require("../projections/order");
 const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     order_1.OrderRespository.retrieveAll()
         .then((result) => __awaiter(void 0, void 0, void 0, function* () {
+        const data = yield (0, order_2.makeOrderArrayView)(result).then((d) => { console.log(d); return d; });
         res.json({
-            data: yield (0, order_2.makeOrderArrayView)(result),
+            data: data,
             count: result.length
         });
         res.status(200).end();

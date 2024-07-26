@@ -7,8 +7,9 @@ import { OrderRow } from '../models/order';
 const all = async (req: express.Request, res: express.Response) => {
     OrderRespository.retrieveAll()
         .then(async (result) => {
+            const data =  await makeOrderArrayView(result).then((d) => {console.log(d); return d})
             res.json({
-                data: await makeOrderArrayView(result),
+                data: data,
                 count : result.length 
             });
             res.status(200).end();

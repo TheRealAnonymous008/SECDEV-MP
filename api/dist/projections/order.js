@@ -38,10 +38,10 @@ const makeOrderView = (document) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.makeOrderView = makeOrderView;
 const makeOrderArrayView = (documents) => __awaiter(void 0, void 0, void 0, function* () {
-    return documents.map((val) => __awaiter(void 0, void 0, void 0, function* () {
+    return Promise.all(documents.map((val) => __awaiter(void 0, void 0, void 0, function* () {
         const v = yield (0, exports.makeOrderView)(val);
         return v;
-    }));
+    })));
 });
 exports.makeOrderArrayView = makeOrderArrayView;
 const retrieveCustomer = (id) => __awaiter(void 0, void 0, void 0, function* () {

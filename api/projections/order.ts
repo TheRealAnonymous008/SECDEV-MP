@@ -30,10 +30,10 @@ export const makeOrderView = async (document) => {
 }
 
 export const makeOrderArrayView = async (documents) => {
-    return documents.map(async (val) => {
+    return Promise.all(documents.map(async (val) => {
         const v = await makeOrderView(val)
         return v
-    });
+    }));
 }
 
 const retrieveCustomer = async (id : number) : Promise<Customer | null> => {
