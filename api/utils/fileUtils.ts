@@ -7,9 +7,9 @@ const FILE_ROOT = process.env.FILE_ROOT;
 
 export const storeFile = (file : Express.Multer.File, ext : string): Promise<string> => {
     try {
-        file.filename =  getTimestamp().toString() + getRandom();
+        file.filename =  getTimestamp().toString() + getRandom() + "." + ext;
         return new Promise((resolve, reject) => {
-            const filePath = path.join(FILE_ROOT, './uploads', file.filename  + + "." + ext);
+            const filePath = path.join(FILE_ROOT, './uploads', file.filename);
             fs.writeFile(filePath, file.buffer, (err) => {
                 if (err) {
                     reject(err);

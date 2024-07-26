@@ -43,8 +43,7 @@ const id = async (req: express.Request, res: express.Response) => {
 
 const create = async (req: express.Request, res: express.Response) => {
     try {
-        console.log(req)
-        const file = await validatePdf(req.file as Express.Multer.File);
+        const file = await validatePdf(req.files[0] as Express.Multer.File);
 
         const order: OrderRow = {
             Status: baseValidation(req.body.status),
@@ -54,7 +53,7 @@ const create = async (req: express.Request, res: express.Response) => {
             TypeId: baseValidation(req.body.type),
             VehicleId: validateInteger(req.body.vehicle),
             EstimateNumber: validateAlphaNumeric(req.body.estimateNumber),
-            ScopeOfWork: baseValidation(req.body.scopeOfWork),  // Free field, SQL injection and XSS prevention assumed,
+            ScopeOfWork: baseValidation(req.body.scopeOfWork), 
             Invoice: file,
             IsVerified: req.body.isVerified === 'true'
         };

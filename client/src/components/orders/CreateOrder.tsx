@@ -8,7 +8,7 @@ export const CreateOrder = (props : {observer : Function}) => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
 
     const setData = (data : any) => {
-        createAPIEndpoint(ENDPOINTS.addOrder).post(data)
+        createAPIEndpoint(ENDPOINTS.addOrder).upload(data)
         .then((response) => {
             props.observer();
             setIsVisible(false);
