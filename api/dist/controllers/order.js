@@ -68,14 +68,14 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             throw new Error("Invalid Time In and Time Out");
         }
         order_1.OrderRespository.insert(order)
-            .then((result) => {
+            .then((result) => __awaiter(void 0, void 0, void 0, function* () {
             if (result == undefined) {
                 res.status(500).end();
                 return;
             }
-            res.json((0, order_2.makeOrderView)(Object.assign(Object.assign({}, order), { Id: result })));
+            res.json(yield (0, order_2.makeOrderView)(Object.assign(Object.assign({}, order), { Id: result })));
             res.status(200).end();
-        })
+        }))
             .catch((err) => {
             console.log(err);
             res.status(500).end();

@@ -9,15 +9,15 @@ import { makeVehicleView } from "./vehicle";
 export const makeOrderView = async (document) => {
     if (document == null)
         return {};
-
+    
     const order = {
         id: document.ID,
         isVerified: document.IsVerified,
-        status: (await StatusEnumRepository.retrieveById(document.Status)).Name,
+        status: document.Status,
         timeIn: document.TimeIn,
         timeOut: document.TimeOut,
         customer: await retrieveCustomer(document.CustomerId),
-        type: (await TypeEnumRepository.retrieveById(document.TypeId)).Name,
+        type: document.Type,
         vehicle: await retrieveVehicle(document.VehicleId),
         estimateNumber: document.EstimateNumber,
         scopeOfWork: document.ScopeOfWork,

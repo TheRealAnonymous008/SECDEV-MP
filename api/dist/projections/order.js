@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeOrderArrayView = exports.makeOrderView = void 0;
 const customer_1 = require("../repository/customer");
-const enums_1 = require("../repository/enums");
 const vehicle_1 = require("../repository/vehicle");
 const customer_2 = require("./customer");
 const vehicle_2 = require("./vehicle");
@@ -21,11 +20,11 @@ const makeOrderView = (document) => __awaiter(void 0, void 0, void 0, function* 
     const order = {
         id: document.ID,
         isVerified: document.IsVerified,
-        status: (yield enums_1.StatusEnumRepository.retrieveById(document.Status)).Name,
+        status: document.Status,
         timeIn: document.TimeIn,
         timeOut: document.TimeOut,
         customer: yield retrieveCustomer(document.CustomerId),
-        type: (yield enums_1.TypeEnumRepository.retrieveById(document.TypeId)).Name,
+        type: document.Type,
         vehicle: yield retrieveVehicle(document.VehicleId),
         estimateNumber: document.EstimateNumber,
         scopeOfWork: document.ScopeOfWork,

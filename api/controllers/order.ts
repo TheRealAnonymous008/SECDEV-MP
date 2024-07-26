@@ -64,12 +64,12 @@ const create = async (req: express.Request, res: express.Response) => {
         }
 
         OrderRespository.insert(order)
-            .then((result) => {
+            .then(async (result) => {
                 if (result == undefined){
                     res.status(500).end();
                     return;
                 }
-                res.json(makeOrderView({...order, Id: result}));
+                res.json(await makeOrderView({...order, Id: result}));
                 res.status(200).end();
             })
             .catch((err) => {
