@@ -31,8 +31,19 @@ export function baseValidation(text) {
     return text 
 }
 
-export function validateEmail(str) {
+export function validateOptional(str, validator){
+    if (str == null || str == ""|| str == undefined) {
+        return null
+    }
+    return validator(str)
+}
+
+export function validateRequired(str, validator) {
     assertNotNullOrEmpty(str)
+    return validator(str)
+}
+
+export function validateEmail(str) {
     str = baseValidation(str)
 
     if (validator.isEmail(str)) 
@@ -43,7 +54,6 @@ export function validateEmail(str) {
 
 
 export function validateName(str) {
-    assertNotNullOrEmpty(str)
     str = baseValidation(str)
 
     const regex = /^[A-Z][a-zA-Z]{1,34}$/;
@@ -55,7 +65,6 @@ export function validateName(str) {
 }
 
 export function validateWord(str) {
-    assertNotNullOrEmpty(str)
     str = baseValidation(str)
 
     if (validator.isAlpha(str) && validator.isLength(str, {min: 1, max:34})) {
@@ -65,7 +74,6 @@ export function validateWord(str) {
 }
 
 export function validateAlphaNumeric(str) {
-    assertNotNullOrEmpty(str)
     str = baseValidation(str)
 
     if (validator.isAlphanumeric(str))
@@ -75,7 +83,6 @@ export function validateAlphaNumeric(str) {
 }
 
 export function validateUsername(str : string) {
-    assertNotNullOrEmpty(str)
     str = baseValidation(str)
 
     if (validator.isAlphanumeric(str) && validator.isLength(str, {min: 4, max: 35})) {
@@ -85,7 +92,6 @@ export function validateUsername(str : string) {
 }
 
 export function validateMobileNumber(str) {
-    assertNotNullOrEmpty(str)
     str = baseValidation(str)
     const regex = /^09\d{9}$/;
 
@@ -96,7 +102,6 @@ export function validateMobileNumber(str) {
 }
 
 export function validateInteger(str : string) {
-    assertNotNullOrEmpty(str)
     str = baseValidation(str)
 
     if (validator.isInt(str)) {
@@ -126,7 +131,6 @@ export function validateLimit(str) {
 
 
 export function validatePassword(str) {
-    assertNotNullOrEmpty(str)
     str = baseValidation(str)
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{8,32}$/;
 
@@ -137,8 +141,6 @@ export function validatePassword(str) {
 }
 
 export function validateRole(role) {
-    
-    assertNotNullOrEmpty(role);
     role = baseValidation(role);
 
     const roleKey = role.toUpperCase();
@@ -150,7 +152,6 @@ export function validateRole(role) {
 }
 
 export function validateLicensePlate(str){
-    assertNotNullOrEmpty(str)
     str = baseValidation(str)
 
     const regex = /^[A-Z0-9]{6,7}$/;                // Follows the specs for Filipino license plates
@@ -163,7 +164,6 @@ export function validateLicensePlate(str){
 }
 
 export function validateDate(str) {
-    assertNotNullOrEmpty(str);
     str = baseValidation(str);
     const date = new Date(str);
     const status = !isNaN(date.getTime()) && date instanceof Date;
@@ -177,7 +177,6 @@ export function validateDate(str) {
 }
 
 export function validateJWT(str) {
-    assertNotNullOrEmpty(str);
     str = baseValidation(str);
 
     if (! validator.isJWT(str)){
@@ -233,18 +232,18 @@ export async function validateImage(image) {
 }
 
 export async function validatePdf(pdf) {
-    // if (pdf == null || pdf.size < minSize) {
-    //     throw new Error("Invalid PDF");
-    // }
+    if (pdf == null || pdf.size < minSize) {
+        throw new Error("Invalid PDF");
+    }
 
     
-    // if (!allowedMimeTypes.includes(pdf.mimetype) || !checkMagicNumbersPdf(pdf.buffer)) {
-    //     throw new Error("Invalid File Format");
-    // }
+    if (!allowedMimeTypes.includes(pdf.mimetype) || !checkMagicNumbersPdf(pdf.buffer)) {
+        throw new Error("Invalid File Format");
+    }
 
-    // if (pdf.size > maxSizePdf) {
-    //     throw new Error("PDF is too large");
-    // }
+    if (pdf.size > maxSizePdf) {
+        throw new Error("PDF is too large");
+    }
 
     return await pdf;
 }
