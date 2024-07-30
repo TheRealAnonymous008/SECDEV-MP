@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sanitizeImage = exports.validatePdf = exports.validateImage = exports.assertNotNullOrEmpty = exports.validateJWT = exports.validateDate = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateLimit = exports.validateNonNegative = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateAlphaNumeric = exports.validateWord = exports.validateName = exports.validateEmail = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
+exports.sanitizeImage = exports.validatePdf = exports.validateImage = exports.assertNotNullOrEmpty = exports.validateJWT = exports.validateDate = exports.validateLicensePlate = exports.validateRole = exports.validatePassword = exports.validateLimit = exports.validateNonNegative = exports.validateInteger = exports.validateMobileNumber = exports.validateUsername = exports.validateAlphaNumeric = exports.validateWord = exports.validateName = exports.validateEmail = exports.validateRequired = exports.validateOptional = exports.baseValidation = exports.validateNoURL = exports.validateNoHTML = void 0;
 const enum_1 = require("../models/enum");
 const sanitize_html_1 = __importDefault(require("sanitize-html"));
 const limiterConfig_1 = require("../config/limiterConfig");
@@ -41,8 +41,19 @@ function baseValidation(text) {
     return text;
 }
 exports.baseValidation = baseValidation;
-function validateEmail(str) {
+function validateOptional(str, validator) {
+    if (str == null || str == "" || str == undefined) {
+        return null;
+    }
+    return validator(str);
+}
+exports.validateOptional = validateOptional;
+function validateRequired(str, validator) {
     assertNotNullOrEmpty(str);
+    return validator(str);
+}
+exports.validateRequired = validateRequired;
+function validateEmail(str) {
     str = baseValidation(str);
     if (validator_1.default.isEmail(str))
         return str;
@@ -50,7 +61,6 @@ function validateEmail(str) {
 }
 exports.validateEmail = validateEmail;
 function validateName(str) {
-    assertNotNullOrEmpty(str);
     str = baseValidation(str);
     const regex = /^[A-Z][a-zA-Z]{1,34}$/;
     if (regex.test(str)) {
@@ -60,7 +70,6 @@ function validateName(str) {
 }
 exports.validateName = validateName;
 function validateWord(str) {
-    assertNotNullOrEmpty(str);
     str = baseValidation(str);
     if (validator_1.default.isAlpha(str) && validator_1.default.isLength(str, { min: 1, max: 34 })) {
         return str;
@@ -69,7 +78,6 @@ function validateWord(str) {
 }
 exports.validateWord = validateWord;
 function validateAlphaNumeric(str) {
-    assertNotNullOrEmpty(str);
     str = baseValidation(str);
     if (validator_1.default.isAlphanumeric(str))
         return str;
@@ -77,7 +85,6 @@ function validateAlphaNumeric(str) {
 }
 exports.validateAlphaNumeric = validateAlphaNumeric;
 function validateUsername(str) {
-    assertNotNullOrEmpty(str);
     str = baseValidation(str);
     if (validator_1.default.isAlphanumeric(str) && validator_1.default.isLength(str, { min: 4, max: 35 })) {
         return str.toLowerCase();
@@ -86,7 +93,6 @@ function validateUsername(str) {
 }
 exports.validateUsername = validateUsername;
 function validateMobileNumber(str) {
-    assertNotNullOrEmpty(str);
     str = baseValidation(str);
     const regex = /^09\d{9}$/;
     if (regex.test(str)) {
@@ -96,7 +102,6 @@ function validateMobileNumber(str) {
 }
 exports.validateMobileNumber = validateMobileNumber;
 function validateInteger(str) {
-    assertNotNullOrEmpty(str);
     str = baseValidation(str);
     if (validator_1.default.isInt(str)) {
         return parseInt(str.toString());
@@ -124,7 +129,6 @@ function validateLimit(str) {
 }
 exports.validateLimit = validateLimit;
 function validatePassword(str) {
-    assertNotNullOrEmpty(str);
     str = baseValidation(str);
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{8,32}$/;
     if (!regex.test(str)) {
@@ -134,7 +138,6 @@ function validatePassword(str) {
 }
 exports.validatePassword = validatePassword;
 function validateRole(role) {
-    assertNotNullOrEmpty(role);
     role = baseValidation(role);
     const roleKey = role.toUpperCase();
     if (!enum_1.ALL_ROLES.includes(roleKey)) {
@@ -144,7 +147,6 @@ function validateRole(role) {
 }
 exports.validateRole = validateRole;
 function validateLicensePlate(str) {
-    assertNotNullOrEmpty(str);
     str = baseValidation(str);
     const regex = /^[A-Z0-9]{6,7}$/; // Follows the specs for Filipino license plates
     if (!regex.test(str)) {
@@ -154,7 +156,6 @@ function validateLicensePlate(str) {
 }
 exports.validateLicensePlate = validateLicensePlate;
 function validateDate(str) {
-    assertNotNullOrEmpty(str);
     str = baseValidation(str);
     const date = new Date(str);
     const status = !isNaN(date.getTime()) && date instanceof Date;
@@ -166,7 +167,6 @@ function validateDate(str) {
 }
 exports.validateDate = validateDate;
 function validateJWT(str) {
-    assertNotNullOrEmpty(str);
     str = baseValidation(str);
     if (!validator_1.default.isJWT(str)) {
         throw new Error("Not JWT");
@@ -215,15 +215,15 @@ function validateImage(image) {
 exports.validateImage = validateImage;
 function validatePdf(pdf) {
     return __awaiter(this, void 0, void 0, function* () {
-        // if (pdf == null || pdf.size < minSize) {
-        //     throw new Error("Invalid PDF");
-        // }
-        // if (!allowedMimeTypes.includes(pdf.mimetype) || !checkMagicNumbersPdf(pdf.buffer)) {
-        //     throw new Error("Invalid File Format");
-        // }
-        // if (pdf.size > maxSizePdf) {
-        //     throw new Error("PDF is too large");
-        // }
+        if (pdf == null || pdf.size < minSize) {
+            throw new Error("Invalid PDF");
+        }
+        if (!allowedMimeTypes.includes(pdf.mimetype) || !checkMagicNumbersPdf(pdf.buffer)) {
+            throw new Error("Invalid File Format");
+        }
+        if (pdf.size > maxSizePdf) {
+            throw new Error("PDF is too large");
+        }
         return yield pdf;
     });
 }

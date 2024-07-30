@@ -12,7 +12,7 @@ import { COOKIE_SETTINGS } from '../config/authConfig';
 
 const SALT_ROUNDS = 14
 
-const register = (req : express.Request, res : express.Response) => {
+const register = (req : express.Request, res : express.Response, next: express.NextFunction) => {
     try {
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS)
         const password = inputValidation.validatePassword(req.body.password)
@@ -30,25 +30,21 @@ const register = (req : express.Request, res : express.Response) => {
         UserRepository.register(user)
             .then((result) => {
                 if (result == undefined){
-                    res.status(500).end();
-                    return
+                    throw new Error(`Failed to register user ${user.Username}`)
                 }
                 res.status(200).end();
             })
             .catch((err) => {
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     }
     catch (err) {
-        console.log(err);
-        res.status(500).end();
+        next(err)
     }
 
 }
 
-const login = (req : express.Request, res : express.Response) => {
-    logger.log(LogLevel.AUDIT, "Hello")
+const login = (req : express.Request, res : express.Response, next: express.NextFunction) => {
     try {
         let username = inputValidation.validateUsername(req.body.username)
 
@@ -66,12 +62,12 @@ const login = (req : express.Request, res : express.Response) => {
                         const data = await initializeSession(user)
                         await signToken(data, (err, token, refreshToken) => {
                             if (err) {
-                                console.log(err)
-                                res.status(500).json({
+                                res.json({
                                     auth : false,
                                     message : err.message,
                                     error : err,
-                                }).end()
+                                })
+                                next(err)
                             }
                             else if (token) {
                                 if(refreshToken) {
@@ -108,17 +104,15 @@ const login = (req : express.Request, res : express.Response) => {
                 auth : false, 
                 error : error
             })
-            .status(500)
-            .end();
+            next(error)
         });
     }
     catch (err) {
-        console.log(err)
-        res.status(500).end();
+        next(err)
     }
 }
 
-const handshake = (req : express.Request, res : express.Response) => {
+const handshake = (req : express.Request, res : express.Response, next : express.NextFunction) => {
     try {
         const sessionId = res.locals.jwt.id
         
@@ -131,17 +125,15 @@ const handshake = (req : express.Request, res : express.Response) => {
                 }
             })
             .catch((err) => {
-                console.log(err)
-                res.status(500).end();
+                next(err)
             })
     }
     catch (err) {
-        console.log(err)
-        res.status(500).end();
+        next(err)
     }
 }
 
-const logout = (req : express.Request, res : express.Response) => {
+const logout = (req : express.Request, res : express.Response, next: express.NextFunction) => {
     try {
         const token = req.cookies.jwt
         const sessionId : any = jwtDecode(token)["id"]
@@ -154,12 +146,11 @@ const logout = (req : express.Request, res : express.Response) => {
                     .end();
             })
             .catch((err) => {
-                console.log(err)
+                next(err)
             });
         
     } catch(err) {
-        console.log(err)
-        res.status(500).end()
+        next(err)
     }
 }
 

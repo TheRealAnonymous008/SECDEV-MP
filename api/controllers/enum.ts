@@ -3,19 +3,18 @@ import { RoleEnumRepository, StatusEnumRepository, TypeEnumRepository } from '..
 import { validateInteger, validateWord } from '../middleware/inputValidation'; 
 import { getEnumNames } from '../models/enums';
 
-const getAllRoles = (req: express.Request, res: express.Response) => {
+const getAllRoles = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     RoleEnumRepository.retrieveAll()
         .then((result) => {
             res.json(getEnumNames(result));
             res.status(200).end();
         })
         .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err)
         });
 };
 
-const getRoleByName = (req: express.Request, res: express.Response) => {
+const getRoleByName = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         let name = validateWord(req.query.name.toString());
         RoleEnumRepository.retrieveByName(name)
@@ -28,28 +27,25 @@ const getRoleByName = (req: express.Request, res: express.Response) => {
                 res.status(200).end();
             })
             .catch((err) => {
-                console.log(err);
-                res.status(500).end();
+                next(err)
             });
     } catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error)
     }
 };
 
-const getAllStatuses = (req: express.Request, res: express.Response) => {
+const getAllStatuses = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     StatusEnumRepository.retrieveAll()
         .then((result) => {
             res.json(getEnumNames(result));
             res.status(200).end();
         })
         .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err)
         });
 };
 
-const getStatusByName = (req: express.Request, res: express.Response) => {
+const getStatusByName = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         let name = validateWord(req.query.name.toString());
         StatusEnumRepository.retrieveByName(name)
@@ -62,28 +58,25 @@ const getStatusByName = (req: express.Request, res: express.Response) => {
                 res.status(200).end();
             })
             .catch((err) => {
-                console.log(err);
-                res.status(500).end();
+                next(err)
             });
     } catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error)
     }
 };
 
-const getAllTypes = (req: express.Request, res: express.Response) => {
+const getAllTypes = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     TypeEnumRepository.retrieveAll()
         .then((result) => {
             res.json(getEnumNames(result));
             res.status(200).end();
         })
         .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err)
         });
 }
 
-const getTypeByName = (req: express.Request, res: express.Response) => {
+const getTypeByName = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         let name = validateWord(req.query.name.toString());
         TypeEnumRepository.retrieveByName(name)
@@ -96,12 +89,10 @@ const getTypeByName = (req: express.Request, res: express.Response) => {
                 res.status(200).end();
             })
             .catch((err) => {
-                console.log(err);
-                res.status(500).end();
+                next(err)
             });
     } catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error)
     }
 }
 

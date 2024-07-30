@@ -1,5 +1,4 @@
 export const makeCustomerView = (document) => {
-    console.log(document)
     if (document == null)
         return {};
         

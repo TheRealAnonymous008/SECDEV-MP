@@ -4,7 +4,7 @@ import { VehicleQuery, VehicleRepository } from '../repository/vehicle';
 import { VehicleRow } from '../models/vehicle';
 import { baseValidation, validateInteger, validateLicensePlate, validateLimit, validateWord } from '../middleware/inputValidation';
 
-const all = (req: express.Request, res: express.Response) => {
+const all = (req: express.Request, res: express.Response, next : express.NextFunction) => {
     VehicleRepository.retrieveAll()
     .then((result) => {
         res.json({
@@ -14,12 +14,11 @@ const all = (req: express.Request, res: express.Response) => {
         res.status(200).end();
     })
     .catch((err) => {
-        console.log(err);
-        res.status(500).end();
+        next(err)
     })
 }
 
-const id = (req: express.Request, res: express.Response) => {
+const id = (req: express.Request, res: express.Response, next : express.NextFunction) => {
     try {
         let id = validateInteger(req.query.id.toString())
         VehicleRepository.retrieveById(id)
@@ -32,16 +31,14 @@ const id = (req: express.Request, res: express.Response) => {
             res.status(200).end();
         })
         .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err)
         })
     } catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error)
     }
 }
 
-const create = (req: express.Request, res: express.Response) => {
+const create = (req: express.Request, res: express.Response, next : express.NextFunction) => {
     try {
         const vehicle : VehicleRow = {
             LicensePlate: validateLicensePlate(req.body.licensePlate),
@@ -56,23 +53,20 @@ const create = (req: express.Request, res: express.Response) => {
         VehicleRepository.insert(vehicle)
             .then((result) => {
                 if (result == undefined){
-                    res.status(500).end();
-                    return
+                    throw new Error(`Failed to create vehicles with params ${vehicle}`)
                 }
                 res.json(makeVehicleView({...vehicle, id: result}));
                 res.status(200).end();
             })
             .catch((err) => {
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     } catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error)
     }
 }
 
-const update = (req: express.Request, res: express.Response) => {
+const update = (req: express.Request, res: express.Response, next : express.NextFunction) => {
     try {
         const vehicle : VehicleRow = {
             LicensePlate: validateLicensePlate(req.body.licensePlate),
@@ -88,44 +82,38 @@ const update = (req: express.Request, res: express.Response) => {
         VehicleRepository.update(id, vehicle)
             .then((result) => {
                 if (result == undefined){
-                    res.status(500).end();
-                    return
+                    throw new Error(`Failed to update vehicle with id ${id}`)
                 }
                 res.json(makeVehicleView({...vehicle, id: result}));
                 res.status(200).end();
             })
             .catch((err) => {
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     } catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error)
     }
 }
 
-const remove = (req: express.Request, res: express.Response) => {
+const remove = (req: express.Request, res: express.Response, next : express.NextFunction) => {
     try {
         let id = validateInteger(req.query.id.toString())
         VehicleRepository.delete(id)
             .then((result) => {
                 if (result == undefined){
-                    res.status(500).end();
-                    return
+                    throw new Error(`Failed to delete vehicle with id ${id}`)
                 }
                 res.status(200).end();
             })
             .catch((err) => {
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     } catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error)
     }
 }
 
-const filter = (req: express.Request, res: express.Response) => {
+const filter = (req: express.Request, res: express.Response, next : express.NextFunction) => {
     try {
         const query = makeQuery(req)
         VehicleRepository.filter(query)
@@ -137,14 +125,11 @@ const filter = (req: express.Request, res: express.Response) => {
                 res.status(200).end();
             })
             .catch((err) => {
-                        
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     }
     catch (err) {
-        console.log(err);
-        res.status(500);
+        next(err)
     }
 }
 

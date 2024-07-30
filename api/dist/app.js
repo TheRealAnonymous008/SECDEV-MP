@@ -33,7 +33,6 @@ const cookieparser = require("cookie-parser");
 const fs = require('fs');
 const https = require('https');
 const bodyParser = require('body-parser');
-const debug = require('debug')('my express app');
 const app = (0, express_1.default)();
 const cors = require('cors');
 // view engine setup
@@ -88,6 +87,7 @@ app.use((req, res, next) => {
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use((err, req, res, next) => {
+        console.log(err);
         res.status(err['status'] || 500);
         res.render('error', {
             message: err.message,

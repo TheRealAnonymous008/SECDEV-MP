@@ -2,7 +2,6 @@
 import { QueryResult, ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
 import Customer, { CustomerRow } from "../models/customer";
-import IRepository from "./IRepository";
 import Order, { OrderRow } from "../models/order";
 import { LIMIT_MAX } from "../config/limiterConfig";
 import { queryBuilder, QueryValuePair } from "../utils/dbUtils";
@@ -11,7 +10,7 @@ import { storeFile } from "../utils/fileUtils";
 
 const ORDER_TABLE_NAME = "order";
 
-export const OrderRespository: IRepository<Order> = {
+export const OrderRespository = {
     retrieveAll(limit: number = LIMIT_MAX, offset?: number): Promise<Order[]> {
         let qv = queryBuilder.select(ORDER_TABLE_NAME);
         queryBuilder.limit(qv, limit);

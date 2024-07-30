@@ -89,7 +89,7 @@ exports.UserRepository = {
                     else {
                         exports.UserRepository.retrieveById(res[0].UserId)
                             .then((user) => { resolve(user); })
-                            .catch((err) => { console.log(err); reject(err); });
+                            .catch((err) => { reject(err); });
                     }
                 }
             }));
@@ -178,23 +178,23 @@ exports.UserRepository = {
         return __awaiter(this, void 0, void 0, function* () {
             let user = yield exports.UserRepository.getUserFromSession(sessid, csrf);
             const id = user.Id;
-            try {
-                (0, fileUtils_1.storeFile)(image, "png");
-                let qv = dbUtils_1.queryBuilder.update("users", { "Picture": image.filename });
-                dbUtils_1.queryBuilder.where(qv, { "Id": id });
-                return new Promise((resolve, reject) => {
-                    connection_1.default.execute(qv.query, qv.values, (err, res) => {
-                        if (err)
-                            reject(err);
-                        else {
-                            resolve(res.insertId);
-                        }
-                    });
+            let qv = dbUtils_1.queryBuilder.update("users", { "Picture": image.filename });
+            dbUtils_1.queryBuilder.where(qv, { "Id": id });
+            return new Promise((resolve, reject) => {
+                try {
+                    (0, fileUtils_1.storeFile)(image, "png");
+                }
+                catch (err) {
+                    reject(err);
+                }
+                connection_1.default.execute(qv.query, qv.values, (err, res) => {
+                    if (err)
+                        reject(err);
+                    else {
+                        resolve(res.insertId);
+                    }
                 });
-            }
-            catch (err) {
-                console.log(err);
-            }
+            });
         });
     },
     update(id, object) {

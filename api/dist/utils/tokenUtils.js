@@ -96,7 +96,7 @@ const checkAccessToken = (token) => {
             break;
     }
     if (decoded == null) {
-        console.log("Error: Access Token Invalid");
+        throw new Error("Error: Access Token Invalid");
     }
     return decoded;
 };
@@ -114,7 +114,7 @@ const checkRefreshToken = (token) => {
             break;
     }
     if (decoded == null) {
-        console.log("Error: Refresh Token Invalid");
+        throw new Error("Error: Refresh Token Invalid");
     }
     return decoded;
 };

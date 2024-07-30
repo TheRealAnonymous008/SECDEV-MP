@@ -24,8 +24,7 @@ const validateRole = (allowedRoles : number[]) => {
                                 next()
                             })
                             .catch((err) => {
-                                console.log(err)
-                                res.status(500)
+                                throw err;
                             })
                     } else {
                         next()
@@ -38,6 +37,7 @@ const validateRole = (allowedRoles : number[]) => {
                 }
             })
             .catch((err) => {
+                // TODO: Possibly change this
                 console.log(err)
                 res.status(403).json({
                     message: 'You do not have permission to access this function'

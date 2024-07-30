@@ -3,18 +3,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const enums_1 = require("../repository/enums");
 const inputValidation_1 = require("../middleware/inputValidation");
 const enums_2 = require("../models/enums");
-const getAllRoles = (req, res) => {
+const getAllRoles = (req, res, next) => {
     enums_1.RoleEnumRepository.retrieveAll()
         .then((result) => {
         res.json((0, enums_2.getEnumNames)(result));
         res.status(200).end();
     })
         .catch((err) => {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     });
 };
-const getRoleByName = (req, res) => {
+const getRoleByName = (req, res, next) => {
     try {
         let name = (0, inputValidation_1.validateWord)(req.query.name.toString());
         enums_1.RoleEnumRepository.retrieveByName(name)
@@ -27,27 +26,24 @@ const getRoleByName = (req, res) => {
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error);
     }
 };
-const getAllStatuses = (req, res) => {
+const getAllStatuses = (req, res, next) => {
     enums_1.StatusEnumRepository.retrieveAll()
         .then((result) => {
         res.json((0, enums_2.getEnumNames)(result));
         res.status(200).end();
     })
         .catch((err) => {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     });
 };
-const getStatusByName = (req, res) => {
+const getStatusByName = (req, res, next) => {
     try {
         let name = (0, inputValidation_1.validateWord)(req.query.name.toString());
         enums_1.StatusEnumRepository.retrieveByName(name)
@@ -60,27 +56,24 @@ const getStatusByName = (req, res) => {
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error);
     }
 };
-const getAllTypes = (req, res) => {
+const getAllTypes = (req, res, next) => {
     enums_1.TypeEnumRepository.retrieveAll()
         .then((result) => {
         res.json((0, enums_2.getEnumNames)(result));
         res.status(200).end();
     })
         .catch((err) => {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     });
 };
-const getTypeByName = (req, res) => {
+const getTypeByName = (req, res, next) => {
     try {
         let name = (0, inputValidation_1.validateWord)(req.query.name.toString());
         enums_1.TypeEnumRepository.retrieveByName(name)
@@ -93,13 +86,11 @@ const getTypeByName = (req, res) => {
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error);
     }
 };
 exports.default = { getAllRoles, getRoleByName, getAllStatuses, getStatusByName, getAllTypes, getTypeByName };

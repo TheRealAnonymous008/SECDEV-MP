@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const vehicle_1 = require("../projections/vehicle");
 const vehicle_2 = require("../repository/vehicle");
 const inputValidation_1 = require("../middleware/inputValidation");
-const all = (req, res) => {
+const all = (req, res, next) => {
     vehicle_2.VehicleRepository.retrieveAll()
         .then((result) => {
         res.json({
@@ -13,11 +13,10 @@ const all = (req, res) => {
         res.status(200).end();
     })
         .catch((err) => {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     });
 };
-const id = (req, res) => {
+const id = (req, res, next) => {
     try {
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         vehicle_2.VehicleRepository.retrieveById(id)
@@ -30,16 +29,14 @@ const id = (req, res) => {
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error);
     }
 };
-const create = (req, res) => {
+const create = (req, res, next) => {
     try {
         const vehicle = {
             LicensePlate: (0, inputValidation_1.validateLicensePlate)(req.body.licensePlate),
@@ -53,23 +50,20 @@ const create = (req, res) => {
         vehicle_2.VehicleRepository.insert(vehicle)
             .then((result) => {
             if (result == undefined) {
-                res.status(500).end();
-                return;
+                throw new Error(`Failed to create vehicles with params ${vehicle}`);
             }
             res.json((0, vehicle_1.makeVehicleView)(Object.assign(Object.assign({}, vehicle), { id: result })));
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error);
     }
 };
-const update = (req, res) => {
+const update = (req, res, next) => {
     try {
         const vehicle = {
             LicensePlate: (0, inputValidation_1.validateLicensePlate)(req.body.licensePlate),
@@ -84,44 +78,38 @@ const update = (req, res) => {
         vehicle_2.VehicleRepository.update(id, vehicle)
             .then((result) => {
             if (result == undefined) {
-                res.status(500).end();
-                return;
+                throw new Error(`Failed to update vehicle with id ${id}`);
             }
             res.json((0, vehicle_1.makeVehicleView)(Object.assign(Object.assign({}, vehicle), { id: result })));
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error);
     }
 };
-const remove = (req, res) => {
+const remove = (req, res, next) => {
     try {
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         vehicle_2.VehicleRepository.delete(id)
             .then((result) => {
             if (result == undefined) {
-                res.status(500).end();
-                return;
+                throw new Error(`Failed to delete vehicle with id ${id}`);
             }
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error);
     }
 };
-const filter = (req, res) => {
+const filter = (req, res, next) => {
     try {
         const query = makeQuery(req);
         vehicle_2.VehicleRepository.filter(query)
@@ -133,13 +121,11 @@ const filter = (req, res) => {
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (err) {
-        console.log(err);
-        res.status(500);
+        next(err);
     }
 };
 const makeQuery = (req) => {

@@ -6,7 +6,7 @@ import { validateName, validateUsername, validateMobileNumber, validateEmail, va
 import Bcrypt = require('bcryptjs');
 import { getRandom } from '../utils/cryptoUtils';
 
-const all = (req: express.Request, res: express.Response) => {
+const all = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     UserRepository.retrieveAll()
         .then((result) => {
             res.json({
@@ -16,13 +16,11 @@ const all = (req: express.Request, res: express.Response) => {
             res.status(200).end();
         })
         .catch((err) => {
-                    
-            console.log(err);
-            res.status(500).end();
+            next(err)
         })
 }
 
-const id = (req: express.Request, res: express.Response) => {
+const id = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         let id = validateInteger(req.query.id.toString());
         UserRepository.retrieveById(id)
@@ -35,19 +33,16 @@ const id = (req: express.Request, res: express.Response) => {
                 res.status(200).end();
             })
             .catch((err) => {
-                        
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     } catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error)
     }
 }
 
 const SALT_ROUNDS = 14
 
-const create = (req : express.Request, res : express.Response) => {
+const create = (req : express.Request, res : express.Response, next: express.NextFunction) => {
     try {
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS)
         const password = getRandom()
@@ -65,19 +60,16 @@ const create = (req : express.Request, res : express.Response) => {
         UserRepository.register(user)
             .then((result) => {
                 if (result == undefined){
-                    res.status(500).end();
-                    return
+                    throw new Error(`Failed to register user ${user.Username}`)
                 }
                 res.status(200).end();
             })
             .catch((err) => {
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     }
     catch (err) {
-        console.log(err);
-        res.status(500).end();
+        next(err)
     }
 
 }
@@ -85,25 +77,23 @@ const create = (req : express.Request, res : express.Response) => {
 // req is any so thatwe can get all the files
 const upload = async(req  :any, res: express.Response, next : express.NextFunction) => {
     try { 
-        const file = await validateImage(req.file as Express.Multer.File)
+        const file = await validateImage(req.file as Express.Multer.File).catch((err) => {next(err)})
         const id = res.locals.jwt.id
         const csrf = res.locals.jwt.csrf
 
-        UserRepository.upload(id, csrf, file)
+        UserRepository.upload(id, csrf, file as Express.Multer.File)
             .then((result) => 
                 res.status(200).end())
             .catch((err) => {
-                console.log(err)
-                res.status(500).end()
+                next(err)
             })
 
     } catch (err) {
-        console.log(err);
-        res.status(500).end();
+        next(err)
     }
 }
 
-const update = (req: express.Request, res: express.Response) => {
+const update = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         let user : UserRow= {
             FirstName : validateName(req.body.firstName),
@@ -118,49 +108,41 @@ const update = (req: express.Request, res: express.Response) => {
         UserRepository.update(id, user)
             .then((result) => {
                 if (result == undefined){
-                    res.status(500).end();
-                    return
+                    throw new Error(`Failed to update user with id ${id}`)
                 }
                 res.json(makeUserView({...user, id: result}));
                 res.status(200).end();
             })
             .catch((err) => {
-                        
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     }
     catch (err) {
-        console.log(err);
-        res.status(500);
+        next(err)
     }
 }
 
-const remove = async (req: express.Request, res: express.Response) => {
+const remove = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         let id = validateInteger(req.query.id.toString());
         UserRepository.delete(id)
             .then((result) => {
                 if (result == undefined){
-                    res.status(500).end();
-                    return
+                    throw new Error(`Failed to delete user with id ${id}`)
                 }
                 res.status(200).end();
             })
             .catch((err) => {
-                        
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     }
     catch (err) {
-        console.log(err);
-        res.status(500);
+        next(err)
     }
 }
 
 
-const filter = async (req: express.Request, res: express.Response) => {
+const filter = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const query = makeQuery(req)
         UserRepository.filter(query)
@@ -172,14 +154,11 @@ const filter = async (req: express.Request, res: express.Response) => {
                 res.status(200).end();
             })
             .catch((err) => {
-                        
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     }
     catch (err) {
-        console.log(err);
-        res.status(500);
+        next(err)
     }
 }
 

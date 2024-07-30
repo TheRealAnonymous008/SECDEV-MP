@@ -1,6 +1,5 @@
 import { QueryResult, ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
-import IRepository from "./IRepository";
 import { LIMIT_MAX } from "../config/limiterConfig";
 import { queryBuilder, QueryValuePair } from "../utils/dbUtils";
 import { IEnum } from "../models/enums";

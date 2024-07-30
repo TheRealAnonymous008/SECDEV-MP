@@ -38,7 +38,6 @@ const validateToken = (req, res, next) => {
             next();
         }
         catch (error) {
-            console.log("Error", error);
             try {
                 (0, tokenUtils_1.checkRefreshToken)(refToken);
             }
@@ -49,6 +48,7 @@ const validateToken = (req, res, next) => {
                     handleAccessTokenExpired(res, token);
                     next();
                 }
+                // TODO: Maybe fix this
                 else {
                     return res.json({
                         message: 'Reassigning token failure in authValidation middleware',

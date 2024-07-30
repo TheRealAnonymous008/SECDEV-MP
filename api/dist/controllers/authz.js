@@ -40,12 +40,10 @@ const enum_1 = require("../models/enum");
 const user_1 = require("../repository/user");
 const inputValidation = __importStar(require("../middleware/inputValidation"));
 const jwt_decode_1 = __importDefault(require("jwt-decode"));
-const logger_1 = __importDefault(require("../utils/logger"));
-const logConfig_1 = require("../config/logConfig");
 const tokenUtils_1 = require("../utils/tokenUtils");
 const authConfig_1 = require("../config/authConfig");
 const SALT_ROUNDS = 14;
-const register = (req, res) => {
+const register = (req, res, next) => {
     try {
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
         const password = inputValidation.validatePassword(req.body.password);
@@ -62,23 +60,19 @@ const register = (req, res) => {
         user_1.UserRepository.register(user)
             .then((result) => {
             if (result == undefined) {
-                res.status(500).end();
-                return;
+                throw new Error(`Failed to register user ${user.Username}`);
             }
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (err) {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     }
 };
-const login = (req, res) => {
-    logger_1.default.log(logConfig_1.LogLevel.AUDIT, "Hello");
+const login = (req, res, next) => {
     try {
         let username = inputValidation.validateUsername(req.body.username);
         user_1.UserRepository.retrieveByUsername(username)
@@ -95,12 +89,12 @@ const login = (req, res) => {
                         const data = yield (0, tokenUtils_1.initializeSession)(user);
                         yield (0, tokenUtils_1.signToken)(data, (err, token, refreshToken) => {
                             if (err) {
-                                console.log(err);
-                                res.status(500).json({
+                                res.json({
                                     auth: false,
                                     message: err.message,
                                     error: err,
-                                }).end();
+                                });
+                                next(err);
                             }
                             else if (token) {
                                 if (refreshToken) {
@@ -136,17 +130,15 @@ const login = (req, res) => {
             res.json({
                 auth: false,
                 error: error
-            })
-                .status(500)
-                .end();
+            });
+            next(error);
         });
     }
     catch (err) {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     }
 };
-const handshake = (req, res) => {
+const handshake = (req, res, next) => {
     try {
         const sessionId = res.locals.jwt.id;
         user_1.UserRepository.getUserFromSession(sessionId)
@@ -158,16 +150,14 @@ const handshake = (req, res) => {
             }
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (err) {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     }
 };
-const logout = (req, res) => {
+const logout = (req, res, next) => {
     try {
         const token = req.cookies.jwt;
         const sessionId = (0, jwt_decode_1.default)(token)["id"];
@@ -180,12 +170,11 @@ const logout = (req, res) => {
                 .end();
         })
             .catch((err) => {
-            console.log(err);
+            next(err);
         });
     }
     catch (err) {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     }
 };
 exports.default = { register, login, logout, handshake };

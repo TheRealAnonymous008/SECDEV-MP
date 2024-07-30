@@ -12,10 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const inputValidation_1 = require("../middleware/inputValidation");
 const order_1 = require("../repository/order");
 const order_2 = require("../projections/order");
-const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const all = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     order_1.OrderRespository.retrieveAll()
         .then((result) => __awaiter(void 0, void 0, void 0, function* () {
-        const data = yield (0, order_2.makeOrderArrayView)(result).then((d) => { console.log(d); return d; });
+        const data = yield (0, order_2.makeOrderArrayView)(result).catch((err) => { next(err); });
         res.json({
             data: data,
             count: result.length
@@ -23,11 +23,10 @@ const all = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(200).end();
     }))
         .catch((err) => {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     });
 });
-const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const id = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         order_1.OrderRespository.retrieveById(id)
@@ -40,18 +39,16 @@ const id = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(200).end();
         }))
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error);
     }
 });
-const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const file = yield (0, inputValidation_1.validatePdf)(req.files[0]);
+        const file = yield (0, inputValidation_1.validatePdf)(req.files[0]).catch((err) => { next(err); });
         const order = {
             Status: (0, inputValidation_1.baseValidation)(req.body.status),
             TimeIn: (0, inputValidation_1.validateDate)(req.body.timeIn),
@@ -70,23 +67,20 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         order_1.OrderRespository.insert(order)
             .then((result) => __awaiter(void 0, void 0, void 0, function* () {
             if (result == undefined) {
-                res.status(500).end();
-                return;
+                throw new Error(`Failed to create order with params ${order}`);
             }
             res.json(yield (0, order_2.makeOrderView)(Object.assign(Object.assign({}, order), { Id: result })));
             res.status(200).end();
         }))
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (err) {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     }
 });
-const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const update = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const order = {
             Status: (0, inputValidation_1.validateWord)(req.body.status),
@@ -106,41 +100,35 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         order_1.OrderRespository.update(id, order)
             .then((result) => {
             if (result == undefined) {
-                res.status(500).end();
-                return;
+                throw new Error(`Failed to update order with id ${id}`);
             }
             res.json((0, order_2.makeOrderView)(Object.assign(Object.assign({}, order), { Id: result })));
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (err) {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     }
 });
-const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const remove = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         order_1.OrderRespository.delete(id)
             .then((result) => {
             if (result == undefined) {
-                res.status(500).end();
-                return;
+                throw new Error(`Failed to delete order with id ${id}`);
             }
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (err) {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     }
 });
 exports.default = { all, id, create, update, remove };

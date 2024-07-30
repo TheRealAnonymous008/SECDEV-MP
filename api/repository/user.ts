@@ -6,6 +6,7 @@ import { LIMIT_MAX } from "../config/limiterConfig";
 import { queryBuilder, QueryValuePair } from "../utils/dbUtils";
 import { getRandom, getTimestamp, hashId } from "../utils/cryptoUtils";
 import { storeFile } from "../utils/fileUtils";
+import { rejects } from "assert";
 
 
 const tableName = "users";
@@ -93,7 +94,7 @@ export const UserRepository = {
                         else {
                             UserRepository.retrieveById(res[0].UserId)
                                 .then((user) => {resolve(user)})
-                                .catch((err) => {console.log(err); reject(err)});
+                                .catch((err) => {reject(err)});
                         }
                     }
                 }
@@ -203,25 +204,26 @@ export const UserRepository = {
     async upload(sessid : string, csrf : string, image : Express.Multer.File) : Promise<number>{
         let user = await  UserRepository.getUserFromSession(sessid, csrf)
         const id = user.Id;
-        try {
-            storeFile(image, "png")
-            let qv = queryBuilder.update("users", {"Picture":  image.filename})
-            queryBuilder.where(qv, {"Id" : id})
-            return new Promise((resolve, reject) => {
-                connection.execute<ResultSetHeader>(
-                    qv.query,
-                    qv.values,
-                    (err, res) => {
-                        if (err) reject(err);
-                        else{
-                            resolve(res.insertId);
-                        }
+
+        let qv = queryBuilder.update("users", {"Picture":  image.filename})
+        queryBuilder.where(qv, {"Id" : id})
+        return new Promise((resolve, reject) => {
+            try {
+                storeFile(image, "png")
+            } catch(err){
+                reject(err)
+            }
+            connection.execute<ResultSetHeader>(
+                qv.query,
+                qv.values,
+                (err, res) => {
+                    if (err) reject(err);
+                    else{
+                        resolve(res.insertId);
                     }
-                )
-            })
-        } catch(err){
-            console.log(err);
-        }
+                }
+            )
+        })
     },
 
     update(id : number, object : UserRow) : Promise<number> {

@@ -1,13 +1,12 @@
 import { QueryResult, ResultSetHeader } from "mysql2";
 import connection from "../config/connection";
 import Customer, { CustomerRow } from "../models/customer";
-import IRepository from "./IRepository";
 import { LIMIT_MAX } from "../config/limiterConfig";
 import { queryBuilder, QueryValuePair } from "../utils/dbUtils";
 
 const tableName = "customer"
 
-export const CustomerRepository : IRepository<Customer> = {
+export const CustomerRepository = {
     retrieveAll(limit : number = LIMIT_MAX, offset? : number) : Promise<Customer[]> {
         let qv = queryBuilder.select(tableName)
         queryBuilder.limit(qv, limit),

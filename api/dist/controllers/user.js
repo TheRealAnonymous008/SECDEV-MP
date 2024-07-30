@@ -14,7 +14,7 @@ const user_2 = require("../repository/user");
 const inputValidation_1 = require("../middleware/inputValidation");
 const Bcrypt = require("bcryptjs");
 const cryptoUtils_1 = require("../utils/cryptoUtils");
-const all = (req, res) => {
+const all = (req, res, next) => {
     user_2.UserRepository.retrieveAll()
         .then((result) => {
         res.json({
@@ -24,11 +24,10 @@ const all = (req, res) => {
         res.status(200).end();
     })
         .catch((err) => {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     });
 };
-const id = (req, res) => {
+const id = (req, res, next) => {
     try {
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         user_2.UserRepository.retrieveById(id)
@@ -41,17 +40,15 @@ const id = (req, res) => {
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error);
     }
 };
 const SALT_ROUNDS = 14;
-const create = (req, res) => {
+const create = (req, res, next) => {
     try {
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
         const password = (0, cryptoUtils_1.getRandom)();
@@ -68,40 +65,35 @@ const create = (req, res) => {
         user_2.UserRepository.register(user)
             .then((result) => {
             if (result == undefined) {
-                res.status(500).end();
-                return;
+                throw new Error(`Failed to register user ${user.Username}`);
             }
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (err) {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     }
 };
 // req is any so thatwe can get all the files
 const upload = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const file = yield (0, inputValidation_1.validateImage)(req.file);
+        const file = yield (0, inputValidation_1.validateImage)(req.file).catch((err) => { next(err); });
         const id = res.locals.jwt.id;
         const csrf = res.locals.jwt.csrf;
         user_2.UserRepository.upload(id, csrf, file)
             .then((result) => res.status(200).end())
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (err) {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     }
 });
-const update = (req, res) => {
+const update = (req, res, next) => {
     try {
         let user = {
             FirstName: (0, inputValidation_1.validateName)(req.body.firstName),
@@ -115,44 +107,38 @@ const update = (req, res) => {
         user_2.UserRepository.update(id, user)
             .then((result) => {
             if (result == undefined) {
-                res.status(500).end();
-                return;
+                throw new Error(`Failed to update user with id ${id}`);
             }
             res.json((0, user_1.makeUserView)(Object.assign(Object.assign({}, user), { id: result })));
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (err) {
-        console.log(err);
-        res.status(500);
+        next(err);
     }
 };
-const remove = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const remove = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
         user_2.UserRepository.delete(id)
             .then((result) => {
             if (result == undefined) {
-                res.status(500).end();
-                return;
+                throw new Error(`Failed to delete user with id ${id}`);
             }
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (err) {
-        console.log(err);
-        res.status(500);
+        next(err);
     }
 });
-const filter = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const filter = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const query = makeQuery(req);
         user_2.UserRepository.filter(query)
@@ -164,13 +150,11 @@ const filter = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(200).end();
         })
             .catch((err) => {
-            console.log(err);
-            res.status(500).end();
+            next(err);
         });
     }
     catch (err) {
-        console.log(err);
-        res.status(500);
+        next(err);
     }
 });
 const makeQuery = (req) => {

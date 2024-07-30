@@ -46,7 +46,6 @@ const validateToken = (req : Request, res : Response, next : NextFunction) => {
             next();
         }
         catch(error){
-            console.log("Error", error)
             try{
                 checkRefreshToken(refToken)
             }
@@ -58,6 +57,7 @@ const validateToken = (req : Request, res : Response, next : NextFunction) => {
                     handleAccessTokenExpired(res, token)
                     next()
                 }
+                // TODO: Maybe fix this
                 else {
                     return res.json({
                         message: 'Reassigning token failure in authValidation middleware',

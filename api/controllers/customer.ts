@@ -4,7 +4,7 @@ import { CustomerQuery, CustomerRepository } from '../repository/customer';
 import { CustomerRow } from '../models/customer';
 import { baseValidation, validateEmail, validateInteger, validateLimit, validateMobileNumber, validateName, validateWord } from '../middleware/inputValidation';
 
-const all = (req: express.Request, res: express.Response) => {
+const all = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     CustomerRepository.retrieveAll()
         .then((result) => {
             res.json({
@@ -14,13 +14,11 @@ const all = (req: express.Request, res: express.Response) => {
             res.status(200).end();
         })
         .catch((err) => {
-                    
-            console.log(err);
-            res.status(500).end();
+            next(err)
         })
 }
 
-const id = (req: express.Request, res: express.Response) => {
+const id = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         let id = validateInteger(req.query.id.toString())
         CustomerRepository.retrieveById(id)
@@ -33,17 +31,14 @@ const id = (req: express.Request, res: express.Response) => {
                 res.status(200).end();
             })
             .catch((err) => {
-                        
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     } catch (error) {
-        console.log(error);
-        res.status(500).end();
+        next(error)
     }
 }
 
-const create = (req: express.Request, res: express.Response) => {
+const create = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const customer : CustomerRow = {
             FirstName: validateName(req.body.firstName),
@@ -58,25 +53,21 @@ const create = (req: express.Request, res: express.Response) => {
         CustomerRepository.insert(customer)
             .then((result) => {
                 if (result == undefined){
-                    res.status(500).end();
-                    return
+                    throw new Error(`Failed to create customer with params ${customer}`)
                 }
                 res.json(makeCustomerView({...customer, id: result}));
                 res.status(200).end();
             })
             .catch((err) => {
-                        
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     }
     catch (err) {
-        console.log(err);
-        res.status(500);
+        next(err)
     }
 }
 
-const update = (req: express.Request, res: express.Response) => {
+const update = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const customer : CustomerRow = {
             FirstName: validateName(req.body.firstName),
@@ -92,49 +83,42 @@ const update = (req: express.Request, res: express.Response) => {
         CustomerRepository.update(id, customer)
             .then((result) => {
                 if (result == undefined){
-                    res.status(500).end();
-                    return
+                    throw new Error(`Failed to update customer with id ${id}`)
                 }
                 res.json(makeCustomerView({...customer, id: result}));
                 res.status(200).end();
             })
             .catch((err) => {
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     }
     catch (err) {
-        console.log(err);
-        res.status(500);
+        next(err)
     }
 }
 
-const remove = (req: express.Request, res: express.Response) => {
+const remove = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         let id = validateInteger(req.query.id.toString())
 
         CustomerRepository.delete(id)
             .then((result) => {
                 if (result == undefined){
-                    res.status(500).end();
-                    return
+                    throw new Error(`Failed to delete customer with id ${id}`)
                 }
                 res.status(200).end();
             })
             .catch((err) => {
-                        
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     }
     catch (err) {
-        console.log(err);
-        res.status(500);
+        next(err)
     }
 }
 
 
-const filter = async (req: express.Request, res: express.Response) => {
+const filter = async (req: express.Request, res: express.Response, next : express.NextFunction) => {
     try {
         const query = makeQuery(req)
         CustomerRepository.filter(query)
@@ -146,14 +130,11 @@ const filter = async (req: express.Request, res: express.Response) => {
                 res.status(200).end();
             })
             .catch((err) => {
-                        
-                console.log(err);
-                res.status(500).end();
+                next(err)
             })
     }
     catch (err) {
-        console.log(err);
-        res.status(500);
+        next(err)
     }
 }
 

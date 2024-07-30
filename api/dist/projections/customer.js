@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeCustomerArrayView = exports.makeCustomerView = void 0;
 const makeCustomerView = (document) => {
-    console.log(document);
     if (document == null)
         return {};
     return {
