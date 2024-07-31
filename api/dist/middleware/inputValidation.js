@@ -184,11 +184,14 @@ exports.assertNotNullOrEmpty = assertNotNullOrEmpty;
 const minSize = 5 * 1024; // 5 KB
 const maxSizeImage = 1024 * 1024; // 1 MB
 const maxSizePdf = 5 * 1024 * 1024; // 5 MB
-const allowedMimeTypes = ['image/jpeg', 'image/png'];
+const allowedMimeTypes = {
+    img: ['image/jpeg', 'image/png'],
+    pdf: ['application/pdf']
+};
 const MAGIC_NUMBERS = {
     jpg: ['ffd8ffe0', 'ffd8ffe1', 'ffd8ffe2', 'ffd8ffe3', 'ffd8ffe8'],
     png: '89504e470d0a1a0a',
-    pdf: ['255044462d,  dfbf34ebce']
+    pdf: ['255044462d', 'dfbf34ebce']
 };
 function checkMagicNumbersImage(buffer) {
     const jpgMagic = buffer.toString('hex', 0, 4);
@@ -196,6 +199,7 @@ function checkMagicNumbersImage(buffer) {
     return MAGIC_NUMBERS.jpg.includes(jpgMagic) || pngMagic === MAGIC_NUMBERS.png;
 }
 function checkMagicNumbersPdf(buffer) {
+    console.log(buffer);
     const pdfMagic = buffer.toString('hex', 0, 5);
     return MAGIC_NUMBERS.pdf.includes(pdfMagic);
 }
@@ -203,7 +207,7 @@ function validateImage(image) {
     return __awaiter(this, void 0, void 0, function* () {
         if (image == null || image.size < minSize)
             throw new Error("Invalid Image");
-        if (!allowedMimeTypes.includes(image.mimetype) || !checkMagicNumbersImage(image.buffer)) {
+        if (!allowedMimeTypes.img.includes(image.mimetype) || !checkMagicNumbersImage(image.buffer)) {
             throw new Error("Invalid File Format");
         }
         if (image.size > maxSizeImage) {
@@ -218,7 +222,7 @@ function validatePdf(pdf) {
         if (pdf == null || pdf.size < minSize) {
             throw new Error("Invalid PDF");
         }
-        if (!allowedMimeTypes.includes(pdf.mimetype) || !checkMagicNumbersPdf(pdf.buffer)) {
+        if (!allowedMimeTypes.pdf.includes(pdf.mimetype) || !checkMagicNumbersPdf(pdf.buffer)) {
             throw new Error("Invalid File Format");
         }
         if (pdf.size > maxSizePdf) {

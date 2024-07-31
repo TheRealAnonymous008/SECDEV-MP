@@ -17,7 +17,7 @@ export const makeOrderView = async (document) => {
         timeIn: document.TimeIn,
         timeOut: document.TimeOut,
         customer: await retrieveCustomer(document.CustomerId),
-        type: document.Type,
+        type: document.TypeId,
         vehicle: await retrieveVehicle(document.VehicleId),
         estimateNumber: document.EstimateNumber,
         scopeOfWork: document.ScopeOfWork,

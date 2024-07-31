@@ -41,7 +41,7 @@ const id = async (req: express.Request, res: express.Response, next: express.Nex
 
 const create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const file = await validatePdf(req.files[0] as Express.Multer.File).catch((err) => {next(err)});
+        const file = await validatePdf(req.files[0] as Express.Multer.File);
 
         const order: OrderRow = {
             Status: baseValidation(req.body.status),
@@ -79,14 +79,14 @@ const create = async (req: express.Request, res: express.Response, next: express
 const update = async (req: express.Request, res: express.Response,  next: express.NextFunction) => {
     try {
         const order: OrderRow = {
-            Status: validateWord(req.body.status),
+            Status: baseValidation(req.body.status),
             TimeIn: validateDate(req.body.timeIn),
             TimeOut: validateDate(req.body.timeOut),
-            CustomerId: validateWord(req.body.customerId),
-            TypeId: validateWord(req.body.typeId),
-            VehicleId: validateWord(req.body.vehicleId),
+            CustomerId: validateInteger(req.body.customerId),
+            TypeId: baseValidation(req.body.typeId),
+            VehicleId: validateInteger(req.body.vehicleId),
             EstimateNumber: validateWord(req.body.estimateNumber),
-            ScopeOfWork: baseValidation(req.body.scopeOfWork),  // Free field, SQL injection and XSS prevention assumed
+            ScopeOfWork: baseValidation(req.body.scopeOfWork),
             IsVerified: req.body.isVerified === 'true'
         };
 

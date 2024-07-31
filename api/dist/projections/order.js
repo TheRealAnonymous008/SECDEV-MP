@@ -24,7 +24,7 @@ const makeOrderView = (document) => __awaiter(void 0, void 0, void 0, function* 
         timeIn: document.TimeIn,
         timeOut: document.TimeOut,
         customer: yield retrieveCustomer(document.CustomerId),
-        type: document.Type,
+        type: document.TypeId,
         vehicle: yield retrieveVehicle(document.VehicleId),
         estimateNumber: document.EstimateNumber,
         scopeOfWork: document.ScopeOfWork,

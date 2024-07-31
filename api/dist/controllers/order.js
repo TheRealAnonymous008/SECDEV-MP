@@ -48,7 +48,7 @@ const id = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const file = yield (0, inputValidation_1.validatePdf)(req.files[0]).catch((err) => { next(err); });
+        const file = yield (0, inputValidation_1.validatePdf)(req.files[0]);
         const order = {
             Status: (0, inputValidation_1.baseValidation)(req.body.status),
             TimeIn: (0, inputValidation_1.validateDate)(req.body.timeIn),
@@ -83,12 +83,12 @@ const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
 const update = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const order = {
-            Status: (0, inputValidation_1.validateWord)(req.body.status),
+            Status: (0, inputValidation_1.baseValidation)(req.body.status),
             TimeIn: (0, inputValidation_1.validateDate)(req.body.timeIn),
             TimeOut: (0, inputValidation_1.validateDate)(req.body.timeOut),
-            CustomerId: (0, inputValidation_1.validateWord)(req.body.customerId),
-            TypeId: (0, inputValidation_1.validateWord)(req.body.typeId),
-            VehicleId: (0, inputValidation_1.validateWord)(req.body.vehicleId),
+            CustomerId: (0, inputValidation_1.validateInteger)(req.body.customerId),
+            TypeId: (0, inputValidation_1.baseValidation)(req.body.typeId),
+            VehicleId: (0, inputValidation_1.validateInteger)(req.body.vehicleId),
             EstimateNumber: (0, inputValidation_1.validateWord)(req.body.estimateNumber),
             ScopeOfWork: (0, inputValidation_1.baseValidation)(req.body.scopeOfWork),
             IsVerified: req.body.isVerified === 'true'
