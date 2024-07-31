@@ -82,11 +82,11 @@ const update = async (req: express.Request, res: express.Response,  next: expres
             Status: baseValidation(req.body.status),
             TimeIn: validateDate(req.body.timeIn),
             TimeOut: validateDate(req.body.timeOut),
-            CustomerId: validateInteger(req.body.customerId),
-            TypeId: baseValidation(req.body.typeId),
-            VehicleId: validateInteger(req.body.vehicleId),
-            EstimateNumber: validateWord(req.body.estimateNumber),
-            ScopeOfWork: baseValidation(req.body.scopeOfWork),
+            CustomerId: validateInteger(req.body.customer),
+            TypeId: baseValidation(req.body.type),
+            VehicleId: validateInteger(req.body.vehicle),
+            EstimateNumber: validateAlphaNumeric(req.body.estimateNumber),
+            ScopeOfWork: baseValidation(req.body.scopeOfWork), 
             IsVerified: req.body.isVerified === 'true'
         };
 

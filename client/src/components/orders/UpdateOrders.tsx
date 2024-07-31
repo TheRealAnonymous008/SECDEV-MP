@@ -33,6 +33,8 @@ export const UpdateOrder = (props : {order : Order, observer : Function}) => {
           <ModalWrapper front={"Edit"} isVisible={isVisible} setIsVisible={setIsVisible}>
             <RequestOrder setResponse={setData} default={{
                 ...props.order, 
+                status: props.order.status,
+                type: props.order.type,
                 timeIn: new Date(props.order?.timeIn), 
                 timeOut: new Date(props.order?.timeOut),
                 customer: {

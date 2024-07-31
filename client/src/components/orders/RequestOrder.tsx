@@ -31,9 +31,7 @@ export const RequestOrder = (props : {setResponse : Function, default? : OrderRe
             .catch((err) => {
                 console.log(err);
             });
-    }, []);
 
-    useEffect(() => {
         createAPIEndpoint(ENDPOINTS.orderTypes).fetch()
             .then((response) => {
                 return response.data;
@@ -52,8 +50,11 @@ export const RequestOrder = (props : {setResponse : Function, default? : OrderRe
 
     useEffect(() => {
         if (props.default) {
-            setValue("status", props.default?.status);
-            setValue("type", props.default?.type);
+            let st = props.default.status as unknown as number 
+            let ty = props.default.type as unknown as number 
+
+            setValue("status", statuses[st]);
+            setValue("type", types[ty]);
             setValue("expenses", props.default?.expenses);
             setValue("customer", props.default?.customer.id.toString());
             setValue("vehicle", props.default?.vehicle.id.toString());
@@ -154,8 +155,9 @@ export const RequestOrder = (props : {setResponse : Function, default? : OrderRe
                                 return v !== DEFAULT_TYPE
                             }
                         }})} 
-                        defaultValue= {(props.default && props.default.type) ? 
-                            watch("type") : DEFAULT_TYPE}>
+                        value = {(watch("type")) ? 
+                            watch("type"): DEFAULT_TYPE}
+                        >
                         <option value={DEFAULT_TYPE} disabled>-- Select Type --</option>
                         {
                             types.map((value, index) => {
