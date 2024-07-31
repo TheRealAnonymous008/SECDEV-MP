@@ -131,4 +131,22 @@ const remove = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         next(err);
     }
 });
-exports.default = { all, id, create, update, remove };
+const verify = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        order_1.OrderRespository.verify(id)
+            .then((result) => {
+            if (result == undefined) {
+                throw new Error(`Failed to update order with id ${id}`);
+            }
+            res.status(200).end();
+        })
+            .catch((err) => {
+            next(err);
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.default = { all, id, create, update, remove, verify };

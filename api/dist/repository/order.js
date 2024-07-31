@@ -106,6 +106,31 @@ exports.OrderRespository = {
             });
         });
     },
+    verify(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let qv_s = dbUtils_1.queryBuilder.select(ORDER_TABLE_NAME, ["IsVerified"]);
+            dbUtils_1.queryBuilder.where(qv_s, { Id: id });
+            return new Promise((resolve, reject) => {
+                connection_1.default.execute(qv_s.query, qv_s.values, (err, res) => {
+                    if (err)
+                        reject(err);
+                    else {
+                        let qv_u = dbUtils_1.queryBuilder.update(ORDER_TABLE_NAME, {
+                            IsVerified: !res[0].IsVerified
+                        });
+                        dbUtils_1.queryBuilder.where(qv_u, { Id: id });
+                        connection_1.default.execute(qv_u.query, qv_u.values, (err, res) => {
+                            if (err)
+                                reject(err);
+                            else {
+                                resolve(id);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    },
     delete(id) {
         let qv = dbUtils_1.queryBuilder.delete(ORDER_TABLE_NAME);
         dbUtils_1.queryBuilder.where(qv, { Id: id });

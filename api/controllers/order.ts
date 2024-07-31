@@ -131,4 +131,23 @@ const remove = async (req: express.Request, res: express.Response, next: express
     }
 }
 
-export default {all, id, create, update, remove};
+const verify = async (req: express.Request, res: express.Response,  next: express.NextFunction) => {
+    try {
+        let id = validateInteger(req.query.id.toString());
+
+        OrderRespository.verify(id)
+            .then((result) => {
+                if (result == undefined){
+                    throw new Error(`Failed to update order with id ${id}`)
+                }
+                res.status(200).end();
+            })
+            .catch((err) => {
+                next(err)
+            })
+    } catch (err) {
+        next(err)
+    }
+}
+
+export default {all, id, create, update, remove, verify};

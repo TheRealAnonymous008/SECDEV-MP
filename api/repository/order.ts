@@ -7,6 +7,7 @@ import { LIMIT_MAX } from "../config/limiterConfig";
 import { queryBuilder, QueryValuePair } from "../utils/dbUtils";
 import { RoleEnumRepository, StatusEnumRepository, TypeEnumRepository } from "./enums";
 import { storeFile } from "../utils/fileUtils";
+import { verify } from "crypto";
 
 const ORDER_TABLE_NAME = "order";
 
@@ -113,6 +114,39 @@ export const OrderRespository = {
             );
         });
     },
+
+    async verify(id: number): Promise<number> {
+        let qv_s = queryBuilder.select(ORDER_TABLE_NAME, ["IsVerified"])
+        queryBuilder.where(qv_s, { Id: id });
+
+        return new Promise((resolve, reject) => {
+            connection.execute<Order[]>(
+                qv_s.query,
+                qv_s.values,
+                (err, res) => {
+                    if (err) reject(err);
+                    else {
+                        let qv_u = queryBuilder.update(ORDER_TABLE_NAME, {
+                            IsVerified: ! res[0].IsVerified
+                        });
+                        queryBuilder.where(qv_u, {Id : id})
+
+                        connection.execute<ResultSetHeader>(
+                            qv_u.query,
+                            qv_u.values,
+                            (err, res) => {
+                                if (err) reject(err);
+                                else {
+                                    resolve(id)
+                                }
+                            }
+                        )
+                    }
+                }
+            );
+        });
+    },
+
 
     delete(id: number): Promise<number> {
         let qv = queryBuilder.delete(ORDER_TABLE_NAME);
