@@ -206,7 +206,7 @@ const allowedMimeTypes = {
 const MAGIC_NUMBERS = {
     jpg: ['ffd8ffe0', 'ffd8ffe1', 'ffd8ffe2', 'ffd8ffe3', 'ffd8ffe8'],
     png: '89504e470d0a1a0a',
-    pdf: ['255044462d',  'dfbf34ebce']
+    pdf: ['255044462d']
 };
 
 function checkMagicNumbersImage(buffer) {
@@ -216,7 +216,6 @@ function checkMagicNumbersImage(buffer) {
 }
 
 function checkMagicNumbersPdf(buffer){
-    console.log(buffer)
     const pdfMagic = buffer.toString('hex', 0, 5);
     return MAGIC_NUMBERS.pdf.includes(pdfMagic)
 }
