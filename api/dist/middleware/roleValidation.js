@@ -1,13 +1,11 @@
-import { validateRequired, baseValidation } from "./inputValidation"
-
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = require("../repository/user");
 const authConfig_1 = require("../config/authConfig");
 const validateRole = (allowedRoles) => {
     return (req, res, next) => {
-        const sessionId = validateRequired(res.locals.jwt.id, baseValidation);
-        const csrf = validateRequired(req.cookies.csrf, baseValidation);
+        const sessionId = res.locals.jwt.id;
+        const csrf = req.cookies.csrf;
         user_1.UserRepository.getUserFromSession(sessionId, csrf)
             .then((user) => {
             if (user == undefined) {
