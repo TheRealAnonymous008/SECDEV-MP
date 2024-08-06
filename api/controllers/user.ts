@@ -2,7 +2,7 @@ import express = require('express');
 import { UserRow } from '../models/user';
 import { makeUserArrayView, makeUserView } from '../projections/user';
 import { UserQuery, UserRepository } from '../repository/user';
-import { validateName, validateUsername, validateMobileNumber, validateEmail, validateInteger, validateImage, validateRole, baseValidation, validateLimit } from '../middleware/inputValidation';
+import { validateName, validateUsername, validateMobileNumber, validateEmail, validateInteger, validateImage, validateRole, baseValidation, validateLimit, validateRequired, validateOptional } from '../middleware/inputValidation';
 import Bcrypt = require('bcryptjs');
 import { getRandom } from '../utils/cryptoUtils';
 
@@ -22,7 +22,7 @@ const all = (req: express.Request, res: express.Response, next: express.NextFunc
 
 const id = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        let id = validateInteger(req.query.id.toString());
+        let id = validateRequired(req.query.id.toString(), validateInteger);
         UserRepository.retrieveById(id)
             .then((result) => {
                 if (result.length == 0){
@@ -47,14 +47,14 @@ const create = (req : express.Request, res : express.Response, next: express.Nex
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS)
         const password = getRandom()
         const user : UserRow= {
-            FirstName : validateName(req.body.firstName),
-            LastName : validateName(req.body.lastName),
-            Username : validateUsername(req.body.username),
-            MobileNumber : validateMobileNumber(req.body.mobileNumber),
-            Email : validateEmail(req.body.email),
+            FirstName : validateRequired(req.body.firstName, validateName),
+            LastName : validateRequired(req.body.lastName, validateName),
+            Username : validateRequired(req.body.username, validateUsername),
+            MobileNumber : validateRequired(req.body.mobileNumber, validateMobileNumber),
+            Email : validateRequired(req.body.email, validateEmail),
             Salt: salt,
             Password : Bcrypt.hashSync(password, salt),
-            Role : validateRole(req.body.role)
+            Role : validateRequired(req.body.role, validateRole)
         }
         
         UserRepository.register(user)
@@ -96,14 +96,14 @@ const upload = async(req  :any, res: express.Response, next : express.NextFuncti
 const update = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         let user : UserRow= {
-            FirstName : validateName(req.body.firstName),
-            LastName: validateName(req.body.lastName),
-            Username : validateUsername(req.body.username),
-            MobileNumber : validateMobileNumber(req.body.mobileNumber),
-            Email : validateEmail(req.body.email),
-            Role : validateRole(req.body.role)
+            FirstName : validateRequired(req.body.firstName, validateName),
+            LastName: validateRequired(req.body.lastName, validateName),
+            Username : validateRequired(req.body.username, validateUsername),
+            MobileNumber : validateRequired(req.body.mobileNumber, validateMobileNumber),
+            Email : validateRequired(req.body.email, validateEmail),
+            Role : validateRequired(req.body.role, validateRole)
         }
-        let id = validateInteger(req.query.id.toString())
+        let id = validateRequired(req.query.id.toString(), validateInteger)
 
         UserRepository.update(id, user)
             .then((result) => {
@@ -124,8 +124,7 @@ const update = (req: express.Request, res: express.Response, next: express.NextF
 
 const remove = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        let id = validateInteger(req.query.id.toString());
-        UserRepository.delete(id)
+        let id = validateRequired(req.query.id.toString(), validateInteger)
             .then((result) => {
                 if (result == undefined){
                     throw new Error(`Failed to delete user with id ${id}`)
@@ -163,13 +162,13 @@ const filter = async (req: express.Request, res: express.Response, next: express
 }
 
 const makeQuery = (req : express.Request) : UserQuery => {
-    const name = baseValidation(req.query.name)
-    const username = baseValidation(req.query.username)
-    const email = baseValidation(req.query.email)
-    const mobileNumber = baseValidation(req.query.mobileNumber)
-    const role = baseValidation(req.query.role)
-    const limit = validateLimit(req.query.limit)
-    const skip = baseValidation(req.query.skip)
+    const name = validateRequired(req.query.name, baseValidation)
+    const username = validateRequired(req.query.username, baseValidation)
+    const email = validateRequired(req.query.email, baseValidation)
+    const mobileNumber = validateRequired(req.query.mobileNumber, baseValidation)
+    const role = validateRequired(req.query.role, baseValidation)
+    const limit = validateRequired(req.query.limit, validateLimit)
+    const skip = validateRequired(req.query.skip, baseValidation)
 
     return {
         name: (name) ? (name as string) : null,
