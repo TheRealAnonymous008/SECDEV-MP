@@ -97,10 +97,10 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use((err, req, res, next) => { // eslint-disable-line @typescript-eslint/no-unused-vars
     res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
+    // res.render('error', {
+    //     message: err.message,
+    //     error: {}
+    // });
 });
 
 app.set('port', process.env.PORT || 3000);
