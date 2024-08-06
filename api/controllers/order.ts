@@ -21,7 +21,7 @@ const all = async (req: express.Request, res: express.Response, next: express.Ne
 
 const id = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        let id = validateInteger(req.query.id.toString());
+        let id = validateRequired(req.query.id.toString(), validateInteger);
         OrderRespository.retrieveById(id)
             .then(async (result) => {
                 if (result.length == 0){
@@ -94,7 +94,7 @@ const update = async (req: express.Request, res: express.Response,  next: expres
             throw new Error("Invalid Time In and Time Out")
         }
         
-        let id = validateInteger(req.query.id.toString());
+        let id = validateRequired(req.query.id.toString(), validateInteger);
 
         OrderRespository.update(id, order)
             .then((result) => {
@@ -114,7 +114,7 @@ const update = async (req: express.Request, res: express.Response,  next: expres
 
 const remove = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        let id = validateInteger(req.query.id.toString());
+        let id = validateRequired(req.query.id.toString(), validateInteger);
 
         OrderRespository.delete(id)
             .then((result) => {
@@ -133,7 +133,7 @@ const remove = async (req: express.Request, res: express.Response, next: express
 
 const verify = async (req: express.Request, res: express.Response,  next: express.NextFunction) => {
     try {
-        let id = validateInteger(req.query.id.toString());
+        let id = validateRequired(req.query.id.toString(), validateInteger);
 
         OrderRespository.verify(id)
             .then((result) => {
