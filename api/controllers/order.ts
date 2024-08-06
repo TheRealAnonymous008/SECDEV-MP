@@ -79,14 +79,14 @@ const create = async (req: express.Request, res: express.Response, next: express
 const update = async (req: express.Request, res: express.Response,  next: express.NextFunction) => {
     try {
         const order: OrderRow = {
-            Status: baseValidation(req.body.status),
-            TimeIn: validateDate(req.body.timeIn),
-            TimeOut: validateDate(req.body.timeOut),
-            CustomerId: validateInteger(req.body.customer),
-            TypeId: baseValidation(req.body.type),
-            VehicleId: validateInteger(req.body.vehicle),
-            EstimateNumber: validateAlphaNumeric(req.body.estimateNumber),
-            ScopeOfWork: baseValidation(req.body.scopeOfWork), 
+            Status: validateRequired(req.body.status, baseValidation),
+            TimeIn: validateRequired(req.body.timeIn, validateDate),
+            TimeOut: validateRequired(req.body.timeOut, validateDate),
+            CustomerId: validateRequired(req.body.customer, validateInteger),
+            TypeId: validateRequired(req.body.type, baseValidation),
+            VehicleId: validateRequired(req.body.vehicle, validateInteger),
+            EstimateNumber: validateRequired(req.body.estimateNumber, validateAlphaNumeric),
+            ScopeOfWork: validateRequired(req.body.scopeOfWork, baseValidation), 
             IsVerified: req.body.isVerified === 'true'
         };
 
