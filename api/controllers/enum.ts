@@ -1,6 +1,6 @@
 import express = require('express');
 import { RoleEnumRepository, StatusEnumRepository, TypeEnumRepository } from '../repository/enums';
-import { validateInteger, validateWord } from '../middleware/inputValidation'; 
+import { validateInteger, validateWord, validateRequired, validateOptional, baseValidation } from '../middleware/inputValidation'; 
 import { getEnumNames } from '../models/enums';
 import logger from '../utils/logger';
 import { LogLevel } from '../config/logConfig';
@@ -19,7 +19,7 @@ const getAllRoles = (req: express.Request, res: express.Response, next: express.
 
 const getRoleByName = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        let name = validateWord(req.query.name.toString());
+        let name = validateRequired(req.query.name.toString(), validateWord);
         RoleEnumRepository.retrieveByName(name)
             .then((result) => {
                 if (!result){
@@ -53,7 +53,7 @@ const getAllStatuses = (req: express.Request, res: express.Response, next: expre
 
 const getStatusByName = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        let name = validateWord(req.query.name.toString());
+        let name = validateRequired(req.query.name.toString(), validateWord);
         StatusEnumRepository.retrieveByName(name)
             .then((result) => {
                 if (!result){
@@ -87,7 +87,7 @@ const getAllTypes = (req: express.Request, res: express.Response, next: express.
 
 const getTypeByName = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        let name = validateWord(req.query.name.toString());
+        let name = validateRequired(req.query.name.toString(), validateWord);
         TypeEnumRepository.retrieveByName(name)
             .then((result) => {
                 if (!result){
