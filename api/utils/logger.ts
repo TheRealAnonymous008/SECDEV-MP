@@ -1,35 +1,44 @@
 import { LOG_LEVEL, LogLevel } from "../config/logConfig";
+import winston from 'winston';
+import os from 'os';
 
-const log = (level : LogLevel, what : string) => {
-    if (LOG_LEVEL >= level) {
-        const timestamp = new Date().toISOString().replace('T', ' ').replace('Z', '');
-        const greenTimestamp = `\x1b[32m[${timestamp}]\x1b[0m`;
+const hostname = os.hostname(); // Get the system hostname
 
-        let levelStr = '';
-        let colorCode = '';
+const logger = winston.createLogger({
+  level: 'debug', // Default level (lowest)
+  format: winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DDTHH:mm:ss.SSSZ' }), // RFC 5424 timestamp format
+    winston.format.printf(({ timestamp, level, message }) => {
+      return `<134>1 ${timestamp} ${hostname} AUTOWORKS 12345 - - [${level.toUpperCase()}] ${message}`;
+    })
+  ),
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.printf(({ timestamp, level, message }) => {
+          return `<134>1 ${timestamp} ${hostname} AUTOWORKS 12345 - - [${level.toUpperCase()}] ${message}`;
+        })
+      )
+    }),
+    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'logs/combined.log' })
+  ]
+});
 
-        switch(level) {
-            case LogLevel.STACK_TRACE:
-                levelStr = 'STACK_TRACE';
-                colorCode = '\x1b[35m'; // Magenta
-                break;
-            case LogLevel.ERRORS:
-                levelStr = 'ERROR';
-                colorCode = '\x1b[31m'; // Red
-                break;
-            case LogLevel.DEBUG:
-                levelStr = 'DEBUG';
-                colorCode = '\x1b[34m'; // Blue
-                break;
-            case LogLevel.AUDIT:
-                levelStr = 'AUDIT';
-                colorCode = '\x1b[33m'; // Yellow
-                break;
-        }
+// Map custom log levels to Winston
+const logLevelMap = {
+  [LogLevel.STACK_TRACE]: 'debug', 
+  [LogLevel.ERRORS]: 'error',
+  [LogLevel.DEBUG]: 'debug',
+  [LogLevel.AUDIT]: 'info'
+};
 
-        const coloredLevel = `${colorCode}${levelStr}\x1b[0m`;
-        console.log(`${greenTimestamp} ${coloredLevel} ${what}`);
-    }
+const log = (level: LogLevel, what: string) => {
+  if (LOG_LEVEL >= level) {
+    const winstonLevel = logLevelMap[level];
+    logger.log(winstonLevel, what);
+  }
 }
 
 export default { log };
