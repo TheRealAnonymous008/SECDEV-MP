@@ -41,7 +41,7 @@ const id = async (req: express.Request, res: express.Response, next: express.Nex
 
 const create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const file = await validatePdf(req.files[0] as Express.Multer.File);
+        const file = await validatePdf(req.files[0] as Express.Multer.File).catch((err) => {throw err});
 
         const order: OrderRow = {
             Status: baseValidation(req.body.status),
