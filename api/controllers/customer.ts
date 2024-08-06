@@ -23,7 +23,7 @@ const all = (req: express.Request, res: express.Response, next: express.NextFunc
 
 const id = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        let id = validateInteger(req.query.id.toString());
+        let id = validateRequired(req.query.id.toString(), validateInteger);
         CustomerRepository.retrieveById(id)
             .then((result) => {
                 if (result.length == 0) {
@@ -46,12 +46,12 @@ const id = (req: express.Request, res: express.Response, next: express.NextFunct
 const create = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const customer : CustomerRow = {
-            FirstName: validateName(req.body.firstName),
-            LastName: validateName(req.body.lastName),
-            MobileNumber: validateMobileNumber(req.body.mobileNumber),
-            Email: validateEmail(req.body.email),
-            Company: validateWord(req.body.company),
-            Insurance: validateWord(req.body.insurance),
+            FirstName: validateRequired(req.body.firstName, validateName),
+            LastName: validateRequired(req.body.lastName, validateName),
+            MobileNumber: validateRequired(req.body.mobileNumber, validateMobileNumber),
+            Email: validateRequired(req.body.email, validateEmail),
+            Company: validateRequired(req.body.company, validateWord),
+            Insurance: validateRequired(req.body.insurance, validateWord),
             Remarks: validateOptional(req.body.remarks, baseValidation)             // This is a free field. SQL injection is prevented via prepared statements. XSS prevented by not accepting HTML
         };
 
@@ -78,15 +78,15 @@ const create = (req: express.Request, res: express.Response, next: express.NextF
 const update = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const customer : CustomerRow = {
-            FirstName: validateName(req.body.firstName),
-            LastName: validateName(req.body.lastName),
-            MobileNumber: validateMobileNumber(req.body.mobileNumber),
-            Email: validateEmail(req.body.email),
-            Company: validateWord(req.body.company),
-            Insurance: validateWord(req.body.insurance),
-            Remarks: baseValidation(req.body.remarks)
+            FirstName: validateRequired(req.body.firstName, validateName),
+            LastName: validateRequired(req.body.lastName, validateName),
+            MobileNumber: validateRequired(req.body.mobileNumber, validateMobileNumber),
+            Email: validateRequired(req.body.email, validateEmail),
+            Company: validateRequired(req.body.company, validateWord),
+            Insurance: validateRequired(req.body.insurance, validateWord),
+            Remarks: validateOptional(req.body.remarks, baseValidation) 
         };
-        let id = validateInteger(req.query.id.toString());
+        let id = validateRequired(req.query.id.toString(), validateInteger);
         
         CustomerRepository.update(id, customer)
             .then((result) => {
@@ -110,7 +110,7 @@ const update = (req: express.Request, res: express.Response, next: express.NextF
 
 const remove = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        let id = validateInteger(req.query.id.toString());
+        let id = validateRequired(req.query.id.toString(), validateInteger);
 
         CustomerRepository.delete(id)
             .then((result) => {
@@ -154,14 +154,14 @@ const filter = async (req: express.Request, res: express.Response, next: express
 }
 
 const makeQuery = (req: express.Request): CustomerQuery => {
-    const name = baseValidation(req.query.name);
-    const email = baseValidation(req.query.email);
-    const mobileNumber = baseValidation(req.query.mobileNumber);
-    const company = baseValidation(req.query.company);
-    const insurance = baseValidation(req.query.insurance);
-    const remarks = baseValidation(req.query.remarks);
-    const limit = validateLimit(req.query.limit);
-    const skip = baseValidation(req.query.skip);
+    const name = validateRequired(req.query.name, baseValidation);
+    const email = validateRequired(req.query.email, baseValidation);
+    const mobileNumber = validateRequired(req.query.mobileNumber, baseValidation);
+    const company = validateRequired(req.query.company, baseValidation);
+    const insurance = validateRequired(req.query.insurance, baseValidation);
+    const remarks = validateRequired(req.query.remarks, baseValidation);
+    const limit = validateRequired(req.query.limit, validateLimit);
+    const skip = validateRequired(req.query.skip, baseValidation);
 
     return {
         name: (name) ? (name as string) : null,
