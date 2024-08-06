@@ -3,7 +3,7 @@ import Bcrypt = require('bcryptjs');
 import { RoleIds } from '../models/enum';
 import { UserRepository } from '../repository/user';
 import { UserRow } from '../models/user';
-import * as inputValidation from '../middleware/inputValidation';
+import { validatePassword, validateName, validateUsername, validateMobileNumber, validateEmail, validateRequired, validateAlphaNumeric, validateOptional } from '../middleware/inputValidation';
 import jwtDecode from 'jwt-decode';
 import logger from '../utils/logger';
 import { LogLevel } from '../config/logConfig';
@@ -15,13 +15,13 @@ const SALT_ROUNDS = 14;
 const register = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
-        const password = inputValidation.validatePassword(req.body.password);
+        const password = validateRequired(req.body.password, validatePassword);
         const user: UserRow = {
-            FirstName: inputValidation.validateName(req.body.firstName),
-            LastName: inputValidation.validateName(req.body.lastName),
-            Username: inputValidation.validateUsername(req.body.username),
-            MobileNumber: inputValidation.validateMobileNumber(req.body.mobileNumber),
-            Email: inputValidation.validateEmail(req.body.email),
+            FirstName: validateRequired(req.body.firstName, validateName),
+            LastName: validateRequired(req.body.lastName, validateName),
+            Username: validateRequired(req.body.username, validateUsername),
+            MobileNumber: validateRequired(req.body.mobileNumber, validateMobileNumber),
+            Email: validateRequired(req.body.email, validateEmail),
             Salt: salt,
             Password: Bcrypt.hashSync(password, salt),
             Role: RoleIds.VIEW
@@ -47,7 +47,7 @@ const register = (req: express.Request, res: express.Response, next: express.Nex
 
 const login = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const username = inputValidation.validateUsername(req.body.username);
+        const username = validateRequired(req.body.username, validateUsername);
 
         UserRepository.retrieveByUsername(username)
             .then((user) => {
