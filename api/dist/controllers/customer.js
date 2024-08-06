@@ -62,7 +62,7 @@ const create = (req, res, next) => {
             Email: (0, inputValidation_1.validateEmail)(req.body.email),
             Company: (0, inputValidation_1.validateWord)(req.body.company),
             Insurance: (0, inputValidation_1.validateWord)(req.body.insurance),
-            Remarks: (0, inputValidation_1.baseValidation)(req.body.remarks) // This is a free field. SQL injection is prevented via prepared statements. XSS prevented by not accepting HTML
+            Remarks: (0, inputValidation_1.validateOptional)(req.body.remarks, inputValidation_1.baseValidation) // This is a free field. SQL injection is prevented via prepared statements. XSS prevented by not accepting HTML
         };
         customer_2.CustomerRepository.insert(customer)
             .then((result) => {

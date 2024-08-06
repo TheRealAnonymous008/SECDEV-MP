@@ -48,16 +48,16 @@ const id = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const file = yield (0, inputValidation_1.validatePdf)(req.files[0]).catch((err) => { throw err; });
+        const file = yield (0, inputValidation_1.validatePdf)(req.files[0]);
         const order = {
-            Status: (0, inputValidation_1.baseValidation)(req.body.status),
-            TimeIn: (0, inputValidation_1.validateDate)(req.body.timeIn),
-            TimeOut: (0, inputValidation_1.validateDate)(req.body.timeOut),
-            CustomerId: (0, inputValidation_1.validateInteger)(req.body.customer),
-            TypeId: (0, inputValidation_1.baseValidation)(req.body.type),
-            VehicleId: (0, inputValidation_1.validateInteger)(req.body.vehicle),
-            EstimateNumber: (0, inputValidation_1.validateAlphaNumeric)(req.body.estimateNumber),
-            ScopeOfWork: (0, inputValidation_1.baseValidation)(req.body.scopeOfWork),
+            Status: (0, inputValidation_1.validateRequired)(req.body.status, inputValidation_1.baseValidation),
+            TimeIn: (0, inputValidation_1.validateRequired)(req.body.timeIn, inputValidation_1.validateDate),
+            TimeOut: (0, inputValidation_1.validateRequired)(req.body.timeOut, inputValidation_1.validateDate),
+            CustomerId: (0, inputValidation_1.validateRequired)(req.body.customer, inputValidation_1.validateInteger),
+            TypeId: (0, inputValidation_1.validateRequired)(req.body.type, inputValidation_1.baseValidation),
+            VehicleId: (0, inputValidation_1.validateRequired)(req.body.vehicle, inputValidation_1.validateInteger),
+            EstimateNumber: (0, inputValidation_1.validateRequired)(req.body.estimateNumber, inputValidation_1.validateAlphaNumeric),
+            ScopeOfWork: (0, inputValidation_1.validateRequired)(req.body.scopeOfWork, inputValidation_1.baseValidation),
             Invoice: file,
             IsVerified: req.body.isVerified === 'true'
         };

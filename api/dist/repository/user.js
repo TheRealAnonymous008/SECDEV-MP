@@ -185,7 +185,6 @@ exports.UserRepository = {
                 catch (err) {
                     reject(err);
                 }
-                console.log(image.filename);
                 let qv = dbUtils_1.queryBuilder.update("users", { "Picture": image.filename });
                 dbUtils_1.queryBuilder.where(qv, { "Id": id });
                 connection_1.default.execute(qv.query, qv.values, (err, res) => {

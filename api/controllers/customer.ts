@@ -2,7 +2,7 @@ import express = require('express');
 import { makeCustomerArrayView, makeCustomerView } from '../projections/customer';
 import { CustomerQuery, CustomerRepository } from '../repository/customer';
 import { CustomerRow } from '../models/customer';
-import { baseValidation, validateEmail, validateInteger, validateLimit, validateMobileNumber, validateName, validateWord } from '../middleware/inputValidation';
+import { baseValidation, validateEmail, validateInteger, validateLimit, validateMobileNumber, validateName, validateOptional, validateRequired, validateWord } from '../middleware/inputValidation';
 import logger from '../utils/logger';
 import { LogLevel } from '../config/logConfig';
 
@@ -52,7 +52,7 @@ const create = (req: express.Request, res: express.Response, next: express.NextF
             Email: validateEmail(req.body.email),
             Company: validateWord(req.body.company),
             Insurance: validateWord(req.body.insurance),
-            Remarks: baseValidation(req.body.remarks)               // This is a free field. SQL injection is prevented via prepared statements. XSS prevented by not accepting HTML
+            Remarks: validateOptional(req.body.remarks, baseValidation)             // This is a free field. SQL injection is prevented via prepared statements. XSS prevented by not accepting HTML
         };
 
         CustomerRepository.insert(customer)

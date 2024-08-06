@@ -52,7 +52,12 @@ exports.OrderRespository = {
             // It is assumed status and Time are IDs
             try {
                 if (object.Invoice) {
-                    (0, fileUtils_1.storeFile)(object.Invoice, "pdf");
+                    try {
+                        (0, fileUtils_1.storeFile)(object.Invoice, "pdf");
+                    }
+                    catch (err) {
+                        throw err;
+                    }
                 }
                 let qv = dbUtils_1.queryBuilder.insert(ORDER_TABLE_NAME, {
                     Status: (yield enums_1.StatusEnumRepository.retrieveByName(object.Status)).Id,
