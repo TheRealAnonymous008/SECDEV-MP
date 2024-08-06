@@ -5,8 +5,7 @@
   "scripts": {
     "build": "tsc --build",
     "clean": "tsc --build --clean",
-    "start": "tsc --build && node ./dist/app.js --ignore-client",
-    "prestart": "mkdir -p logs"
+    "start": "tsc --build && node ./dist/app.js --ignore-client"
   },
   "description": "api",
   "author": {

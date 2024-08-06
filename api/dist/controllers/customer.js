@@ -8,10 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const customer_1 = require("../projections/customer");
 const customer_2 = require("../repository/customer");
 const inputValidation_1 = require("../middleware/inputValidation");
+const logger_1 = __importDefault(require("../utils/logger"));
+const logConfig_1 = require("../config/logConfig");
 const all = (req, res, next) => {
     customer_2.CustomerRepository.retrieveAll()
         .then((result) => {
@@ -22,6 +27,7 @@ const all = (req, res, next) => {
         res.status(200).end();
     })
         .catch((err) => {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error retrieving all customers: ${err.message}`);
         next(err);
     });
 };
@@ -38,10 +44,12 @@ const id = (req, res, next) => {
             res.status(200).end();
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error retrieving customer by id ${id}: ${err.message}`);
             next(err);
         });
     }
     catch (error) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Validation error in id function: ${error.message}`);
         next(error);
     }
 };
@@ -61,14 +69,17 @@ const create = (req, res, next) => {
             if (result == undefined) {
                 throw new Error(`Failed to create customer with params ${customer}`);
             }
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Customer created: ${JSON.stringify(Object.assign(Object.assign({}, customer), { id: result }))}`);
             res.json((0, customer_1.makeCustomerView)(Object.assign(Object.assign({}, customer), { id: result })));
             res.status(200).end();
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error creating customer: ${err.message}`);
             next(err);
         });
     }
     catch (err) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error in create function: ${err.message}`);
         next(err);
     }
 };
@@ -89,14 +100,17 @@ const update = (req, res, next) => {
             if (result == undefined) {
                 throw new Error(`Failed to update customer with id ${id}`);
             }
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Customer updated: ${JSON.stringify(Object.assign(Object.assign({}, customer), { id: result }))}`);
             res.json((0, customer_1.makeCustomerView)(Object.assign(Object.assign({}, customer), { id: result })));
             res.status(200).end();
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error updating customer with id ${id}: ${err.message}`);
             next(err);
         });
     }
     catch (err) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error in update function: ${err.message}`);
         next(err);
     }
 };
@@ -108,13 +122,16 @@ const remove = (req, res, next) => {
             if (result == undefined) {
                 throw new Error(`Failed to delete customer with id ${id}`);
             }
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Customer deleted: ${id}`);
             res.status(200).end();
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error deleting customer with id ${id}: ${err.message}`);
             next(err);
         });
     }
     catch (err) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error in remove function: ${err.message}`);
         next(err);
     }
 };
@@ -130,10 +147,12 @@ const filter = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
             res.status(200).end();
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error filtering customers: ${err.message}`);
             next(err);
         });
     }
     catch (err) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error in filter function: ${err.message}`);
         next(err);
     }
 });

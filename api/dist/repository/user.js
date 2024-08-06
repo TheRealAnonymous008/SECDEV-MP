@@ -178,8 +178,6 @@ exports.UserRepository = {
         return __awaiter(this, void 0, void 0, function* () {
             let user = yield exports.UserRepository.getUserFromSession(sessid, csrf);
             const id = user.Id;
-            let qv = dbUtils_1.queryBuilder.update("users", { "Picture": image.filename });
-            dbUtils_1.queryBuilder.where(qv, { "Id": id });
             return new Promise((resolve, reject) => {
                 try {
                     (0, fileUtils_1.storeFile)(image, "png");
@@ -187,6 +185,9 @@ exports.UserRepository = {
                 catch (err) {
                     reject(err);
                 }
+                console.log(image.filename);
+                let qv = dbUtils_1.queryBuilder.update("users", { "Picture": image.filename });
+                dbUtils_1.queryBuilder.where(qv, { "Id": id });
                 connection_1.default.execute(qv.query, qv.values, (err, res) => {
                     if (err)
                         reject(err);

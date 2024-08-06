@@ -19,7 +19,7 @@ const storeFile = (file, ext) => {
                     reject(err);
                     return;
                 }
-                resolve(filePath);
+                resolve(file.filename);
             });
         });
     }

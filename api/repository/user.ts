@@ -205,14 +205,15 @@ export const UserRepository = {
         let user = await  UserRepository.getUserFromSession(sessid, csrf)
         const id = user.Id;
 
-        let qv = queryBuilder.update("users", {"Picture":  image.filename})
-        queryBuilder.where(qv, {"Id" : id})
         return new Promise((resolve, reject) => {
             try {
                 storeFile(image, "png")
             } catch(err){
                 reject(err)
             }
+            
+            let qv = queryBuilder.update("users", {"Picture":  image.filename})
+            queryBuilder.where(qv, {"Id" : id})
             connection.execute<ResultSetHeader>(
                 qv.query,
                 qv.values,

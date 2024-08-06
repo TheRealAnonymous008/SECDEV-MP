@@ -53,7 +53,12 @@ export const OrderRespository = {
         // It is assumed status and Time are IDs
         try {
             if (object.Invoice){
-                storeFile(object.Invoice, "pdf");
+                try{
+                    storeFile(object.Invoice, "pdf");
+                }
+                catch(err){
+                    throw err;
+                }
             }
 
             let qv = queryBuilder.insert(ORDER_TABLE_NAME, {

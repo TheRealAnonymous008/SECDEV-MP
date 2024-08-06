@@ -217,18 +217,16 @@ function validateImage(image) {
 }
 exports.validateImage = validateImage;
 function validatePdf(pdf) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (pdf == null || pdf.size < minSize) {
-            throw new Error("Invalid PDF");
-        }
-        if (!allowedMimeTypes.pdf.includes(pdf.mimetype) || !checkMagicNumbersPdf(pdf.buffer)) {
-            throw new Error("Invalid File Format");
-        }
-        if (pdf.size > maxSizePdf) {
-            throw new Error("PDF is too large");
-        }
-        return yield pdf;
-    });
+    if (pdf == null || pdf.size < minSize) {
+        throw new Error("Invalid PDF");
+    }
+    if (!allowedMimeTypes.pdf.includes(pdf.mimetype) || !checkMagicNumbersPdf(pdf.buffer)) {
+        throw new Error("Invalid File Format");
+    }
+    if (pdf.size > maxSizePdf) {
+        throw new Error("PDF is too large");
+    }
+    return pdf;
 }
 exports.validatePdf = validatePdf;
 function sanitizeImage(image) {

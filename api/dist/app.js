@@ -89,20 +89,22 @@ if (app.get('env') === 'development') {
     app.use((err, req, res, next) => {
         console.log(err);
         res.status(err['status'] || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
+        res.end();
+        // res.render('error', {
+        //     message: err.message,
+        //     error: err
+        // });
     });
 }
 // production error handler
 // no stacktraces leaked to user
 app.use((err, req, res, next) => {
     res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
+    res.end();
+    // res.render('error', {
+    //     message: err.message,
+    //     error: {}
+    // });
 });
 app.set('port', process.env.PORT || 3000);
 const privatekey = fs.readFileSync("certs/key.pem", 'utf8');

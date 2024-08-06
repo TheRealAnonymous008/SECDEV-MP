@@ -235,7 +235,7 @@ export async function validateImage(image) {
     return await sanitizeImage(image);   
 }
 
-export async function validatePdf(pdf) {
+export function validatePdf(pdf) {
     if (pdf == null || pdf.size < minSize) {
         throw new Error("Invalid PDF");
     }
@@ -248,7 +248,7 @@ export async function validatePdf(pdf) {
         throw new Error("PDF is too large");
     }
 
-    return await pdf;
+    return pdf;
 }
 
 export async function sanitizeImage(image : Express.Multer.File) {

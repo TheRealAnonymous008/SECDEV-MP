@@ -1,8 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const enums_1 = require("../repository/enums");
 const inputValidation_1 = require("../middleware/inputValidation");
 const enums_2 = require("../models/enums");
+const logger_1 = __importDefault(require("../utils/logger"));
+const logConfig_1 = require("../config/logConfig");
 const getAllRoles = (req, res, next) => {
     enums_1.RoleEnumRepository.retrieveAll()
         .then((result) => {
@@ -10,6 +15,7 @@ const getAllRoles = (req, res, next) => {
         res.status(200).end();
     })
         .catch((err) => {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error retrieving all roles: ${err.message}`);
         next(err);
     });
 };
@@ -26,10 +32,12 @@ const getRoleByName = (req, res, next) => {
             res.status(200).end();
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error retrieving role by name ${name}: ${err.message}`);
             next(err);
         });
     }
     catch (error) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Validation error in getRoleByName function: ${error.message}`);
         next(error);
     }
 };
@@ -40,6 +48,7 @@ const getAllStatuses = (req, res, next) => {
         res.status(200).end();
     })
         .catch((err) => {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error retrieving all statuses: ${err.message}`);
         next(err);
     });
 };
@@ -56,10 +65,12 @@ const getStatusByName = (req, res, next) => {
             res.status(200).end();
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error retrieving status by name ${name}: ${err.message}`);
             next(err);
         });
     }
     catch (error) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Validation error in getStatusByName function: ${error.message}`);
         next(error);
     }
 };
@@ -70,6 +81,7 @@ const getAllTypes = (req, res, next) => {
         res.status(200).end();
     })
         .catch((err) => {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error retrieving all types: ${err.message}`);
         next(err);
     });
 };
@@ -86,10 +98,12 @@ const getTypeByName = (req, res, next) => {
             res.status(200).end();
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error retrieving type by name ${name}: ${err.message}`);
             next(err);
         });
     }
     catch (error) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Validation error in getTypeByName function: ${error.message}`);
         next(error);
     }
 };
