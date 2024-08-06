@@ -3,7 +3,7 @@ import Bcrypt = require('bcryptjs');
 import { RoleIds } from '../models/enum';
 import { UserRepository } from '../repository/user';
 import { UserRow } from '../models/user';
-import { validatePassword, validateName, validateUsername, validateMobileNumber, validateEmail, validateRequired, validateAlphaNumeric, validateOptional } from '../middleware/inputValidation';
+import { validatePassword, validateName, validateUsername, validateMobileNumber, validateEmail, validateRequired, validateAlphaNumeric, validateOptional, baseValidation } from '../middleware/inputValidation';
 import jwtDecode from 'jwt-decode';
 import logger from '../utils/logger';
 import { LogLevel } from '../config/logConfig';
@@ -117,7 +117,7 @@ const login = (req: express.Request, res: express.Response, next: express.NextFu
 
 const handshake = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const sessionId = res.locals.jwt.id;
+        const sessionId = validateRequired(res.locals.jwt.id, baseValidation);
 
         UserRepository.getUserFromSession(sessionId)
             .then((value) => {
@@ -140,7 +140,7 @@ const handshake = (req: express.Request, res: express.Response, next: express.Ne
 const logout = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const token = req.cookies.jwt;
-        const sessionId: any = jwtDecode(token)["id"];
+        const sessionId: any = validateRequired(jwtDecode(token)["id"], baseValidation);
         UserRepository
             .deleteSession(sessionId)
             .then((v) => {
