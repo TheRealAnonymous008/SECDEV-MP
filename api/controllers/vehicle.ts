@@ -135,15 +135,15 @@ const filter = (req: express.Request, res: express.Response, next : express.Next
 
 
 const makeQuery = (req : express.Request) : VehicleQuery => {
-    const licensePlate = validateRequired(req.query.licensePlate, baseValidation)
-    const model = validateRequired(req.query.model, baseValidation)
-    const manufacturer = validateRequired(req.query.manufacturer, baseValidation)
-    const yearManufactured = validateRequired(req.query.yearManufactured, baseValidation)
-    const color = validateRequired(req.query.color, baseValidation)
-    const engine = validateRequired(req.query.engine, baseValidation)
+    const licensePlate = validateOptional(req.query.licensePlate, baseValidation)
+    const model = validateOptional(req.query.model, baseValidation)
+    const manufacturer = validateOptional(req.query.manufacturer, baseValidation)
+    const yearManufactured = validateOptional(req.query.yearManufactured, baseValidation)
+    const color = validateOptional(req.query.color, baseValidation)
+    const engine = validateOptional(req.query.engine, baseValidation)
     const remarks = validateOptional(req.query.remarks, baseValidation)
-    const limit = validateRequired(req.query.limit, validateLimit)
-    const skip = validateRequired(req.query.skip, baseValidation)
+    const limit = validateOptional(req.query.limit, validateLimit)
+    const skip = validateOptional(req.query.skip, baseValidation)
 
     return {
         licensePlate: (licensePlate) ? (licensePlate as string) : null,

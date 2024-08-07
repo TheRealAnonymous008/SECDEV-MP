@@ -224,6 +224,23 @@ INSERT INTO `autoworks`.`StatusEnum` (`Id`, `Name`) VALUES (7, 'FOR LOA OR INVOI
 
 COMMIT;
 
+-- -----------------------------------------------------
+-- Table `autoworks`.`Expenses`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `autoworks`.`Expenses`;
+
+CREATE TABLE IF NOT EXISTS `autoworks`.`Expenses` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `InvoiceAmount` DECIMAL(10, 2) NOT NULL,
+  `InvoiceDeductible` DECIMAL(10, 2) NOT NULL,
+  `AgentFirstName` VARCHAR(45) NOT NULL,
+  `AgentLastName` VARCHAR(45) NOT NULL,
+  `DatePaid` DATE NOT NULL,
+  `AgentCommission` DECIMAL(10, 2) NOT NULL,
+  PRIMARY KEY (`Id`)
+)
+ENGINE = InnoDB;
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

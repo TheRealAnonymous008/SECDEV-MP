@@ -129,15 +129,15 @@ const filter = (req, res, next) => {
     }
 };
 const makeQuery = (req) => {
-    const licensePlate = (0, inputValidation_1.validateRequired)(req.query.licensePlate, inputValidation_1.baseValidation);
-    const model = (0, inputValidation_1.validateRequired)(req.query.model, inputValidation_1.baseValidation);
-    const manufacturer = (0, inputValidation_1.validateRequired)(req.query.manufacturer, inputValidation_1.baseValidation);
-    const yearManufactured = (0, inputValidation_1.validateRequired)(req.query.yearManufactured, inputValidation_1.baseValidation);
-    const color = (0, inputValidation_1.validateRequired)(req.query.color, inputValidation_1.baseValidation);
-    const engine = (0, inputValidation_1.validateRequired)(req.query.engine, inputValidation_1.baseValidation);
+    const licensePlate = (0, inputValidation_1.validateOptional)(req.query.licensePlate, inputValidation_1.baseValidation);
+    const model = (0, inputValidation_1.validateOptional)(req.query.model, inputValidation_1.baseValidation);
+    const manufacturer = (0, inputValidation_1.validateOptional)(req.query.manufacturer, inputValidation_1.baseValidation);
+    const yearManufactured = (0, inputValidation_1.validateOptional)(req.query.yearManufactured, inputValidation_1.baseValidation);
+    const color = (0, inputValidation_1.validateOptional)(req.query.color, inputValidation_1.baseValidation);
+    const engine = (0, inputValidation_1.validateOptional)(req.query.engine, inputValidation_1.baseValidation);
     const remarks = (0, inputValidation_1.validateOptional)(req.query.remarks, inputValidation_1.baseValidation);
-    const limit = (0, inputValidation_1.validateRequired)(req.query.limit, inputValidation_1.validateLimit);
-    const skip = (0, inputValidation_1.validateRequired)(req.query.skip, inputValidation_1.baseValidation);
+    const limit = (0, inputValidation_1.validateOptional)(req.query.limit, inputValidation_1.validateLimit);
+    const skip = (0, inputValidation_1.validateOptional)(req.query.skip, inputValidation_1.baseValidation);
     return {
         licensePlate: (licensePlate) ? licensePlate : null,
         model: (model) ? model : null,

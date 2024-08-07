@@ -4,7 +4,6 @@ import { createAPIEndpoint } from "../../api";
 import { ModalWrapper } from "../base/ModalBase";
 import { InvoiceDisplay } from "./InvoiceDisplay";
 import { DateEntry } from "../base/DateEntry";
-import { ExpensesDisplay } from "../expenses/ExpensesDisplay";
 import { DeleteOrder } from "./DeleteOrder";
 import { UpdateOrder } from "./UpdateOrders";
 import { isRole } from "../../utils/CheckRole";

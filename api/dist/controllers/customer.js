@@ -157,14 +157,14 @@ const filter = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 const makeQuery = (req) => {
-    const name = (0, inputValidation_1.validateRequired)(req.query.name, inputValidation_1.baseValidation);
-    const email = (0, inputValidation_1.validateRequired)(req.query.email, inputValidation_1.baseValidation);
-    const mobileNumber = (0, inputValidation_1.validateRequired)(req.query.mobileNumber, inputValidation_1.baseValidation);
-    const company = (0, inputValidation_1.validateRequired)(req.query.company, inputValidation_1.baseValidation);
-    const insurance = (0, inputValidation_1.validateRequired)(req.query.insurance, inputValidation_1.baseValidation);
-    const remarks = (0, inputValidation_1.validateRequired)(req.query.remarks, inputValidation_1.baseValidation);
-    const limit = (0, inputValidation_1.validateRequired)(req.query.limit, inputValidation_1.validateLimit);
-    const skip = (0, inputValidation_1.validateRequired)(req.query.skip, inputValidation_1.baseValidation);
+    const name = (0, inputValidation_1.validateOptional)(req.query.name, inputValidation_1.baseValidation);
+    const email = (0, inputValidation_1.validateOptional)(req.query.email, inputValidation_1.baseValidation);
+    const mobileNumber = (0, inputValidation_1.validateOptional)(req.query.mobileNumber, inputValidation_1.baseValidation);
+    const company = (0, inputValidation_1.validateOptional)(req.query.company, inputValidation_1.baseValidation);
+    const insurance = (0, inputValidation_1.validateOptional)(req.query.insurance, inputValidation_1.baseValidation);
+    const remarks = (0, inputValidation_1.validateOptional)(req.query.remarks, inputValidation_1.baseValidation);
+    const limit = (0, inputValidation_1.validateOptional)(req.query.limit, inputValidation_1.validateLimit);
+    const skip = (0, inputValidation_1.validateOptional)(req.query.skip, inputValidation_1.baseValidation);
     return {
         name: (name) ? name : null,
         email: (email) ? email : null,

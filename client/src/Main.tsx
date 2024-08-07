@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import OrdersView from "./components/orders/ViewOrders";
 import Register from "./components/Register";
 import ViewVehicles from "./components/vehicles/ViewVehicles";
+import ViewExpenses from './components/expenses/ViewExpenses';
 import "./style/temporary.css";
 import { ROUTES } from "./api/routes";
 import UsersView from "./components/users/ViewUsers";
@@ -91,6 +92,13 @@ export const Main = () => {
                         <Route
                             path={ROUTES.orders }
                             element={<OrdersView/> }
+                        />
+                    </Route>
+
+                    <Route path={ROUTES.expenses} element={<ProtectedRoute isLoggedIn={isLoggedIn}/>}>
+                        <Route
+                            path={ROUTES.expenses }
+                            element={<ViewExpenses/> }
                         />
                     </Route>
 

@@ -1,56 +1,41 @@
-import { useEffect, useState } from "react";
-import { ConvertDate } from "../../utils/ConvertDate";
+import { useState, useEffect } from "react";
+import { createAPIEndpoint } from "../../api";
+import { ENDPOINTS } from "../../api/endpoints";
+import { EditButton } from "../../style/EditButton";
+import { isRole } from "../../utils/CheckRole";
 import { ModalWrapper } from "../base/ModalBase";
-import { Expense } from "./ExpenseDetails";
+import { Expense, ExpenseRequest } from "./ExpenseDetails";
+import { RequestExpense } from "./RequestExpense";
 
 
-export const UpdateExpense = (props: {setData : Function,  default : Expense}) => {
-    const [expense, setExpense] = useState<Expense>(props.default);
+export const UpdateExpense = (props : {expense : Expense, observer : Function}) => {
+    const [data, setData] = useState<ExpenseRequest>();
     const [isVisible, setIsVisible] = useState<boolean>(false);
-
-    const onChange = () => {
-        props.setData(expense);
-        setExpense(expense)
-    }
-
+    
     useEffect(() => {
-        setExpense(props.default)
+        if (data == undefined)
+            return;
+        if (isRole("VIEW"))
+            return;
+
+        createAPIEndpoint(ENDPOINTS.updateExpense).post(data, {id: props.expense.Id})
+        .then(function (response) {
+            props.observer();
+            setIsVisible(false);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.default])
+    }, [data])
 
     return (
-        <ModalWrapper front={"Edit"} isVisible={isVisible} setIsVisible={setIsVisible}>
-            <div>
-                <label htmlFor="expenses.dateRecorded">Date Recorded</label>
-                <input type='date' name="expenses.dateRecorded" id="expenses.amount" 
-                    value={ConvertDate(new Date(expense.dateRecorded))}
-                    onChange = {(e) => {
-                        setExpense({...expense, dateRecorded: new Date(e.target.value)})
-                    }}
+        <EditButton>
+          <ModalWrapper front={"Edit"} isVisible={isVisible} setIsVisible={setIsVisible}>
+            <RequestExpense setResponse={setData} 
+                default={props.expense}
                 />
-            </div>
-
-            <div>
-                <label htmlFor="expenses.amount"> Amount</label>
-                <input type='text' name="expenses.amount" id="expenses.amount" 
-                    value={expense.amount}
-                    onChange = {(e) => {
-                        setExpense({...expense, amount: parseInt(e.target.value)})
-                    }}
-                />
-            </div>
-
-            <div>
-                <label htmlFor="expenses.description">Description</label>
-                <input type='text' name="expenses.description" id="expenses.description" 
-                    value={expense.description}
-                    onChange = {(e) => {
-                        setExpense({...expense, description: e.target.value});
-                    }}
-                />
-            </div>
-            
-            <input type="button" name="submit" onClick={onChange} value={"Apply"}/>
-        </ModalWrapper>
-    );
+          </ModalWrapper>
+        </EditButton>
+    )
 }

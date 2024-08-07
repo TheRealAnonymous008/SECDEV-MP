@@ -83,10 +83,3 @@ const retrieveVehicle = (id) => __awaiter(void 0, void 0, void 0, function* () {
         return null;
     }
 });
-const makeExpenseView = (expense) => {
-    return {
-        dateRecorded: expense.dateRecorded,
-        description: expense.description,
-        amount: parseFloat(expense.amount)
-    };
-};

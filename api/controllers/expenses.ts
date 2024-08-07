@@ -3,12 +3,24 @@ import Expense, { ExpenseRow } from '../models/expenses';
 import { ExpensesRepository } from '../repository/expenses';
 import logger from '../utils/logger';
 import { LogLevel } from '../config/logConfig';
+import { validateRequired, validateInteger, validateDate } from '../middleware/inputValidation';
+import { makeExpenseView, makeExpenseArrayView } from '../projections/expenses';
 
 const all = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const expenses = await ExpensesRepository.retrieveAll();
-        res.json({ data: expenses, count: expenses.length });
-        res.status(200).end();
+        ExpensesRepository.retrieveAll()
+            .then(async (result) => {
+                const data =  await makeExpenseArrayView(result).catch((err) => {next(err)});
+                res.json({
+                    data: data,
+                    count : result.length 
+                });
+                res.status(200).end();
+            })
+            .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error retrieving all expenses: ${err.message}`);
+                next(err);
+            });
     } catch (err) {
         logger.log(LogLevel.ERRORS, `Error retrieving all expenses: ${err.message}`);
         next(err);
@@ -17,14 +29,20 @@ const all = async (req: express.Request, res: express.Response, next: express.Ne
 
 const id = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const id = parseInt(req.query.id.toString());
-        const expense = await ExpensesRepository.retrieveById(id);
-        if (!expense) {
-            res.status(404).end();
-            return;
-        }
-        res.json(expense);
-        res.status(200).end();
+        let id = validateRequired(req.query.id.toString(), validateInteger);
+        ExpensesRepository.retrieveById(id)
+            .then(async (result) => {
+                if (result.length == 0) {
+                    res.status(404).end();
+                    return;
+                }
+                res.json(await makeExpenseView(result));
+                res.status(200).end();
+            })
+            .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error retrieving expense by id: ${err.message}`);
+                next(err);
+            });
     } catch (error) {
         logger.log(LogLevel.ERRORS, `Error retrieving expense by id: ${error.message}`);
         next(error);
@@ -34,17 +52,27 @@ const id = async (req: express.Request, res: express.Response, next: express.Nex
 const create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const expense: ExpenseRow = {
-            InvoiceAmount: parseFloat(req.body.invoiceAmount),
-            InvoiceDeductible: parseFloat(req.body.invoiceDeductible),
-            AgentFirstName: req.body.agentFirstName,
-            AgentLastName: req.body.agentLastName,
-            DatePaid: req.body.datePaid,
-            AgentCommission: parseFloat(req.body.agentCommission),
+            InvoiceAmount: parseFloat(req.body.InvoiceAmount),
+            InvoiceDeductible: parseFloat(req.body.InvoiceDeductible),
+            AgentFirstName: req.body.AgentFirstName,
+            AgentLastName: req.body.AgentLastName,
+            DatePaid: req.body.DatePaid,
+            AgentCommission: parseFloat(req.body.AgentCommission),
         };
 
-        const result = await ExpensesRepository.insert(expense);
-        res.json({ id: result });
-        res.status(200).end();
+        ExpensesRepository.insert(expense)
+            .then(async (result) => {
+                if (result = undefined) {
+                    throw new Error(`Failed to create order with params ${expense}`)
+                }
+                
+                res.json(await makeExpenseView({...expense, Id: result}));
+                res.status(200).end();
+            })
+            .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error creating expense: ${err.message}`);
+                next(err);
+            });
     } catch (err) {
         logger.log(LogLevel.ERRORS, `Error creating expense: ${err.message}`);
         next(err);
@@ -53,19 +81,28 @@ const create = async (req: express.Request, res: express.Response, next: express
 
 const update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const expense: Expense = {
-            Id: parseInt(req.body.id),
-            InvoiceAmount: parseFloat(req.body.invoiceAmount),
-            InvoiceDeductible: parseFloat(req.body.invoiceDeductible),
-            AgentFirstName: req.body.agentFirstName,
-            AgentLastName: req.body.agentLastName,
-            DatePaid: req.body.datePaid,
-            AgentCommission: parseFloat(req.body.agentCommission),
-        } as Expense;
+        const expense: ExpenseRow = {
+            InvoiceAmount: parseFloat(req.body.InvoiceAmount),
+            InvoiceDeductible: parseFloat(req.body.InvoiceDeductible),
+            AgentFirstName: req.body.AgentFirstName,
+            AgentLastName: req.body.AgentLastName,
+            DatePaid: req.body.DatePaid,
+            AgentCommission: parseFloat(req.body.AgentCommission),
+        };
 
-        const result = await ExpensesRepository.insert(expense);
-        res.json({ id: result });
-        res.status(200).end();
+        let id = validateRequired(req.query.id.toString(), validateInteger);
+
+        ExpensesRepository.update(id, expense)
+            .then(async (result) => {
+                if (result == undefined){
+                    throw new Error(`Failed to update expense with id ${id}`)
+                }
+                res.json(await makeExpenseView({...expense, Id: result}));
+                res.status(200).end();
+            })
+            .catch((err) => {
+                next(err)
+            });
     } catch (err) {
         logger.log(LogLevel.ERRORS, `Error updating expense: ${err.message}`);
         next(err);
@@ -74,9 +111,20 @@ const update = async (req: express.Request, res: express.Response, next: express
 
 const remove = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const id = parseInt(req.query.id.toString());
-        await ExpensesRepository.delete(id);
-        res.status(200).end();
+        let id = validateRequired(req.query.id.toString(), validateInteger);
+
+        ExpensesRepository.delete(id)
+            .then((result) => {
+                if (result == undefined){
+                    throw new Error(`Failed to delete expense with id ${id}`);
+                }
+                logger.log(LogLevel.AUDIT, `Expense deleted: ${id}`);
+                res.status(200).end();
+            })
+            .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error deleting expense with id ${id}: ${err.message}`);
+                next(err);
+            });
     } catch (err) {
         logger.log(LogLevel.ERRORS, `Error deleting expense with id ${id}: ${err.message}`);
         next(err);

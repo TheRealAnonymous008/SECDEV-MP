@@ -77,12 +77,3 @@ const retrieveVehicle = async (id : number) : Promise<Vehicle | null> => {
     }
 }
 
-
-const makeExpenseView = (expense) => {
-    return {
-        dateRecorded: expense.dateRecorded,
-        description: expense.description,
-        amount: parseFloat(expense.amount)
-    };
-}
-

@@ -1,5 +1,18 @@
 export interface Expense {
-    dateRecorded : Date,
-    description : string,
-    amount : number,
+    Id: number;
+    InvoiceAmount: number;
+    InvoiceDeductible: number;
+    AgentFirstName: string;
+    AgentLastName: string;
+    DatePaid: string;
+    AgentCommission: number;
+}
+
+export interface ExpenseRequest {
+    InvoiceAmount: number;
+    InvoiceDeductible: number;
+    AgentFirstName: string;
+    AgentLastName: string;
+    DatePaid: string;
+    AgentCommission: number;
 }

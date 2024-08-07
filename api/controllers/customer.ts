@@ -154,14 +154,14 @@ const filter = async (req: express.Request, res: express.Response, next: express
 }
 
 const makeQuery = (req: express.Request): CustomerQuery => {
-    const name = validateRequired(req.query.name, baseValidation);
-    const email = validateRequired(req.query.email, baseValidation);
-    const mobileNumber = validateRequired(req.query.mobileNumber, baseValidation);
-    const company = validateRequired(req.query.company, baseValidation);
-    const insurance = validateRequired(req.query.insurance, baseValidation);
-    const remarks = validateRequired(req.query.remarks, baseValidation);
-    const limit = validateRequired(req.query.limit, validateLimit);
-    const skip = validateRequired(req.query.skip, baseValidation);
+    const name = validateOptional(req.query.name, baseValidation);
+    const email = validateOptional(req.query.email, baseValidation);
+    const mobileNumber = validateOptional(req.query.mobileNumber, baseValidation);
+    const company = validateOptional(req.query.company, baseValidation);
+    const insurance = validateOptional(req.query.insurance, baseValidation);
+    const remarks = validateOptional(req.query.remarks, baseValidation);
+    const limit = validateOptional(req.query.limit, validateLimit);
+    const skip = validateOptional(req.query.skip, baseValidation);
 
     return {
         name: (name) ? (name as string) : null,

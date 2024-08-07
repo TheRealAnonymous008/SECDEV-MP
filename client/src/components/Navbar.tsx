@@ -21,6 +21,7 @@ const Navbar = (props : {isAdmin : boolean}) => {
                     <Button buttonName={"Orders"} to={ROUTES.orders}/>
                     <Button buttonName={"Customers"} to={ROUTES.customers}/>
                     <Button buttonName={"Vehicles"} to={ROUTES.vehicles}/>
+                    <Button buttonName={"Expenses"} to={ROUTES.expenses}/>
                     { props.isAdmin && <Button buttonName={"Users"} to={ROUTES.users}/> }
                     <Button buttonName={"Profile"} to={ROUTES.profile}/>
                     <Button buttonName={"Logout"} to={ROUTES.logout}/>

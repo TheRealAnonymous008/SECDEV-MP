@@ -62,7 +62,7 @@ export const ExpensesRepository = {
         });
     },
 
-    async update(id: number, expense: ExpenseRow): Promise<void> {
+    async update(id: number, expense: ExpenseRow): Promise<number> {
         let qv = queryBuilder.update(EXPENSES_TABLE_NAME, {
             InvoiceAmount: expense.InvoiceAmount,
             InvoiceDeductible: expense.InvoiceDeductible,
@@ -79,13 +79,13 @@ export const ExpensesRepository = {
                 qv.values,
                 (err, res) => {
                     if (err) reject(err);
-                    else resolve();
+                    else resolve(id);
                 }
             );
         });
     },
 
-    delete(id: number): Promise<void> {
+    delete(id: number): Promise<number> {
         let qv = queryBuilder.delete(EXPENSES_TABLE_NAME);
         queryBuilder.where(qv, { Id: id });
 
@@ -95,7 +95,7 @@ export const ExpensesRepository = {
                 qv.values,
                 (err, res) => {
                     if (err) reject(err);
-                    else resolve();
+                    else resolve(id);
                 }
             );
         });
