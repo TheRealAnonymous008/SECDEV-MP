@@ -110,6 +110,15 @@ export function validateInteger(str : string) {
     throw new Error("Invalid number format.");
 }
 
+export function validateFloat(str : string) {
+    str = baseValidation(str)
+
+    if (validator.isFloat(str)) {
+        return parseFloat(str.toString()); 
+    }
+    throw new Error("Invalid number format.");
+}
+
 export function validateNonNegative(str : string) {
     const x = validateInteger(str)
     if (x >= 0){

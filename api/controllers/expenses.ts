@@ -3,7 +3,7 @@ import Expense, { ExpenseRow } from '../models/expenses';
 import { ExpensesRepository } from '../repository/expenses';
 import logger from '../utils/logger';
 import { LogLevel } from '../config/logConfig';
-import { validateRequired, validateInteger, validateDate } from '../middleware/inputValidation';
+import { validateRequired, validateInteger, validateDate, validateOptional, validateFloat, validateName } from '../middleware/inputValidation';
 import { makeExpenseView, makeExpenseArrayView } from '../projections/expenses';
 
 const all = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -52,12 +52,12 @@ const id = async (req: express.Request, res: express.Response, next: express.Nex
 const create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const expense: ExpenseRow = {
-            InvoiceAmount: parseFloat(req.body.InvoiceAmount),
-            InvoiceDeductible: parseFloat(req.body.InvoiceDeductible),
-            AgentFirstName: req.body.AgentFirstName,
-            AgentLastName: req.body.AgentLastName,
-            DatePaid: req.body.DatePaid,
-            AgentCommission: parseFloat(req.body.AgentCommission),
+            InvoiceAmount: validateRequired(req.body.InvoiceAmount, validateFloat),
+            InvoiceDeductible: validateRequired(req.body.InvoiceDeductible, validateFloat),
+            AgentFirstName: validateRequired(req.body.AgentFirstName, validateName),
+            AgentLastName: validateRequired(req.body.AgentLastName, validateName),
+            DatePaid: validateRequired(req.body.DatePaid, validateDate),
+            AgentCommission: validateRequired(req.body.AgentCommission, validateFloat),
         };
 
         ExpensesRepository.insert(expense)
@@ -82,12 +82,12 @@ const create = async (req: express.Request, res: express.Response, next: express
 const update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const expense: ExpenseRow = {
-            InvoiceAmount: parseFloat(req.body.InvoiceAmount),
-            InvoiceDeductible: parseFloat(req.body.InvoiceDeductible),
-            AgentFirstName: req.body.AgentFirstName,
-            AgentLastName: req.body.AgentLastName,
-            DatePaid: req.body.DatePaid,
-            AgentCommission: parseFloat(req.body.AgentCommission),
+            InvoiceAmount: validateRequired(req.body.InvoiceAmount, validateFloat),
+            InvoiceDeductible: validateRequired(req.body.InvoiceDeductible, validateFloat),
+            AgentFirstName: validateRequired(req.body.AgentFirstName, validateName),
+            AgentLastName: validateRequired(req.body.AgentLastName, validateName),
+            DatePaid: validateRequired(req.body.DatePaid, validateDate),
+            AgentCommission: validateRequired(req.body.AgentCommission, validateFloat),
         };
 
         let id = validateRequired(req.query.id.toString(), validateInteger);
