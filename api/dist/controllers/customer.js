@@ -33,7 +33,7 @@ const all = (req, res, next) => {
 };
 const id = (req, res, next) => {
     try {
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        let id = (0, inputValidation_1.validateRequired)(req.query.id.toString(), inputValidation_1.validateInteger);
         customer_2.CustomerRepository.retrieveById(id)
             .then((result) => {
             if (result.length == 0) {
@@ -56,12 +56,12 @@ const id = (req, res, next) => {
 const create = (req, res, next) => {
     try {
         const customer = {
-            FirstName: (0, inputValidation_1.validateName)(req.body.firstName),
-            LastName: (0, inputValidation_1.validateName)(req.body.lastName),
-            MobileNumber: (0, inputValidation_1.validateMobileNumber)(req.body.mobileNumber),
-            Email: (0, inputValidation_1.validateEmail)(req.body.email),
-            Company: (0, inputValidation_1.validateWord)(req.body.company),
-            Insurance: (0, inputValidation_1.validateWord)(req.body.insurance),
+            FirstName: (0, inputValidation_1.validateRequired)(req.body.firstName, inputValidation_1.validateName),
+            LastName: (0, inputValidation_1.validateRequired)(req.body.lastName, inputValidation_1.validateName),
+            MobileNumber: (0, inputValidation_1.validateRequired)(req.body.mobileNumber, inputValidation_1.validateMobileNumber),
+            Email: (0, inputValidation_1.validateRequired)(req.body.email, inputValidation_1.validateEmail),
+            Company: (0, inputValidation_1.validateRequired)(req.body.company, inputValidation_1.validateWord),
+            Insurance: (0, inputValidation_1.validateRequired)(req.body.insurance, inputValidation_1.validateWord),
             Remarks: (0, inputValidation_1.validateOptional)(req.body.remarks, inputValidation_1.baseValidation) // This is a free field. SQL injection is prevented via prepared statements. XSS prevented by not accepting HTML
         };
         customer_2.CustomerRepository.insert(customer)
@@ -86,15 +86,15 @@ const create = (req, res, next) => {
 const update = (req, res, next) => {
     try {
         const customer = {
-            FirstName: (0, inputValidation_1.validateName)(req.body.firstName),
-            LastName: (0, inputValidation_1.validateName)(req.body.lastName),
-            MobileNumber: (0, inputValidation_1.validateMobileNumber)(req.body.mobileNumber),
-            Email: (0, inputValidation_1.validateEmail)(req.body.email),
-            Company: (0, inputValidation_1.validateWord)(req.body.company),
-            Insurance: (0, inputValidation_1.validateWord)(req.body.insurance),
-            Remarks: (0, inputValidation_1.baseValidation)(req.body.remarks)
+            FirstName: (0, inputValidation_1.validateRequired)(req.body.firstName, inputValidation_1.validateName),
+            LastName: (0, inputValidation_1.validateRequired)(req.body.lastName, inputValidation_1.validateName),
+            MobileNumber: (0, inputValidation_1.validateRequired)(req.body.mobileNumber, inputValidation_1.validateMobileNumber),
+            Email: (0, inputValidation_1.validateRequired)(req.body.email, inputValidation_1.validateEmail),
+            Company: (0, inputValidation_1.validateRequired)(req.body.company, inputValidation_1.validateWord),
+            Insurance: (0, inputValidation_1.validateRequired)(req.body.insurance, inputValidation_1.validateWord),
+            Remarks: (0, inputValidation_1.validateOptional)(req.body.remarks, inputValidation_1.baseValidation)
         };
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        let id = (0, inputValidation_1.validateRequired)(req.query.id.toString(), inputValidation_1.validateInteger);
         customer_2.CustomerRepository.update(id, customer)
             .then((result) => {
             if (result == undefined) {
@@ -116,7 +116,7 @@ const update = (req, res, next) => {
 };
 const remove = (req, res, next) => {
     try {
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        let id = (0, inputValidation_1.validateRequired)(req.query.id.toString(), inputValidation_1.validateInteger);
         customer_2.CustomerRepository.delete(id)
             .then((result) => {
             if (result == undefined) {
@@ -157,14 +157,14 @@ const filter = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 const makeQuery = (req) => {
-    const name = (0, inputValidation_1.baseValidation)(req.query.name);
-    const email = (0, inputValidation_1.baseValidation)(req.query.email);
-    const mobileNumber = (0, inputValidation_1.baseValidation)(req.query.mobileNumber);
-    const company = (0, inputValidation_1.baseValidation)(req.query.company);
-    const insurance = (0, inputValidation_1.baseValidation)(req.query.insurance);
-    const remarks = (0, inputValidation_1.baseValidation)(req.query.remarks);
-    const limit = (0, inputValidation_1.validateLimit)(req.query.limit);
-    const skip = (0, inputValidation_1.baseValidation)(req.query.skip);
+    const name = (0, inputValidation_1.validateRequired)(req.query.name, inputValidation_1.baseValidation);
+    const email = (0, inputValidation_1.validateRequired)(req.query.email, inputValidation_1.baseValidation);
+    const mobileNumber = (0, inputValidation_1.validateRequired)(req.query.mobileNumber, inputValidation_1.baseValidation);
+    const company = (0, inputValidation_1.validateRequired)(req.query.company, inputValidation_1.baseValidation);
+    const insurance = (0, inputValidation_1.validateRequired)(req.query.insurance, inputValidation_1.baseValidation);
+    const remarks = (0, inputValidation_1.validateRequired)(req.query.remarks, inputValidation_1.baseValidation);
+    const limit = (0, inputValidation_1.validateRequired)(req.query.limit, inputValidation_1.validateLimit);
+    const skip = (0, inputValidation_1.validateRequired)(req.query.skip, inputValidation_1.baseValidation);
     return {
         name: (name) ? name : null,
         email: (email) ? email : null,

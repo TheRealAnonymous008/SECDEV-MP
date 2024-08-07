@@ -28,7 +28,7 @@ const all = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const id = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        let id = (0, inputValidation_1.validateRequired)(req.query.id.toString(), inputValidation_1.validateInteger);
         order_1.OrderRespository.retrieveById(id)
             .then((result) => __awaiter(void 0, void 0, void 0, function* () {
             if (result.length == 0) {
@@ -96,7 +96,7 @@ const update = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         if (order.TimeIn > order.TimeOut) {
             throw new Error("Invalid Time In and Time Out");
         }
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        let id = (0, inputValidation_1.validateRequired)(req.query.id.toString(), inputValidation_1.validateInteger);
         order_1.OrderRespository.update(id, order)
             .then((result) => {
             if (result == undefined) {
@@ -115,7 +115,7 @@ const update = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
 });
 const remove = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        let id = (0, inputValidation_1.validateRequired)(req.query.id.toString(), inputValidation_1.validateInteger);
         order_1.OrderRespository.delete(id)
             .then((result) => {
             if (result == undefined) {
@@ -133,7 +133,7 @@ const remove = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
 });
 const verify = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        let id = (0, inputValidation_1.validateRequired)(req.query.id.toString(), inputValidation_1.validateInteger);
         order_1.OrderRespository.verify(id)
             .then((result) => {
             if (result == undefined) {

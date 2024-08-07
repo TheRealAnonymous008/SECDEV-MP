@@ -2,10 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = require("../repository/user");
 const authConfig_1 = require("../config/authConfig");
+const inputValidation_1 = require("./inputValidation");
 const validateRole = (allowedRoles) => {
     return (req, res, next) => {
-        const sessionId = res.locals.jwt.id;
-        const csrf = req.cookies.csrf;
+        const sessionId = (0, inputValidation_1.validateRequired)(res.locals.jwt.id, inputValidation_1.baseValidation);
+        const csrf = (0, inputValidation_1.validateRequired)(req.cookies.csrf, inputValidation_1.baseValidation);
         user_1.UserRepository.getUserFromSession(sessionId, csrf)
             .then((user) => {
             if (user == undefined) {

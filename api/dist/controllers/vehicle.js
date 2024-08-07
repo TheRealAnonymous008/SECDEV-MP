@@ -18,7 +18,7 @@ const all = (req, res, next) => {
 };
 const id = (req, res, next) => {
     try {
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        let id = (0, inputValidation_1.validateRequired)(req.query.id.toString(), inputValidation_1.validateInteger);
         vehicle_2.VehicleRepository.retrieveById(id)
             .then((result) => {
             if (result.length == 0) {
@@ -39,13 +39,13 @@ const id = (req, res, next) => {
 const create = (req, res, next) => {
     try {
         const vehicle = {
-            LicensePlate: (0, inputValidation_1.validateLicensePlate)(req.body.licensePlate),
-            Model: (0, inputValidation_1.validateWord)(req.body.model),
-            Manufacturer: (0, inputValidation_1.validateWord)(req.body.manufacturer),
-            YearManufactured: (0, inputValidation_1.validateInteger)(req.body.yearManufactured),
-            Color: (0, inputValidation_1.validateWord)(req.body.color),
-            Engine: (0, inputValidation_1.validateWord)(req.body.engine),
-            Remarks: (0, inputValidation_1.baseValidation)(req.body.remarks)
+            LicensePlate: (0, inputValidation_1.validateRequired)(req.body.licensePlate, inputValidation_1.validateLicensePlate),
+            Model: (0, inputValidation_1.validateRequired)(req.body.model, inputValidation_1.validateWord),
+            Manufacturer: (0, inputValidation_1.validateRequired)(req.body.manufacturer, inputValidation_1.validateWord),
+            YearManufactured: (0, inputValidation_1.validateRequired)(req.body.yearManufactured, inputValidation_1.validateInteger),
+            Color: (0, inputValidation_1.validateRequired)(req.body.color, inputValidation_1.validateWord),
+            Engine: (0, inputValidation_1.validateRequired)(req.body.engine, inputValidation_1.validateWord),
+            Remarks: (0, inputValidation_1.validateOptional)(req.body.remarks, inputValidation_1.baseValidation)
         };
         vehicle_2.VehicleRepository.insert(vehicle)
             .then((result) => {
@@ -66,15 +66,15 @@ const create = (req, res, next) => {
 const update = (req, res, next) => {
     try {
         const vehicle = {
-            LicensePlate: (0, inputValidation_1.validateLicensePlate)(req.body.licensePlate),
-            Model: (0, inputValidation_1.validateWord)(req.body.model),
-            Manufacturer: (0, inputValidation_1.validateWord)(req.body.manufacturer),
-            YearManufactured: (0, inputValidation_1.validateInteger)(req.body.yearManufactured),
-            Color: (0, inputValidation_1.validateWord)(req.body.color),
-            Engine: (0, inputValidation_1.validateWord)(req.body.engine),
-            Remarks: (0, inputValidation_1.baseValidation)(req.body.remarks)
+            LicensePlate: (0, inputValidation_1.validateRequired)(req.body.licensePlate, inputValidation_1.validateLicensePlate),
+            Model: (0, inputValidation_1.validateRequired)(req.body.model, inputValidation_1.validateWord),
+            Manufacturer: (0, inputValidation_1.validateRequired)(req.body.manufacturer, inputValidation_1.validateWord),
+            YearManufactured: (0, inputValidation_1.validateRequired)(req.body.yearManufactured, inputValidation_1.validateInteger),
+            Color: (0, inputValidation_1.validateRequired)(req.body.color, inputValidation_1.validateWord),
+            Engine: (0, inputValidation_1.validateRequired)(req.body.engine, inputValidation_1.validateWord),
+            Remarks: (0, inputValidation_1.validateOptional)(req.body.remarks, inputValidation_1.baseValidation)
         };
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        let id = (0, inputValidation_1.validateRequired)(req.query.id.toString(), inputValidation_1.validateInteger);
         vehicle_2.VehicleRepository.update(id, vehicle)
             .then((result) => {
             if (result == undefined) {
@@ -93,7 +93,7 @@ const update = (req, res, next) => {
 };
 const remove = (req, res, next) => {
     try {
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        let id = (0, inputValidation_1.validateRequired)(req.query.id.toString(), inputValidation_1.validateInteger);
         vehicle_2.VehicleRepository.delete(id)
             .then((result) => {
             if (result == undefined) {
@@ -129,15 +129,15 @@ const filter = (req, res, next) => {
     }
 };
 const makeQuery = (req) => {
-    const licensePlate = (0, inputValidation_1.baseValidation)(req.query.licensePlate);
-    const model = (0, inputValidation_1.baseValidation)(req.query.model);
-    const manufacturer = (0, inputValidation_1.baseValidation)(req.query.manufacturer);
-    const yearManufactured = (0, inputValidation_1.baseValidation)(req.query.yearManufactured);
-    const color = (0, inputValidation_1.baseValidation)(req.query.color);
-    const engine = (0, inputValidation_1.baseValidation)(req.query.engine);
-    const remarks = (0, inputValidation_1.baseValidation)(req.query.remarks);
-    const limit = (0, inputValidation_1.validateLimit)(req.query.limit);
-    const skip = (0, inputValidation_1.baseValidation)(req.query.skip);
+    const licensePlate = (0, inputValidation_1.validateRequired)(req.query.licensePlate, inputValidation_1.baseValidation);
+    const model = (0, inputValidation_1.validateRequired)(req.query.model, inputValidation_1.baseValidation);
+    const manufacturer = (0, inputValidation_1.validateRequired)(req.query.manufacturer, inputValidation_1.baseValidation);
+    const yearManufactured = (0, inputValidation_1.validateRequired)(req.query.yearManufactured, inputValidation_1.baseValidation);
+    const color = (0, inputValidation_1.validateRequired)(req.query.color, inputValidation_1.baseValidation);
+    const engine = (0, inputValidation_1.validateRequired)(req.query.engine, inputValidation_1.baseValidation);
+    const remarks = (0, inputValidation_1.validateOptional)(req.query.remarks, inputValidation_1.baseValidation);
+    const limit = (0, inputValidation_1.validateRequired)(req.query.limit, inputValidation_1.validateLimit);
+    const skip = (0, inputValidation_1.validateRequired)(req.query.skip, inputValidation_1.baseValidation);
     return {
         licensePlate: (licensePlate) ? licensePlate : null,
         model: (model) ? model : null,

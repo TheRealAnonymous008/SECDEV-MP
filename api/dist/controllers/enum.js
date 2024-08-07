@@ -21,7 +21,7 @@ const getAllRoles = (req, res, next) => {
 };
 const getRoleByName = (req, res, next) => {
     try {
-        let name = (0, inputValidation_1.validateWord)(req.query.name.toString());
+        let name = (0, inputValidation_1.validateRequired)(req.query.name.toString(), inputValidation_1.validateWord);
         enums_1.RoleEnumRepository.retrieveByName(name)
             .then((result) => {
             if (!result) {
@@ -54,7 +54,7 @@ const getAllStatuses = (req, res, next) => {
 };
 const getStatusByName = (req, res, next) => {
     try {
-        let name = (0, inputValidation_1.validateWord)(req.query.name.toString());
+        let name = (0, inputValidation_1.validateRequired)(req.query.name.toString(), inputValidation_1.validateWord);
         enums_1.StatusEnumRepository.retrieveByName(name)
             .then((result) => {
             if (!result) {
@@ -87,7 +87,7 @@ const getAllTypes = (req, res, next) => {
 };
 const getTypeByName = (req, res, next) => {
     try {
-        let name = (0, inputValidation_1.validateWord)(req.query.name.toString());
+        let name = (0, inputValidation_1.validateRequired)(req.query.name.toString(), inputValidation_1.validateWord);
         enums_1.TypeEnumRepository.retrieveByName(name)
             .then((result) => {
             if (!result) {

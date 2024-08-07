@@ -29,7 +29,7 @@ const all = (req, res, next) => {
 };
 const id = (req, res, next) => {
     try {
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        let id = (0, inputValidation_1.validateRequired)(req.query.id.toString(), inputValidation_1.validateInteger);
         user_2.UserRepository.retrieveById(id)
             .then((result) => {
             if (result.length == 0) {
@@ -53,14 +53,14 @@ const create = (req, res, next) => {
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
         const password = (0, cryptoUtils_1.getRandom)();
         const user = {
-            FirstName: (0, inputValidation_1.validateName)(req.body.firstName),
-            LastName: (0, inputValidation_1.validateName)(req.body.lastName),
-            Username: (0, inputValidation_1.validateUsername)(req.body.username),
-            MobileNumber: (0, inputValidation_1.validateMobileNumber)(req.body.mobileNumber),
-            Email: (0, inputValidation_1.validateEmail)(req.body.email),
+            FirstName: (0, inputValidation_1.validateRequired)(req.body.firstName, inputValidation_1.validateName),
+            LastName: (0, inputValidation_1.validateRequired)(req.body.lastName, inputValidation_1.validateName),
+            Username: (0, inputValidation_1.validateRequired)(req.body.username, inputValidation_1.validateUsername),
+            MobileNumber: (0, inputValidation_1.validateRequired)(req.body.mobileNumber, inputValidation_1.validateMobileNumber),
+            Email: (0, inputValidation_1.validateRequired)(req.body.email, inputValidation_1.validateEmail),
             Salt: salt,
             Password: Bcrypt.hashSync(password, salt),
-            Role: (0, inputValidation_1.validateRole)(req.body.role)
+            Role: (0, inputValidation_1.validateRequired)(req.body.role, inputValidation_1.validateRole)
         };
         user_2.UserRepository.register(user)
             .then((result) => {
@@ -96,14 +96,14 @@ const upload = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
 const update = (req, res, next) => {
     try {
         let user = {
-            FirstName: (0, inputValidation_1.validateName)(req.body.firstName),
-            LastName: (0, inputValidation_1.validateName)(req.body.lastName),
-            Username: (0, inputValidation_1.validateUsername)(req.body.username),
-            MobileNumber: (0, inputValidation_1.validateMobileNumber)(req.body.mobileNumber),
-            Email: (0, inputValidation_1.validateEmail)(req.body.email),
-            Role: (0, inputValidation_1.validateRole)(req.body.role)
+            FirstName: (0, inputValidation_1.validateRequired)(req.body.firstName, inputValidation_1.validateName),
+            LastName: (0, inputValidation_1.validateRequired)(req.body.lastName, inputValidation_1.validateName),
+            Username: (0, inputValidation_1.validateRequired)(req.body.username, inputValidation_1.validateUsername),
+            MobileNumber: (0, inputValidation_1.validateRequired)(req.body.mobileNumber, inputValidation_1.validateMobileNumber),
+            Email: (0, inputValidation_1.validateRequired)(req.body.email, inputValidation_1.validateEmail),
+            Role: (0, inputValidation_1.validateRequired)(req.body.role, inputValidation_1.validateRole)
         };
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
+        let id = (0, inputValidation_1.validateRequired)(req.query.id.toString(), inputValidation_1.validateInteger);
         user_2.UserRepository.update(id, user)
             .then((result) => {
             if (result == undefined) {
@@ -122,8 +122,7 @@ const update = (req, res, next) => {
 };
 const remove = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let id = (0, inputValidation_1.validateInteger)(req.query.id.toString());
-        user_2.UserRepository.delete(id)
+        let id = (0, inputValidation_1.validateRequired)(req.query.id.toString(), inputValidation_1.validateInteger)
             .then((result) => {
             if (result == undefined) {
                 throw new Error(`Failed to delete user with id ${id}`);
@@ -158,13 +157,13 @@ const filter = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 const makeQuery = (req) => {
-    const name = (0, inputValidation_1.baseValidation)(req.query.name);
-    const username = (0, inputValidation_1.baseValidation)(req.query.username);
-    const email = (0, inputValidation_1.baseValidation)(req.query.email);
-    const mobileNumber = (0, inputValidation_1.baseValidation)(req.query.mobileNumber);
-    const role = (0, inputValidation_1.baseValidation)(req.query.role);
-    const limit = (0, inputValidation_1.validateLimit)(req.query.limit);
-    const skip = (0, inputValidation_1.baseValidation)(req.query.skip);
+    const name = (0, inputValidation_1.validateRequired)(req.query.name, inputValidation_1.baseValidation);
+    const username = (0, inputValidation_1.validateRequired)(req.query.username, inputValidation_1.baseValidation);
+    const email = (0, inputValidation_1.validateRequired)(req.query.email, inputValidation_1.baseValidation);
+    const mobileNumber = (0, inputValidation_1.validateRequired)(req.query.mobileNumber, inputValidation_1.baseValidation);
+    const role = (0, inputValidation_1.validateRequired)(req.query.role, inputValidation_1.baseValidation);
+    const limit = (0, inputValidation_1.validateRequired)(req.query.limit, inputValidation_1.validateLimit);
+    const skip = (0, inputValidation_1.validateRequired)(req.query.skip, inputValidation_1.baseValidation);
     return {
         name: (name) ? name : null,
         username: (username) ? username : null,

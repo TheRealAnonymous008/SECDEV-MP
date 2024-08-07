@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -38,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Bcrypt = require("bcryptjs");
 const enum_1 = require("../models/enum");
 const user_1 = require("../repository/user");
-const inputValidation = __importStar(require("../middleware/inputValidation"));
+const inputValidation_1 = require("../middleware/inputValidation");
 const jwt_decode_1 = __importDefault(require("jwt-decode"));
 const logger_1 = __importDefault(require("../utils/logger"));
 const logConfig_1 = require("../config/logConfig");
@@ -48,13 +25,13 @@ const SALT_ROUNDS = 14;
 const register = (req, res, next) => {
     try {
         const salt = Bcrypt.genSaltSync(SALT_ROUNDS);
-        const password = inputValidation.validatePassword(req.body.password);
+        const password = (0, inputValidation_1.validateRequired)(req.body.password, inputValidation_1.validatePassword);
         const user = {
-            FirstName: inputValidation.validateName(req.body.firstName),
-            LastName: inputValidation.validateName(req.body.lastName),
-            Username: inputValidation.validateUsername(req.body.username),
-            MobileNumber: inputValidation.validateMobileNumber(req.body.mobileNumber),
-            Email: inputValidation.validateEmail(req.body.email),
+            FirstName: (0, inputValidation_1.validateRequired)(req.body.firstName, inputValidation_1.validateName),
+            LastName: (0, inputValidation_1.validateRequired)(req.body.lastName, inputValidation_1.validateName),
+            Username: (0, inputValidation_1.validateRequired)(req.body.username, inputValidation_1.validateUsername),
+            MobileNumber: (0, inputValidation_1.validateRequired)(req.body.mobileNumber, inputValidation_1.validateMobileNumber),
+            Email: (0, inputValidation_1.validateRequired)(req.body.email, inputValidation_1.validateEmail),
             Salt: salt,
             Password: Bcrypt.hashSync(password, salt),
             Role: enum_1.RoleIds.VIEW
@@ -79,7 +56,7 @@ const register = (req, res, next) => {
 };
 const login = (req, res, next) => {
     try {
-        const username = inputValidation.validateUsername(req.body.username);
+        const username = (0, inputValidation_1.validateRequired)(req.body.username, inputValidation_1.validateUsername);
         user_1.UserRepository.retrieveByUsername(username)
             .then((user) => {
             if (user) {
@@ -152,7 +129,7 @@ const login = (req, res, next) => {
 };
 const handshake = (req, res, next) => {
     try {
-        const sessionId = res.locals.jwt.id;
+        const sessionId = (0, inputValidation_1.validateRequired)(res.locals.jwt.id, inputValidation_1.baseValidation);
         user_1.UserRepository.getUserFromSession(sessionId)
             .then((value) => {
             if (value) {
@@ -175,7 +152,7 @@ const handshake = (req, res, next) => {
 const logout = (req, res, next) => {
     try {
         const token = req.cookies.jwt;
-        const sessionId = (0, jwt_decode_1.default)(token)["id"];
+        const sessionId = (0, inputValidation_1.validateRequired)((0, jwt_decode_1.default)(token)["id"], inputValidation_1.baseValidation);
         user_1.UserRepository
             .deleteSession(sessionId)
             .then((v) => {
