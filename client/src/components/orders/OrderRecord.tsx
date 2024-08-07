@@ -75,7 +75,7 @@ export const OrderRecord = (props : { order: Order, rerenderFlag: Function}) => 
                 <td> {order?.estimateNumber}</td>
                 <td> {order?.scopeOfWork}</td>
                 
-                <td>
+                {/* <td>
                     <p> 
                         {"Total Expenses: " } 
                      
@@ -92,7 +92,7 @@ export const OrderRecord = (props : { order: Order, rerenderFlag: Function}) => 
                         <ExpensesDisplay expenses={order?.expenses}/>
                     </ModalWrapper> 
                        
-                </td>
+                </td> */}
 
                 <td hidden={isRole("VIEW")}> <UpdateOrder order={order} observer={onUpdate}/></td>
                 <td hidden={isRole("VIEW")}> <DeleteOrder order={order} observer={onDelete}/></td>

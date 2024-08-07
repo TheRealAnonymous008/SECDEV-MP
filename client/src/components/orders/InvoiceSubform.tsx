@@ -12,21 +12,6 @@ export const InvoiceSubform = (props: {setValue : any, errors : any}) => {
         setIsVisible(false);
     };
 
-    // const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    //     event.preventDefault();
-    //     if(selectedPdf) {
-    //         const formData = new FormData();
-    //         formData.append('pdfFile', selectedPdf);
-    //         createAPIEndpoint(ENDPOINTS.uploadInvoice).upload(formData)
-    //             .then((response) => {
-    //                 props.setValue("invoice.pdfFile", response.data);
-    //             })
-    //             .catch((err) => {
-    //                 console.log(err);
-    //             });
-    //     }
-    // };
-
     const [isVisible, setIsVisible] = useState<boolean>(false);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,8 +96,8 @@ export const InvoiceSubform = (props: {setValue : any, errors : any}) => {
                         }
                     />
                     {errors.invoice?.agentCommission && <p>Agent Commission has wrong format</p>}
-                </div>
-                */}
+                </div> */}
+               
 
                 <div>
                     <label htmlFor="pdfUpload">PDF File</label>

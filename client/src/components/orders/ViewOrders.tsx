@@ -65,7 +65,7 @@ const OrdersView = () => {
                             <th> License Plate </th>
                             <th> Estimate Number </th>
                             <th> Scope of Work </th>
-                            <th> Expenses </th>
+                            <th>  </th>
         
                             <th hidden={isRole("VIEW")}></th>
                             <th hidden={isRole("VIEW")}></th>
