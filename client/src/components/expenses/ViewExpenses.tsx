@@ -35,20 +35,19 @@ const ViewExpenses = () => {
                     {name: "DatePaid", description: "The date the amount was paid"},
                     {name: "AgentCommission", description: "The commission received by the agent-in-charge"}
                 ]}>
-            <br />
-      
+                <br />
                 <table>
                     <TableHead>
                         <tr>
                             <td> Invoice Amount </td>
                             <td> Invoice Deductible </td>
-                            <td> Agent FirstName </td>
-                            <td> Agent LastName </td>
+                            <td> Agent First Name </td>
+                            <td> Agent Last Name </td>
                             <td> Date Paid </td>
                             <td> Agent Commission </td>
 
-                                <th hidden={isRole("VIEW")}></th>
-                                <th hidden={isRole("VIEW")}></th>
+                            <th hidden={isRole("VIEW")}></th>
+                            <th hidden={isRole("VIEW")}></th>
                         </tr>
                     </TableHead>
                 
