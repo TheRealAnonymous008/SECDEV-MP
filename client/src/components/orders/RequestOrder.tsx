@@ -109,11 +109,14 @@ export const RequestOrder = (props : {setResponse : Function, default? : OrderRe
                     <input {...register('timeIn', {
                         required: true, valueAsDate : true, validate: {
                             isAfterTimeIn: (v) =>{
-                                if (watch("timeOut").valueOf() === 0){
+                                if (watch("timeOut").valueOf() === 0) {
                                     return true;
                                 }
-                                if(isNaN(v.valueOf()))
+
+                                if (isNaN(v.valueOf())) {
                                     return false;
+                                }
+                                    
                                 return watch("timeOut") >= watch("timeIn") || isNaN(watch("timeOut").valueOf());
                             }
                         }
@@ -130,11 +133,14 @@ export const RequestOrder = (props : {setResponse : Function, default? : OrderRe
                     <input {...register('timeOut', {
                         required: false ,valueAsDate: true, validate: {
                             isAfterTimeIn: (v) =>{
-                                if (watch("timeOut").valueOf() === 0){
+                                if (watch("timeOut").valueOf() === 0) {
                                     return true;
                                 }
-                                if(isNaN(v.valueOf()))
+                                
+                                if (isNaN(v.valueOf())) {
                                     return true;
+                                }
+
                                 return watch("timeOut") >= watch("timeIn");
                             }
                         }
