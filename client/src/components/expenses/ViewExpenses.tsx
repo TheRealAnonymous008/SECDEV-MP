@@ -8,6 +8,15 @@ import { TableBody, TableHead } from "../../style/TableStyle";
 import { CreateButton } from "../../style/CreateButton";
 import { ENDPOINTS } from "../../api/endpoints";
 
+const searchOptions = [
+    {name: "InvoiceAmount", description:"The amount associated with the invoice"},
+    {name: "InvoiceDeductible", description: "The amount deductible from the invoice"},
+    {name: "AgentFirstName", description: "The first name of the agent associated with the expense"},
+    {name: "AgentLastName", description: "The last name of the agent associated with the expense"},
+    {name: "DatePaid", description: "The date the amount was paid"},
+    {name: "AgentCommission", description: "The commission received by the agent-in-charge"},
+]
+
 
 const ViewExpenses = () => {
 
@@ -26,15 +35,7 @@ const ViewExpenses = () => {
 
     return (
         <div>
-            <ViewHandler path={ENDPOINTS.filterExpense} all={ENDPOINTS.expenses} setData={setQueryResult} queryParser={queryParser} flag ={flag}
-                options = {[
-                    {name: "InvoiceAmount", description:"The amount associated with the invoice"},
-                    {name: "InvoiceDeductible", description: "The amount deductible from the invoice"},
-                    {name: "AgentFirstName", description: "The first name of the agent associated with the expense"},
-                    {name: "AgentLastName", description: "The last name of the agent associated with the expense"},
-                    {name: "DatePaid", description: "The date the amount was paid"},
-                    {name: "AgentCommission", description: "The commission received by the agent-in-charge"}
-                ]}>
+            <ViewHandler path={ENDPOINTS.filterExpense} all={ENDPOINTS.expenses} setData={setQueryResult} queryParser={queryParser} flag={flag} options={searchOptions}>
                 <br />
                 <table>
                     <TableHead>
