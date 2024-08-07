@@ -42,4 +42,11 @@ export const ENDPOINTS = {
     deleteUser: "user/delete",
     filterUser: 'user/filter',
 
+    expenses: 'expenses/all',
+    getExpense: 'expenses/id',
+    addExpense: 'expenses/create',
+    updateExpense: 'expenses/update',
+    deleteExpense: 'expenses/delete',
+    filterExpense: 'expenses/filter',
+
 }
