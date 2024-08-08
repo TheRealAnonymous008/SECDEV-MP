@@ -58,25 +58,6 @@ export const ComplaintsRepository = {
         });
     },
 
-    async update(id: number, complaint: ComplaintRow): Promise<number> {
-        let qv = queryBuilder.update(COMPLAINTS_TABLE_NAME, {
-            Description: complaint.Description,
-            DateReported: complaint.DateReported,
-        });
-        queryBuilder.where(qv, { Id: id });
-
-        return new Promise((resolve, reject) => {
-            connection.execute<ResultSetHeader>(
-                qv.query,
-                qv.values,
-                (err, res) => {
-                    if (err) reject(err);
-                    else resolve(id);
-                }
-            );
-        });
-    },
-
     delete(id: number): Promise<number> {
         let qv = queryBuilder.delete(COMPLAINTS_TABLE_NAME);
         queryBuilder.where(qv, { Id: id });
@@ -117,11 +98,14 @@ export interface ComplaintQuery {
 
 export const makeSQLQuery = (query: ComplaintQuery): QueryValuePair => {
     let qv = queryBuilder.select(COMPLAINTS_TABLE_NAME);
+
     queryBuilder.filter(qv, {
         Description: query.Description,
         DateReported: query.DateReported
     })
+
     queryBuilder.limit(qv, query.limit);
     queryBuilder.skip(qv, query.skip);
+
     return qv;
 };

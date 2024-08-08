@@ -10,7 +10,6 @@ import { ENDPOINTS } from "../../api/endpoints";
 
 const searchOptions = [
     {name: "Description", description:"The description of the complaint"},
-
 ]
 
 

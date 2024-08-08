@@ -63,7 +63,7 @@ const id = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
 const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const complaint = {
-            Description: (0, inputValidation_1.validateRequired)(req.body.Description, inputValidation_1.validateWord),
+            Description: (0, inputValidation_1.validateRequired)(req.body.Description, inputValidation_1.baseValidation),
             DateReported: (0, inputValidation_1.validateRequired)(req.body.DateReported, inputValidation_1.validateDate),
         };
         complaints_1.ComplaintsRepository.insert(complaint)
@@ -108,6 +108,7 @@ const remove = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
 const filter = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const query = makeQuery(req);
+        console.log("QUERY:", query);
         complaints_1.ComplaintsRepository.filter(query)
             .then((result) => __awaiter(void 0, void 0, void 0, function* () {
             res.json({
@@ -127,8 +128,8 @@ const filter = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 const makeQuery = (req) => {
-    const description = (0, inputValidation_1.validateOptional)(req.query.description, inputValidation_1.validateWord);
-    const dateReported = (0, inputValidation_1.validateOptional)(req.query.dateReported, inputValidation_1.validateDate);
+    const description = (0, inputValidation_1.validateOptional)(req.query.Description, inputValidation_1.baseValidation);
+    const dateReported = (0, inputValidation_1.validateOptional)(req.query.DateReported, inputValidation_1.validateDate);
     const limit = (0, inputValidation_1.validateOptional)(req.query.limit, inputValidation_1.validateInteger);
     const skip = (0, inputValidation_1.validateOptional)(req.query.skip, inputValidation_1.validateInteger);
     return {

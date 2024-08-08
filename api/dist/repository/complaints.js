@@ -59,23 +59,6 @@ exports.ComplaintsRepository = {
             });
         });
     },
-    update(id, complaint) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let qv = dbUtils_1.queryBuilder.update(COMPLAINTS_TABLE_NAME, {
-                Description: complaint.Description,
-                DateReported: complaint.DateReported,
-            });
-            dbUtils_1.queryBuilder.where(qv, { Id: id });
-            return new Promise((resolve, reject) => {
-                connection_1.default.execute(qv.query, qv.values, (err, res) => {
-                    if (err)
-                        reject(err);
-                    else
-                        resolve(id);
-                });
-            });
-        });
-    },
     delete(id) {
         let qv = dbUtils_1.queryBuilder.delete(COMPLAINTS_TABLE_NAME);
         dbUtils_1.queryBuilder.where(qv, { Id: id });

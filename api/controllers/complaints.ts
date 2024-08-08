@@ -3,7 +3,7 @@ import Complaint, { ComplaintRow } from '../models/complaints';
 import { ComplaintQuery, ComplaintsRepository } from '../repository/complaints';
 import logger from '../utils/logger';
 import { LogLevel } from '../config/logConfig';
-import { validateRequired, validateWord, validateDate, validateInteger, validateOptional } from '../middleware/inputValidation';
+import { validateRequired, validateWord, validateDate, validateInteger, validateOptional, baseValidation } from '../middleware/inputValidation';
 import { makeComplaintView, makeComplaintArrayView } from '../projections/complaints';
 
 const all = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -52,7 +52,7 @@ const id = async (req: express.Request, res: express.Response, next: express.Nex
 const create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const complaint: ComplaintRow = {
-            Description: validateRequired(req.body.Description, validateWord),
+            Description: validateRequired(req.body.Description, baseValidation),
             DateReported: validateRequired(req.body.DateReported, validateDate),
         };
 
@@ -119,8 +119,8 @@ const filter = async (req: express.Request, res: express.Response, next: express
 };
 
 const makeQuery = (req: express.Request): ComplaintQuery => {
-    const description = validateOptional(req.query.description, validateWord);
-    const dateReported = validateOptional(req.query.dateReported, validateDate);
+    const description = validateOptional(req.query.Description, baseValidation);
+    const dateReported = validateOptional(req.query.DateReported, validateDate);
     const limit = validateOptional(req.query.limit, validateInteger);
     const skip = validateOptional(req.query.skip, validateInteger);
 
