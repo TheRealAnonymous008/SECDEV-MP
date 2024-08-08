@@ -49,4 +49,9 @@ export const ENDPOINTS = {
     deleteExpense: 'expenses/delete',
     filterExpense: 'expenses/filter',
 
+    complaints: 'complaints/all',
+    getComplaint: 'complaints/id',
+    addComplaint: 'complaints/create',
+    deleteComplaint: 'complaints/delete',
+    filterComplaint: 'complaints/filter',
 }
