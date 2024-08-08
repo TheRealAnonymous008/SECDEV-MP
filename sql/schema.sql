@@ -241,6 +241,20 @@ CREATE TABLE IF NOT EXISTS `autoworks`.`Expenses` (
 )
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table `autoworks`.`Complaints`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `autoworks`.`Complaints`;
+
+CREATE TABLE IF NOT EXISTS `autoworks`.`Complaints` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `Description` TEXT NOT NULL,
+  `DateReported` DATETIME NOT NULL,
+  PRIMARY KEY (`Id`)
+)
+ENGINE = InnoDB;
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

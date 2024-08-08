@@ -16,6 +16,7 @@ import UserProfile from "./components/profile/UserProfile";
 import { createAPIEndpoint } from "./api";
 import { ENDPOINTS } from "./api/endpoints";
 import { useAsync } from "react-async";
+import ViewComplaint from "./components/complaints/ViewComplaint";
 
 
 
@@ -99,6 +100,13 @@ export const Main = () => {
                         <Route
                             path={ROUTES.expenses }
                             element={<ViewExpenses/> }
+                        />
+                    </Route>
+
+                    <Route path={ROUTES.complaints} element={<ProtectedRoute isLoggedIn={isLoggedIn}/>}>
+                        <Route
+                            path={ROUTES.complaints }
+                            element={<ViewComplaint/> }
                         />
                     </Route>
 
