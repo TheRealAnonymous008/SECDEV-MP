@@ -5,7 +5,6 @@ import { makeOrderArrayView, makeOrderView } from '../projections/order';
 import { OrderRow } from '../models/order';
 import { queryBuilder } from '../utils/dbUtils';
 
-const ORDER_TABLE_NAME = "order";
 const all = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     OrderRespository.retrieveAll()
         .then(async (result) => {

@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const inputValidation_1 = require("../middleware/inputValidation");
 const order_1 = require("../repository/order");
 const order_2 = require("../projections/order");
-const ORDER_TABLE_NAME = "order";
 const all = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     order_1.OrderRespository.retrieveAll()
         .then((result) => __awaiter(void 0, void 0, void 0, function* () {

@@ -111,8 +111,10 @@ function validateInteger(str) {
 exports.validateInteger = validateInteger;
 function validateFloat(str) {
     str = baseValidation(str);
-    if (validator_1.default.isFloat(str)) {
-        return parseFloat(str.toString());
+    if (validateNonNegative(str) >= 0) {
+        if (validator_1.default.isFloat(str)) {
+            return parseFloat(str.toString());
+        }
     }
     throw new Error("Invalid number format.");
 }

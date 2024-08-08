@@ -12,19 +12,18 @@ export const UpdateOrder = (props : {order : Order, observer : Function}) => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
     
     useEffect(() => {
-        if (data == undefined){
-            return 
-        }
-        if (isRole("VIEW")) 
-            return;
+        if (data === undefined) return; 
+        
+        if (isRole("VIEW")) return;
+
         createAPIEndpoint(ENDPOINTS.updateOrder).post(data, {id: props.order.id})
-        .then(function (response) {
-            props.observer();
-            setIsVisible(false);
-        })
-        .catch(function (error) {
-            console.log(error);
-        })
+            .then(function (response) {
+                props.observer();
+                setIsVisible(false);
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data])
 

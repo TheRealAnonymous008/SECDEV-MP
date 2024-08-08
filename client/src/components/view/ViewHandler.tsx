@@ -24,7 +24,7 @@ export const ViewHandler = (props : {
     const [currentPage, setCurrentPage] = useState(1);
 
 
-    const appendQuery = (val : string) => {
+    const appendQuery = (val : string | number) => {
         if (query === "")
             setQuery(query + " " + val);
         else {

@@ -13,7 +13,19 @@ const ORDER_TABLE_NAME = "order";
 
 export const OrderRespository = {
     retrieveAll(limit: number = LIMIT_MAX, offset?: number): Promise<Order[]> {
-        let qv = queryBuilder.select(ORDER_TABLE_NAME);
+        let qv = queryBuilder.select("order o INNER JOIN statusenum s ON o.Status = s.Id", [
+            "o.Id", 
+            "o.Status",
+            "o.TimeIn",
+            "o.TimeOut",
+            "o.CustomerId",
+            "o.TypeId",
+            "o.VehicleId",
+            "o.EstimateNumber",
+            "o.ScopeOfWork",
+            "o.IsVerified",
+            `s.Name as "StatusName"`
+        ]);
         queryBuilder.limit(qv, limit);
         queryBuilder.skip(qv, offset);
 
@@ -24,7 +36,11 @@ export const OrderRespository = {
                 (err, res) => {
                     if (err) reject(err);
                     else {
-                        resolve(res);
+                        const ordersWithStatus = res.map(order => ({
+                            ...order,
+                            Status: order.StatusName,
+                        }));
+                        resolve(ordersWithStatus);
                     }
                 }
             );
@@ -188,7 +204,7 @@ export const OrderRespository = {
         });
     },
 
-    filter(query: any): Promise<Order[]> {
+    filter(query: OrderQuery): Promise<Order[]> {
         let qv = makeSQLQuery(query);
         return new Promise((resolve, reject) => {
             connection.execute<Order[]>(
@@ -196,7 +212,13 @@ export const OrderRespository = {
                 qv.values,
                 (err, res) => {
                     if (err) reject(err);
-                    else resolve(res);
+                    else {
+                        const ordersWithStatus = res.map(order => ({
+                            ...order,
+                            Status: order.StatusName,
+                        }));
+                        resolve(ordersWithStatus);
+                    };
                 }
             );
         });
@@ -218,18 +240,30 @@ export interface OrderQuery {
 }
 
 const makeSQLQuery = (query: OrderQuery): QueryValuePair => {
-    let qv = queryBuilder.select(ORDER_TABLE_NAME);
+    let qv = queryBuilder.select("order o INNER JOIN statusenum s ON o.Status = s.Id", [
+        "o.Id",
+        "o.Status",
+        "o.TimeIn",
+        "o.TimeOut",
+        "o.CustomerId",
+        "o.TypeId",
+        "o.VehicleId",
+        "o.EstimateNumber",
+        "o.ScopeOfWork",
+        "o.IsVerified",
+        `s.Name as "StatusName"`
+    ]);
     queryBuilder.filter(qv, {
-        Status: query.Status,
-        TimeIn: query.TimeIn,
-        TimeOut: query.TimeOut,
-        CustomerId: query.CustomerId,
-        TypeId: query.TypeId,
-        VehicleId: query.VehicleId,
-        EstimateNumber: query.EstimateNumber,
-        ScopeOfWork: query.ScopeOfWork,
-        IsVerified: query.IsVerified
-    })
+        "s.Name": query.Status,
+        "o.TimeIn": query.TimeIn,
+        "o.TimeOut": query.TimeOut,
+        "o.CustomerId": query.CustomerId,
+        "o.TypeId": query.TypeId,
+        "o.VehicleId": query.VehicleId,
+        "o.EstimateNumber": query.EstimateNumber,
+        "o.ScopeOfWork": query.ScopeOfWork,
+        "o.IsVerified": query.IsVerified
+    });
     queryBuilder.limit(qv, query.limit);
     queryBuilder.skip(qv, query.skip);
     return qv;
