@@ -113,10 +113,12 @@ export function validateInteger(str : string) {
 export function validateFloat(str : string) {
     str = baseValidation(str)
 
-    if (validator.isFloat(str) && parseFloat(str) >= 0) {
-        return parseFloat(str.toString()); 
+    if (validateNonNegative(str) >= 0) {
+        if (validator.isFloat(str)) {
+            return parseFloat(str.toString()); 
+        }
     }
-
+    
     throw new Error("Invalid number format.");
 }
 
