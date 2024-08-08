@@ -189,19 +189,48 @@ export const OrderRespository = {
     },
 
     filter(query: any): Promise<Order[]> {
-        // Placeholder for filter implementation
-        let values = [];
+        let qv = makeSQLQuery(query);
         return new Promise((resolve, reject) => {
             connection.execute<Order[]>(
-                query,
-                values,
+                qv.query,
+                qv.values,
                 (err, res) => {
                     if (err) reject(err);
-                    else {
-                        resolve(res);
-                    }
+                    else resolve(res);
                 }
             );
         });
-    }
+    },
 };
+
+export interface OrderQuery {
+    Status: string;
+    TimeIn: string;
+    TimeOut: string;
+    CustomerId: number;
+    TypeId: string;
+    VehicleId: number;
+    EstimateNumber: string;
+    ScopeOfWork: string;
+    IsVerified: boolean;
+    limit: number;
+    skip: number;
+}
+
+const makeSQLQuery = (query: OrderQuery): QueryValuePair => {
+    let qv = queryBuilder.select(ORDER_TABLE_NAME);
+    queryBuilder.filter(qv, {
+        Status: query.Status,
+        TimeIn: query.TimeIn,
+        TimeOut: query.TimeOut,
+        CustomerId: query.CustomerId,
+        TypeId: query.TypeId,
+        VehicleId: query.VehicleId,
+        EstimateNumber: query.EstimateNumber,
+        ScopeOfWork: query.ScopeOfWork,
+        IsVerified: query.IsVerified
+    })
+    queryBuilder.limit(qv, query.limit);
+    queryBuilder.skip(qv, query.skip);
+    return qv;
+}

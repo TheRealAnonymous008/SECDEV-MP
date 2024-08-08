@@ -1,9 +1,11 @@
 import express = require('express');
-import { baseValidation, validateAlphaNumeric, validateDate, validateInteger, validatePdf, validateWord, validateRequired } from '../middleware/inputValidation';
-import { OrderRespository } from '../repository/order';
+import { baseValidation, validateAlphaNumeric, validateDate, validateInteger, validatePdf, validateWord, validateRequired, validateOptional } from '../middleware/inputValidation';
+import { OrderQuery, OrderRespository } from '../repository/order';
 import { makeOrderArrayView, makeOrderView } from '../projections/order';
 import { OrderRow } from '../models/order';
+import { queryBuilder } from '../utils/dbUtils';
 
+const ORDER_TABLE_NAME = "order";
 const all = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     OrderRespository.retrieveAll()
         .then(async (result) => {
@@ -150,4 +152,51 @@ const verify = async (req: express.Request, res: express.Response,  next: expres
     }
 }
 
-export default {all, id, create, update, remove, verify};
+const filter = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const query = makeQuery(req);
+        OrderRespository.filter(query)
+            .then(async (result) => {
+                res.json({
+                    data: await makeOrderArrayView(result),
+                    count : result.length 
+                });
+                res.status(200).end();
+            })
+            .catch((err) => {
+                next(err)
+            })
+    } catch (err) {
+        next(err)
+    }
+}
+
+const makeQuery = (req: express.Request): OrderQuery => { 
+    const status = validateOptional(req.query.status, baseValidation);
+    const timeIn = validateOptional(req.query.timeIn, validateDate);
+    const timeOut = validateOptional(req.query.timeOut, validateDate);
+    const customer = validateOptional(req.query.customer, validateInteger);
+    const type = validateOptional(req.query.type, baseValidation);
+    const vehicle = validateOptional(req.query.vehicle, validateInteger);
+    const estimateNumber = validateOptional(req.query.estimateNumber, validateAlphaNumeric);
+    const scopeOfWork = validateOptional(req.query.scopeOfWork, baseValidation);
+    const isVerified = validateOptional(req.query.isVerified, validateWord);
+    const limit = validateOptional(req.query.limit, validateInteger);
+    const skip = validateOptional(req.query.skip, validateInteger);
+
+    return {
+        Status: (status) ? (status as string) : null,
+        TimeIn: (timeIn) ? (timeIn as string) : null,
+        TimeOut: (timeOut) ? (timeOut as string) : null,
+        CustomerId: (customer) ? (customer as number) : null,
+        TypeId: (type) ? (type as string) : null,
+        VehicleId: (vehicle) ? (vehicle as number) : null,
+        EstimateNumber: (estimateNumber) ? (estimateNumber as string) : null,
+        ScopeOfWork: (scopeOfWork) ? (scopeOfWork as string) : null,
+        IsVerified: (isVerified) ? (isVerified as boolean) : null,
+        limit: (limit) ? (limit as number) : null,
+        skip: (skip) ? (skip as number) : null,
+    };
+}
+
+export default {all, id, create, update, remove, verify, filter};

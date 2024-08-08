@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const inputValidation_1 = require("../middleware/inputValidation");
 const order_1 = require("../repository/order");
 const order_2 = require("../projections/order");
+const ORDER_TABLE_NAME = "order";
 const all = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     order_1.OrderRespository.retrieveAll()
         .then((result) => __awaiter(void 0, void 0, void 0, function* () {
@@ -149,4 +150,49 @@ const verify = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         next(err);
     }
 });
-exports.default = { all, id, create, update, remove, verify };
+const filter = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const query = makeQuery(req);
+        order_1.OrderRespository.filter(query)
+            .then((result) => __awaiter(void 0, void 0, void 0, function* () {
+            res.json({
+                data: yield (0, order_2.makeOrderArrayView)(result),
+                count: result.length
+            });
+            res.status(200).end();
+        }))
+            .catch((err) => {
+            next(err);
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+const makeQuery = (req) => {
+    const status = (0, inputValidation_1.validateOptional)(req.query.status, inputValidation_1.baseValidation);
+    const timeIn = (0, inputValidation_1.validateOptional)(req.query.timeIn, inputValidation_1.validateDate);
+    const timeOut = (0, inputValidation_1.validateOptional)(req.query.timeOut, inputValidation_1.validateDate);
+    const customer = (0, inputValidation_1.validateOptional)(req.query.customer, inputValidation_1.validateInteger);
+    const type = (0, inputValidation_1.validateOptional)(req.query.type, inputValidation_1.baseValidation);
+    const vehicle = (0, inputValidation_1.validateOptional)(req.query.vehicle, inputValidation_1.validateInteger);
+    const estimateNumber = (0, inputValidation_1.validateOptional)(req.query.estimateNumber, inputValidation_1.validateAlphaNumeric);
+    const scopeOfWork = (0, inputValidation_1.validateOptional)(req.query.scopeOfWork, inputValidation_1.baseValidation);
+    const isVerified = (0, inputValidation_1.validateOptional)(req.query.isVerified, inputValidation_1.validateWord);
+    const limit = (0, inputValidation_1.validateOptional)(req.query.limit, inputValidation_1.validateInteger);
+    const skip = (0, inputValidation_1.validateOptional)(req.query.skip, inputValidation_1.validateInteger);
+    return {
+        Status: (status) ? status : null,
+        TimeIn: (timeIn) ? timeIn : null,
+        TimeOut: (timeOut) ? timeOut : null,
+        CustomerId: (customer) ? customer : null,
+        TypeId: (type) ? type : null,
+        VehicleId: (vehicle) ? vehicle : null,
+        EstimateNumber: (estimateNumber) ? estimateNumber : null,
+        ScopeOfWork: (scopeOfWork) ? scopeOfWork : null,
+        IsVerified: (isVerified) ? isVerified : null,
+        limit: (limit) ? limit : null,
+        skip: (skip) ? skip : null,
+    };
+};
+exports.default = { all, id, create, update, remove, verify, filter };

@@ -16,6 +16,6 @@ router.get('/id', authValidation_1.default, (0, roleValidation_1.default)([enum_
 router.post('/create', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN, enum_1.RoleIds.VIEW_EDIT]), uploadHandler.any(), order_1.default.create);
 router.post('/update', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN, enum_1.RoleIds.VIEW_EDIT]), order_1.default.update);
 router.delete('/delete', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN, enum_1.RoleIds.VIEW_EDIT]), order_1.default.remove);
-// router.get('/filter', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW_EDIT, RoleIds.VIEW]), controller.filter);
+router.get('/filter', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN, enum_1.RoleIds.VIEW_EDIT, enum_1.RoleIds.VIEW]), order_1.default.filter);
 router.post('/verify', authValidation_1.default, (0, roleValidation_1.default)([enum_1.RoleIds.ADMIN]), order_1.default.verify);
 exports.default = router;

@@ -162,16 +162,31 @@ exports.OrderRespository = {
         });
     },
     filter(query) {
-        // Placeholder for filter implementation
-        let values = [];
+        let qv = makeSQLQuery(query);
         return new Promise((resolve, reject) => {
-            connection_1.default.execute(query, values, (err, res) => {
+            connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
-                else {
+                else
                     resolve(res);
-                }
             });
         });
-    }
+    },
+};
+const makeSQLQuery = (query) => {
+    let qv = dbUtils_1.queryBuilder.select(ORDER_TABLE_NAME);
+    dbUtils_1.queryBuilder.filter(qv, {
+        Status: query.Status,
+        TimeIn: query.TimeIn,
+        TimeOut: query.TimeOut,
+        CustomerId: query.CustomerId,
+        TypeId: query.TypeId,
+        VehicleId: query.VehicleId,
+        EstimateNumber: query.EstimateNumber,
+        ScopeOfWork: query.ScopeOfWork,
+        IsVerified: query.IsVerified
+    });
+    dbUtils_1.queryBuilder.limit(qv, query.limit);
+    dbUtils_1.queryBuilder.skip(qv, query.skip);
+    return qv;
 };
