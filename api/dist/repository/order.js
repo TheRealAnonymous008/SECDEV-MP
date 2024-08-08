@@ -21,7 +21,7 @@ const fileUtils_1 = require("../utils/fileUtils");
 const ORDER_TABLE_NAME = "order";
 exports.OrderRespository = {
     retrieveAll(limit = limiterConfig_1.LIMIT_MAX, offset) {
-        let qv = dbUtils_1.queryBuilder.select("order o INNER JOIN statusenum s ON o.Status = s.Id", [
+        let qv = dbUtils_1.queryBuilder.select("order o INNER JOIN statusenum s ON o.Status = s.Id INNER JOIN typeenum t ON o.TypeId = t.Id", [
             "o.Id",
             "o.Status",
             "o.TimeIn",
@@ -32,7 +32,8 @@ exports.OrderRespository = {
             "o.EstimateNumber",
             "o.ScopeOfWork",
             "o.IsVerified",
-            `s.Name as "StatusName"`
+            `s.Name as "StatusName"`,
+            `t.Name as "TypeName"`
         ]);
         dbUtils_1.queryBuilder.limit(qv, limit);
         dbUtils_1.queryBuilder.skip(qv, offset);
@@ -41,21 +42,35 @@ exports.OrderRespository = {
                 if (err)
                     reject(err);
                 else {
-                    const ordersWithStatus = res.map(order => (Object.assign(Object.assign({}, order), { Status: order.StatusName })));
+                    const ordersWithStatus = res.map(order => (Object.assign(Object.assign({}, order), { Status: order.StatusName, TypeId: order.TypeName })));
                     resolve(ordersWithStatus);
                 }
             });
         });
     },
     retrieveById(id) {
-        let qv = dbUtils_1.queryBuilder.select(ORDER_TABLE_NAME);
+        let qv = dbUtils_1.queryBuilder.select("order o INNER JOIN statusenum s ON o.Status = s.Id INNER JOIN typeenum t ON o.TypeId = t.Id", [
+            "o.Id",
+            "o.Status",
+            "o.TimeIn",
+            "o.TimeOut",
+            "o.CustomerId",
+            "o.TypeId",
+            "o.VehicleId",
+            "o.EstimateNumber",
+            "o.ScopeOfWork",
+            "o.IsVerified",
+            `s.Name as "StatusName"`,
+            `t.Name as "TypeName"`
+        ]);
         dbUtils_1.queryBuilder.where(qv, { Id: id });
         return new Promise((resolve, reject) => {
             connection_1.default.execute(qv.query, qv.values, (err, res) => {
                 if (err)
                     reject(err);
                 else {
-                    resolve(res[0]);
+                    const order = res[0];
+                    resolve(Object.assign(Object.assign({}, order), { Status: order.StatusName, TypeId: order.TypeName }));
                 }
             });
         });
@@ -181,8 +196,8 @@ exports.OrderRespository = {
                 if (err)
                     reject(err);
                 else {
-                    const ordersWithStatus = res.map(order => (Object.assign(Object.assign({}, order), { Status: order.StatusName })));
-                    resolve(ordersWithStatus);
+                    const ordersWithEnums = res.map(order => (Object.assign(Object.assign({}, order), { Status: order.StatusName, TypeId: order.TypeName })));
+                    resolve(ordersWithEnums);
                 }
                 ;
             });
@@ -190,7 +205,7 @@ exports.OrderRespository = {
     },
 };
 const makeSQLQuery = (query) => {
-    let qv = dbUtils_1.queryBuilder.select("order o INNER JOIN statusenum s ON o.Status = s.Id", [
+    let qv = dbUtils_1.queryBuilder.select("order o INNER JOIN statusenum s ON o.Status = s.Id INNER JOIN typeenum t ON o.TypeId = t.Id", [
         "o.Id",
         "o.Status",
         "o.TimeIn",
@@ -201,20 +216,21 @@ const makeSQLQuery = (query) => {
         "o.EstimateNumber",
         "o.ScopeOfWork",
         "o.IsVerified",
-        `s.Name as "StatusName"`
+        `s.Name as "StatusName"`,
+        `t.Name as "TypeName"`
     ]);
     dbUtils_1.queryBuilder.filter(qv, {
         "s.Name": query.Status,
+        "t.Name": query.TypeId,
         "o.TimeIn": query.TimeIn,
         "o.TimeOut": query.TimeOut,
         "o.CustomerId": query.CustomerId,
-        "o.TypeId": query.TypeId,
         "o.VehicleId": query.VehicleId,
         "o.EstimateNumber": query.EstimateNumber,
         "o.ScopeOfWork": query.ScopeOfWork,
         "o.IsVerified": query.IsVerified
     });
-    dbUtils_1.queryBuilder.limit(qv, query.limit);
+    dbUtils_1.queryBuilder.limit(qv, query.limit || limiterConfig_1.LIMIT_MAX);
     dbUtils_1.queryBuilder.skip(qv, query.skip);
     return qv;
 };
