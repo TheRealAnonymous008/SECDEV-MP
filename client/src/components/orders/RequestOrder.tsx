@@ -217,11 +217,6 @@ export const RequestOrder = (props : {setResponse : Function, default? : OrderRe
                 }}
                 errors={errors} />
                 <br />
-                
-                {/* Deactivating expenses for now */}
-                {/* <ExpenseSubform setData={(expenses: Expense[]) => {
-                    setValue("expenses", expenses)
-                }} default={watch("expenses")}/> */}
 
                 <br />
                 <br />

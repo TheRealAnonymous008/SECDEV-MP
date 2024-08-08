@@ -21,9 +21,6 @@ const searchOptions =[
         {name: "WALK IN",      description:"The order is for a walk-in customer", tag: "type: WALK IN"},
         {name: "FLEET",      description:"The order is for a fleet of vehicles", tag: "type: FLEET"},
         {name: "INSURANCE ",      description:"The order for a vehicle with insurance", tag: "type: INSURANCE"},
-
-        {name: "customer", description: "The customer corresponding to the order"},
-        {name: "vehicle", description: "The vehicle corresponding to the order"},
 ]
 
 

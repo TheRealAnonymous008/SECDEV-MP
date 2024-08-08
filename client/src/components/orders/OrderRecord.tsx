@@ -67,31 +67,8 @@ export const OrderRecord = (props : { order: Order, rerenderFlag: Function}) => 
                 <td> {order?.type} </td>
                 <td> {order?.vehicle?.licensePlate }</td>
 
-                {/* <td>
-                    <InvoiceDisplay invoice={order?.invoice}/>
-                </td> */}
-
                 <td> {order?.estimateNumber}</td>
                 <td> {order?.scopeOfWork}</td>
-                
-                {/* <td>
-                    <p> 
-                        {"Total Expenses: " } 
-                     
-                    <>
-                    {
-                        order?.expenses?.reduce(
-                            (x, y) => {
-                                return x + y.amount.valueOf();
-                            }, 0).toFixed(2)
-                    }
-                    </>
-                    </p>
-                    <ModalWrapper front={"..."} isVisible={isVisible} setIsVisible={setIsVisible}>
-                        <ExpensesDisplay expenses={order?.expenses}/>
-                    </ModalWrapper> 
-                       
-                </td> */}
 
                 <td hidden={isRole("VIEW")}> <UpdateOrder order={order} observer={onUpdate}/></td>
                 <td hidden={isRole("VIEW")}> <DeleteOrder order={order} observer={onDelete}/></td>
