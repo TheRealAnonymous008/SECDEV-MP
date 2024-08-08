@@ -100,4 +100,44 @@ export const ExpensesRepository = {
             );
         });
     },
+
+    filter(query: ExpenseQuery): Promise<Expense[]> {
+        let qv = makeSQLQuery(query);
+        return new Promise((resolve, reject) => {
+            connection.execute<Expense[]>(
+                qv.query,
+                qv.values,
+                (err, res) => {
+                    if (err) reject(err);
+                    else resolve(res);
+                }
+            );
+        });
+    },
+};
+
+export interface ExpenseQuery {
+    InvoiceAmount: number;
+    InvoiceDeductible: number;
+    AgentFirstName: string;
+    AgentLastName: string;
+    DatePaid: string;
+    AgentCommission: number;
+    limit: number;
+    skip: number;
+}
+
+export const makeSQLQuery = (query: ExpenseQuery): QueryValuePair => {
+    let qv = queryBuilder.select(EXPENSES_TABLE_NAME);
+    queryBuilder.filter(qv, {
+        InvoiceAmount: query.InvoiceAmount,
+        InvoiceDeductible: query.InvoiceDeductible,
+        AgentFirstName: query.AgentFirstName,
+        AgentLastName: query.AgentLastName,
+        DatePaid: query.DatePaid,
+        AgentCommission: query.AgentCommission
+    })
+    queryBuilder.limit(qv, query.limit);
+    queryBuilder.skip(qv, query.skip);
+    return qv;
 };

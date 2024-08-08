@@ -162,13 +162,13 @@ const filter = async (req: express.Request, res: express.Response, next: express
 }
 
 const makeQuery = (req : express.Request) : UserQuery => {
-    const name = validateRequired(req.query.name, baseValidation)
-    const username = validateRequired(req.query.username, baseValidation)
-    const email = validateRequired(req.query.email, baseValidation)
-    const mobileNumber = validateRequired(req.query.mobileNumber, baseValidation)
-    const role = validateRequired(req.query.role, baseValidation)
-    const limit = validateRequired(req.query.limit, validateLimit)
-    const skip = validateRequired(req.query.skip, baseValidation)
+    const name = validateOptional(req.query.name, baseValidation)
+    const username = validateOptional(req.query.username, baseValidation)
+    const email = validateOptional(req.query.email, baseValidation)
+    const mobileNumber = validateOptional(req.query.mobileNumber, baseValidation)
+    const role = validateOptional(req.query.role, baseValidation)
+    const limit = validateOptional(req.query.limit, validateLimit)
+    const skip = validateOptional(req.query.skip, baseValidation)
 
     return {
         name: (name) ? (name as string) : null,

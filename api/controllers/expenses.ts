@@ -1,6 +1,6 @@
 import express = require('express');
 import Expense, { ExpenseRow } from '../models/expenses';
-import { ExpensesRepository } from '../repository/expenses';
+import { ExpenseQuery, ExpensesRepository } from '../repository/expenses';
 import logger from '../utils/logger';
 import { LogLevel } from '../config/logConfig';
 import { validateRequired, validateInteger, validateDate, validateOptional, validateFloat, validateName } from '../middleware/inputValidation';
@@ -10,7 +10,7 @@ const all = async (req: express.Request, res: express.Response, next: express.Ne
     try {
         ExpensesRepository.retrieveAll()
             .then(async (result) => {
-                const data =  await makeExpenseArrayView(result).catch((err) => {next(err)});
+                const data =  await makeExpenseArrayView(result);
                 res.json({
                     data: data,
                     count : result.length 
@@ -131,15 +131,47 @@ const remove = async (req: express.Request, res: express.Response, next: express
     }
 };
 
-// const filter = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-//     try {
-//         const expenses = await ExpensesRepository.filter(query);
-//         res.json({ data: expenses, count: expenses.length });
-//         res.status(200).end();
-//     } catch (err) {
-//         logger.log(LogLevel.ERRORS, `Error filtering expenses: ${err.message}`);
-//         next(err);
-//     }
-// };
+const filter = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const query = makeQuery(req);
+        ExpensesRepository.filter(query)
+            .then(async (result) => {
+                res.json({
+                    data: await makeExpenseArrayView(result),
+                    count : result.length 
+                });
+                res.status(200).end();
+            })
+            .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error filtering expenses: ${err.message}`);
+                next(err);
+            });
+    } catch (err) {
+        logger.log(LogLevel.ERRORS, `Error filtering expenses: ${err.message}`);
+        next(err);
+    }
+};
 
-export default { all, id, create, update, remove };
+const makeQuery = (req: express.Request): ExpenseQuery => {
+    const invoiceAmount = validateOptional(req.query.InvoiceAmount, validateFloat);
+    const invoiceDeductible = validateOptional(req.query.InvoiceDeductible, validateFloat);
+    const agentFirstName = validateOptional(req.query.AgentFirstName, validateName);
+    const agentLastName = validateOptional(req.query.AgentLastName, validateName);
+    const datePaid = validateOptional(req.query.DatePaid, validateDate);
+    const agentCommission = validateOptional(req.query.AgentCommission, validateFloat);
+    const limit = validateOptional(req.query.limit, validateInteger);
+    const skip = validateOptional(req.query.skip, validateInteger);
+
+    return {
+        InvoiceAmount: (invoiceAmount) ? (invoiceAmount as number) : null,
+        InvoiceDeductible: (invoiceDeductible) ? (invoiceDeductible as number) : null,
+        AgentFirstName: (agentFirstName) ? (agentFirstName as string) : null,
+        AgentLastName: (agentLastName) ? (agentLastName as string) : null,
+        DatePaid: (datePaid) ? (datePaid as string) : null,
+        AgentCommission: (agentCommission) ? (agentCommission as number) : null,
+        limit: (limit) ? (limit as number) : null,
+        skip: (skip) ? (skip as number) : null,
+    };
+}
+
+export default { all, id, create, update, remove, filter };

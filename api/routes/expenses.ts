@@ -11,7 +11,6 @@ router.get('/id', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW_EDIT,
 router.post('/create', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW_EDIT]), expensesController.create);
 router.post('/update', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW_EDIT]), expensesController.update);
 router.delete('/delete', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW_EDIT]), expensesController.remove);
- 
-// router.get('/filter', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW_EDIT, RoleIds.VIEW]), expensesController.filter);
+ router.get('/filter', validateToken, validateRole([RoleIds.ADMIN, RoleIds.VIEW_EDIT, RoleIds.VIEW]), expensesController.filter);
 
 export default router;
