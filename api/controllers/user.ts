@@ -5,6 +5,8 @@ import { UserQuery, UserRepository } from '../repository/user';
 import { validateName, validateUsername, validateMobileNumber, validateEmail, validateInteger, validateImage, validateRole, baseValidation, validateLimit, validateRequired, validateOptional } from '../middleware/inputValidation';
 import Bcrypt = require('bcryptjs');
 import { getRandom } from '../utils/cryptoUtils';
+import logger from '../utils/logger';
+import { LogLevel } from '../config/logConfig';
 
 const all = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     UserRepository.retrieveAll()
@@ -13,9 +15,11 @@ const all = (req: express.Request, res: express.Response, next: express.NextFunc
                 data: makeUserArrayView(result),
                 count : result.length 
             });
+            logger.log(LogLevel.AUDIT, `Retrieved all users`);
             res.status(200).end();
         })
         .catch((err) => {
+            logger.log(LogLevel.ERRORS, `Error retrieving all users: ${err.message}`);
             next(err)
         })
 }

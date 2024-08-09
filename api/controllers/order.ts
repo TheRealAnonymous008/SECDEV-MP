@@ -18,6 +18,7 @@ const all = async (req: express.Request, res: express.Response, next: express.Ne
             res.status(200).end();
         })
         .catch((err) => {
+            logger.log(LogLevel.ERRORS, `Error retrieving all orders: ${err.message}`);
             next(err)
         })
 }
@@ -35,9 +36,11 @@ const id = async (req: express.Request, res: express.Response, next: express.Nex
                 res.status(200).end();
             })
             .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error retrieving order by id ${id}: ${err.message}`);
                 next(err)
             })
     } catch (error) {
+        logger.log(LogLevel.ERRORS, `Validation error in id function: ${error.message}`);
         next(error)
     }
 }
@@ -60,21 +63,26 @@ const create = async (req: express.Request, res: express.Response, next: express
         };
 
         if (order.TimeIn > order.TimeOut){
+            logger.log(LogLevel.ERRORS, "Invalid time in and time out entered");
             throw new Error("Invalid Time In and Time Out")
         }
 
         OrderRespository.insert(order)
             .then(async (result) => {
                 if (result == undefined){
+                    logger.log(LogLevel.ERRORS, `Failed to create order with params ${order}`);
                     throw new Error(`Failed to create order with params ${order}`)
                 }
+                logger.log(LogLevel.AUDIT, `Order created: ${JSON.stringify({...order, Id: result})}`);
                 res.json(await makeOrderView({...order, Id: result}));
                 res.status(200).end();
             })
             .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error creating order: ${err.message}`);
                 next(err)
             })
     } catch (err) {
+        logger.log(LogLevel.ERRORS, `Error in create function: ${err.message}`);
         next(err)
     }
 }
@@ -94,6 +102,7 @@ const update = async (req: express.Request, res: express.Response,  next: expres
         };
 
         if (order.TimeIn > order.TimeOut){
+            logger.log(LogLevel.ERRORS, "Invalid time in and time out entered");
             throw new Error("Invalid Time In and Time Out")
         }
         
@@ -102,15 +111,18 @@ const update = async (req: express.Request, res: express.Response,  next: expres
         OrderRespository.update(id, order)
             .then((result) => {
                 if (result == undefined){
+                    logger.log(LogLevel.ERRORS, `Failed to update order with id ${id}`);
                     throw new Error(`Failed to update order with id ${id}`)
                 }
                 res.json(makeOrderView({...order, Id: result}));
                 res.status(200).end();
             })
             .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error updating order with id ${id}: ${err.message}`);
                 next(err)
             })
     } catch (err) {
+        logger.log(LogLevel.ERRORS, `Error in update function: ${err.message}`);
         next(err)
     }
 }
@@ -122,14 +134,17 @@ const remove = async (req: express.Request, res: express.Response, next: express
         OrderRespository.delete(id)
             .then((result) => {
                 if (result == undefined){
+                    logger.log(LogLevel.ERRORS, `Failed to delete order with id ${id}`);
                     throw new Error(`Failed to delete order with id ${id}`)
                 }
                 res.status(200).end();
             })
             .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error deleting order with id ${id}: ${err.message}`);
                 next(err)
             })
     } catch (err) {
+        logger.log(LogLevel.ERRORS, `Error in remove function: ${err.message}`);
         next(err)
     }
 }
@@ -141,15 +156,17 @@ const verify = async (req: express.Request, res: express.Response,  next: expres
         OrderRespository.verify(id)
             .then((result) => {
                 if (result == undefined){
-                    throw new Error(`Failed to update order with id ${id}`)
                     logger.log(LogLevel.ERRORS, `Failed to update order with id ${id}`);
+                    throw new Error(`Failed to update order with id ${id}`);
                 }
                 res.status(200).end();
             })
             .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error updating order with id ${id}: ${err.message}`);
                 next(err)
             })
     } catch (err) {
+        logger.log(LogLevel.ERRORS, `Error in verify function: ${err.message}`);
         next(err)
     }
 }
@@ -166,9 +183,11 @@ const filter = async (req: express.Request, res: express.Response, next: express
                 res.status(200).end();
             })
             .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error filtering orders: ${err.message}`);
                 next(err)
             })
     } catch (err) {
+        logger.log(LogLevel.ERRORS, `Error in filter function: ${err.message}`);
         next(err)
     }
 }

@@ -15,6 +15,7 @@ const all = async (req: express.Request, res: express.Response, next: express.Ne
                     data: data,
                     count : result.length 
                 });
+                logger.log(LogLevel.AUDIT, `Retrieved all expenses`);
                 res.status(200).end();
             })
             .catch((err) => {
@@ -33,10 +34,12 @@ const id = async (req: express.Request, res: express.Response, next: express.Nex
         ExpensesRepository.retrieveById(id)
             .then(async (result) => {
                 if (result.length == 0) {
+                    logger.log(LogLevel.DEBUG, `Expense not found: ${id}`);
                     res.status(404).end();
                     return;
                 }
                 res.json(await makeExpenseView(result));
+                logger.log(LogLevel.AUDIT, `Expense retrieved: ${id}`);
                 res.status(200).end();
             })
             .catch((err) => {
@@ -65,8 +68,8 @@ const create = async (req: express.Request, res: express.Response, next: express
                 if (result = undefined) {
                     throw new Error(`Failed to create order with params ${expense}`)
                 }
-                
                 res.json(await makeExpenseView({...expense, Id: result}));
+                logger.log(LogLevel.AUDIT, `Expense created: ${result}`);
                 res.status(200).end();
             })
             .catch((err) => {
@@ -98,9 +101,11 @@ const update = async (req: express.Request, res: express.Response, next: express
                     throw new Error(`Failed to update expense with id ${id}`)
                 }
                 res.json(await makeExpenseView({...expense, Id: result}));
+                logger.log(LogLevel.AUDIT, `Expense updated: ${result}`);
                 res.status(200).end();
             })
             .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error updating expense: ${err.message}`);
                 next(err)
             });
     } catch (err) {
@@ -140,6 +145,7 @@ const filter = async (req: express.Request, res: express.Response, next: express
                     data: await makeExpenseArrayView(result),
                     count : result.length 
                 });
+                logger.log(LogLevel.AUDIT, `Filtered expenses`);
                 res.status(200).end();
             })
             .catch((err) => {

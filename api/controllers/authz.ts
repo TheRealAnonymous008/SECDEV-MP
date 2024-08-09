@@ -32,8 +32,8 @@ const register = (req: express.Request, res: express.Response, next: express.Nex
                 if (result === undefined) {
                     throw new Error(`Failed to register user ${user.Username}`);
                 }
-                logger.log(LogLevel.AUDIT, `User registered: ${user.Username}`);
                 res.status(200).end();
+                logger.log(LogLevel.AUDIT, `User registered: ${user.Username}`);
             })
             .catch((err) => {
                 logger.log(LogLevel.ERRORS, `Error registering user: ${err.message}`);
