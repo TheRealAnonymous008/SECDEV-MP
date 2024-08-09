@@ -108,7 +108,6 @@ const remove = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
 const filter = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const query = makeQuery(req);
-        console.log("QUERY:", query);
         complaints_1.ComplaintsRepository.filter(query)
             .then((result) => __awaiter(void 0, void 0, void 0, function* () {
             res.json({

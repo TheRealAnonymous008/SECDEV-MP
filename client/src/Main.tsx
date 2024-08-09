@@ -43,12 +43,10 @@ export const Main = () => {
                 else {
                     setIsLoggedIn(false)
                     setIsAdmin(false)
-                    console.log("This ran")
                     navigate(ROUTES.login)
                 }
             })
             .catch((err) => {
-                console.log(err)
                 setIsLoggedIn(false)
                 setIsAdmin(false)
                 navigate(ROUTES.login)

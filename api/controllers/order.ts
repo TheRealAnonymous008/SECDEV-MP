@@ -4,6 +4,8 @@ import { OrderQuery, OrderRespository } from '../repository/order';
 import { makeOrderArrayView, makeOrderView } from '../projections/order';
 import { OrderRow } from '../models/order';
 import { queryBuilder } from '../utils/dbUtils';
+import logger from '../utils/logger';
+import { LogLevel } from '../config/logConfig';
 
 const all = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     OrderRespository.retrieveAll()
@@ -140,6 +142,7 @@ const verify = async (req: express.Request, res: express.Response,  next: expres
             .then((result) => {
                 if (result == undefined){
                     throw new Error(`Failed to update order with id ${id}`)
+                    logger.log(LogLevel.ERRORS, `Failed to update order with id ${id}`);
                 }
                 res.status(200).end();
             })

@@ -7,16 +7,17 @@ const logConfig_1 = require("../config/logConfig");
 const winston_1 = __importDefault(require("winston"));
 const os_1 = __importDefault(require("os"));
 const hostname = os_1.default.hostname(); // Get the system hostname
+const pid = process.pid; // Get the process ID
 const logger = winston_1.default.createLogger({
     level: 'debug',
     format: winston_1.default.format.combine(winston_1.default.format.timestamp({ format: 'YYYY-MM-DDTHH:mm:ss.SSSZ' }), // RFC 5424 timestamp format
     winston_1.default.format.printf(({ timestamp, level, message }) => {
-        return `<134>1 ${timestamp} ${hostname} AUTOWORKS 12345 - - [${level.toUpperCase()}] ${message}`;
+        return `<134>1 ${timestamp} ${hostname} AUTOWORKS ${pid} - - [${level.toUpperCase()}] ${message}`;
     })),
     transports: [
         new winston_1.default.transports.Console({
             format: winston_1.default.format.combine(winston_1.default.format.colorize(), winston_1.default.format.printf(({ timestamp, level, message }) => {
-                return `<134>1 ${timestamp} ${hostname} AUTOWORKS 12345 - - [${level.toUpperCase()}] ${message}`;
+                return `<134>1 ${timestamp} ${hostname} AUTOWORKS ${pid} - - [${level.toUpperCase()}] ${message}`;
             }))
         }),
         new winston_1.default.transports.File({ filename: 'logs/error.log', level: 'error' }),

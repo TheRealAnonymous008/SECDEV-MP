@@ -14,11 +14,13 @@ export const Logout = (props: {setIsLoggedIn : Function}) => {
     }, [props.setIsLoggedIn])
 
     createAPIEndpoint(ENDPOINTS.logout).post({})
-    .then((response) => {
-        
+    .then((response) => { 
+        props.setIsLoggedIn(false);
+        if (response.status === 200) {
+            navigation(ROUTES.login);
+        }
     })
     .then(() => {
-        props.setIsLoggedIn(false);
     })
     .catch((err) => {
         console.log(err)

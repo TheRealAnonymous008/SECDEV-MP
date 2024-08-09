@@ -3,13 +3,14 @@ import winston from 'winston';
 import os from 'os';
 
 const hostname = os.hostname(); // Get the system hostname
+const pid = process.pid; // Get the process ID
 
 const logger = winston.createLogger({
   level: 'debug', // Default level (lowest)
   format: winston.format.combine(
     winston.format.timestamp({ format: 'YYYY-MM-DDTHH:mm:ss.SSSZ' }), // RFC 5424 timestamp format
     winston.format.printf(({ timestamp, level, message }) => {
-      return `<134>1 ${timestamp} ${hostname} AUTOWORKS 12345 - - [${level.toUpperCase()}] ${message}`;
+      return `<134>1 ${timestamp} ${hostname} AUTOWORKS ${pid} - - [${level.toUpperCase()}] ${message}`;
     })
   ),
   transports: [
@@ -17,7 +18,7 @@ const logger = winston.createLogger({
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.printf(({ timestamp, level, message }) => {
-          return `<134>1 ${timestamp} ${hostname} AUTOWORKS 12345 - - [${level.toUpperCase()}] ${message}`;
+          return `<134>1 ${timestamp} ${hostname} AUTOWORKS ${pid} - - [${level.toUpperCase()}] ${message}`;
         })
       )
     }),

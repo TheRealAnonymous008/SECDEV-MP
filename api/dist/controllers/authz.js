@@ -159,7 +159,7 @@ const logout = (req, res, next) => {
             res.clearCookie("jwt")
                 .clearCookie("jwtacc")
                 .clearCookie("csrf")
-                .end();
+                .status(200).end();
             logger_1.default.log(logConfig_1.LogLevel.AUDIT, `User logged out: ${sessionId}`);
         })
             .catch((err) => {
