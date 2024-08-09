@@ -8,12 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = require("../projections/user");
 const user_2 = require("../repository/user");
 const inputValidation_1 = require("../middleware/inputValidation");
 const Bcrypt = require("bcryptjs");
 const cryptoUtils_1 = require("../utils/cryptoUtils");
+const logger_1 = __importDefault(require("../utils/logger"));
+const logConfig_1 = require("../config/logConfig");
 const all = (req, res, next) => {
     user_2.UserRepository.retrieveAll()
         .then((result) => {
@@ -21,9 +26,11 @@ const all = (req, res, next) => {
             data: (0, user_1.makeUserArrayView)(result),
             count: result.length
         });
+        logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Retrieved all users`);
         res.status(200).end();
     })
         .catch((err) => {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error retrieving all users: ${err.message}`);
         next(err);
     });
 };

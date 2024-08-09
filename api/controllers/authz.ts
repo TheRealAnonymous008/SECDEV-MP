@@ -32,8 +32,8 @@ const register = (req: express.Request, res: express.Response, next: express.Nex
                 if (result === undefined) {
                     throw new Error(`Failed to register user ${user.Username}`);
                 }
-                logger.log(LogLevel.AUDIT, `User registered: ${user.Username}`);
                 res.status(200).end();
+                logger.log(LogLevel.AUDIT, `User registered: ${user.Username}`);
             })
             .catch((err) => {
                 logger.log(LogLevel.ERRORS, `Error registering user: ${err.message}`);
@@ -70,19 +70,17 @@ const login = (req: express.Request, res: express.Response, next: express.NextFu
                                         error: err,
                                     });
                                     next(err);
-                                } else if (token) {
-                                    if (refreshToken) {
-                                        res.cookie('jwt', refreshToken, COOKIE_SETTINGS);
-                                        res.cookie('jwtacc', token, COOKIE_SETTINGS);
-                                        res.cookie('csrf', data.csrf, COOKIE_SETTINGS);
-                                        logger.log(LogLevel.AUDIT, `User logged in: ${username}`);
-                                        res.json({
-                                            auth: true,
-                                            message: "Authenticated",
-                                            token: token,
-                                            success: true,
-                                        }).status(200).end();
-                                    }
+                                } else if (token && refreshToken) {
+                                    res.cookie('jwt', refreshToken, COOKIE_SETTINGS);
+                                    res.cookie('jwtacc', token, COOKIE_SETTINGS);
+                                    res.cookie('csrf', data.csrf, COOKIE_SETTINGS);
+                                    logger.log(LogLevel.AUDIT, `User logged in: ${username}`);
+                                    res.json({
+                                        auth: true,
+                                        message: "Authenticated",
+                                        token: token,
+                                        success: true,
+                                    }).status(200).end();
                                 }
                             });
                         } else if (error) {
@@ -121,11 +119,7 @@ const handshake = (req: express.Request, res: express.Response, next: express.Ne
 
         UserRepository.getUserFromSession(sessionId)
             .then((value) => {
-                if (value) {
-                    res.json(value).end();
-                } else {
-                    res.json(undefined).end();
-                }
+                res.json(value || undefined).end();
             })
             .catch((err) => {
                 logger.log(LogLevel.ERRORS, `Error in handshake function for session: ${sessionId}, ${err.message}`);

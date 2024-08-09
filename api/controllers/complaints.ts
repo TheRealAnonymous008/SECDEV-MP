@@ -15,6 +15,7 @@ const all = async (req: express.Request, res: express.Response, next: express.Ne
                     data: data,
                     count: result.length
                 });
+                logger.log(LogLevel.AUDIT, `Retrieved all complaints`);
                 res.status(200).end();
             })
             .catch((err) => {
@@ -33,10 +34,12 @@ const id = async (req: express.Request, res: express.Response, next: express.Nex
         ComplaintsRepository.retrieveById(id)
             .then(async (result) => {
                 if (result === undefined) {
+                    logger.log(LogLevel.DEBUG, `Complaint not found: ${id}`);
                     res.status(404).end();
                     return;
                 }
                 res.json(await makeComplaintView(result));
+                logger.log(LogLevel.AUDIT, `Complaint retrieved: ${id}`);
                 res.status(200).end();
             })
             .catch((err) => {
@@ -59,10 +62,11 @@ const create = async (req: express.Request, res: express.Response, next: express
         ComplaintsRepository.insert(complaint)
             .then(async (result) => {
                 if (result === undefined) {
+                    logger.log(LogLevel.ERRORS, `Failed to create complaint with params ${complaint}`);
                     throw new Error(`Failed to create complaint with params ${complaint}`);
                 }
-
                 res.json(await makeComplaintView({ ...complaint, Id: result }));
+                logger.log(LogLevel.AUDIT, `Complaint created: ${result}`);
                 res.status(200).end();
             })
             .catch((err) => {
@@ -106,6 +110,7 @@ const filter = async (req: express.Request, res: express.Response, next: express
                     data: await makeComplaintArrayView(result),
                     count: result.length
                 });
+                logger.log(LogLevel.AUDIT, `Filtered complaints`);
                 res.status(200).end();
             })
             .catch((err) => {

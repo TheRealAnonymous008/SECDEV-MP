@@ -12,6 +12,7 @@ const getAllRoles = (req, res, next) => {
     enums_1.RoleEnumRepository.retrieveAll()
         .then((result) => {
         res.json((0, enums_2.getEnumNames)(result));
+        logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Retrieved all roles`);
         res.status(200).end();
     })
         .catch((err) => {
@@ -25,10 +26,12 @@ const getRoleByName = (req, res, next) => {
         enums_1.RoleEnumRepository.retrieveByName(name)
             .then((result) => {
             if (!result) {
+                logger_1.default.log(logConfig_1.LogLevel.DEBUG, `Role not found: ${name}`);
                 res.status(404).end();
                 return;
             }
             res.json(result);
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Role retrieved: ${name}`);
             res.status(200).end();
         })
             .catch((err) => {
@@ -45,6 +48,7 @@ const getAllStatuses = (req, res, next) => {
     enums_1.StatusEnumRepository.retrieveAll()
         .then((result) => {
         res.json((0, enums_2.getEnumNames)(result));
+        logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Retrieved all statuses`);
         res.status(200).end();
     })
         .catch((err) => {
@@ -58,10 +62,12 @@ const getStatusByName = (req, res, next) => {
         enums_1.StatusEnumRepository.retrieveByName(name)
             .then((result) => {
             if (!result) {
+                logger_1.default.log(logConfig_1.LogLevel.DEBUG, `Status not found: ${name}`);
                 res.status(404).end();
                 return;
             }
             res.json(result);
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Status retrieved: ${name}`);
             res.status(200).end();
         })
             .catch((err) => {
@@ -78,6 +84,7 @@ const getAllTypes = (req, res, next) => {
     enums_1.TypeEnumRepository.retrieveAll()
         .then((result) => {
         res.json((0, enums_2.getEnumNames)(result));
+        logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Retrieved all types`);
         res.status(200).end();
     })
         .catch((err) => {
@@ -91,10 +98,12 @@ const getTypeByName = (req, res, next) => {
         enums_1.TypeEnumRepository.retrieveByName(name)
             .then((result) => {
             if (!result) {
+                logger_1.default.log(logConfig_1.LogLevel.DEBUG, `Type not found: ${name}`);
                 res.status(404).end();
                 return;
             }
             res.json(result);
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Type retrieved: ${name}`);
             res.status(200).end();
         })
             .catch((err) => {

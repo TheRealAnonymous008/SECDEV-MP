@@ -5,6 +5,9 @@ import { UserQuery, UserRepository } from '../repository/user';
 import { validateName, validateUsername, validateMobileNumber, validateEmail, validateInteger, validateImage, validateRole, baseValidation, validateLimit, validateRequired, validateOptional } from '../middleware/inputValidation';
 import Bcrypt = require('bcryptjs');
 import { getRandom } from '../utils/cryptoUtils';
+import logger from '../utils/logger';
+import { LogLevel } from '../config/logConfig';
+import { log } from 'console';
 
 const all = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     UserRepository.retrieveAll()
@@ -13,9 +16,11 @@ const all = (req: express.Request, res: express.Response, next: express.NextFunc
                 data: makeUserArrayView(result),
                 count : result.length 
             });
+            logger.log(LogLevel.AUDIT, `Retrieved all users`);
             res.status(200).end();
         })
         .catch((err) => {
+            logger.log(LogLevel.ERRORS, `Error retrieving all users: ${err.message}`);
             next(err)
         })
 }
@@ -27,15 +32,19 @@ const id = (req: express.Request, res: express.Response, next: express.NextFunct
             .then((result) => {
                 if (result.length == 0){
                     res.status(404).end();
+                    logger.log(LogLevel.DEBUG, `User not found: ${id}`);
                     return
                 }
                 res.json(makeUserView(result));
                 res.status(200).end();
+                logger.log(LogLevel.AUDIT, `User retrieved: ${id}`);
             })
             .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error retrieving user by id: ${err.message}`);
                 next(err)
             })
     } catch (error) {
+        logger.log(LogLevel.ERRORS, `Error retrieving user by id: ${error.message}`);
         next(error)
     }
 }
@@ -60,15 +69,19 @@ const create = (req : express.Request, res : express.Response, next: express.Nex
         UserRepository.register(user)
             .then((result) => {
                 if (result == undefined){
+                    logger.log(LogLevel.ERRORS, `Failed to register user ${user.Username}`)
                     throw new Error(`Failed to register user ${user.Username}`)
                 }
                 res.status(200).end();
+                logger.log(LogLevel.AUDIT, `User registered: ${user.Username}`)
             })
             .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error registering user: ${err.message}`)
                 next(err)
             })
     }
     catch (err) {
+        logger.log(LogLevel.ERRORS, `Error in register function: ${err.message}`)
         next(err)
     }
 
@@ -82,13 +95,16 @@ const upload = async(req  :any, res: express.Response, next : express.NextFuncti
         const csrf = res.locals.jwt.csrf
 
         UserRepository.upload(id, csrf, file as Express.Multer.File)
-            .then((result) => 
-                res.status(200).end())
+            .then((result) => {
+                res.status(200).end
+                logger.log(LogLevel.AUDIT, `User uploaded image: ${id}`)})
             .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error uploading image: ${err.message}`)
                 next(err)
             })
 
     } catch (err) {
+        logger.log(LogLevel.ERRORS, `Error in upload function: ${err.message}`)
         next(err)
     }
 }
@@ -112,12 +128,15 @@ const update = (req: express.Request, res: express.Response, next: express.NextF
                 }
                 res.json(makeUserView({...user, id: result}));
                 res.status(200).end();
+                logger.log(LogLevel.AUDIT, `User updated: ${id}`);
             })
             .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error updating user with id ${id}: ${err.message}`);
                 next(err)
             })
     }
     catch (err) {
+        logger.log(LogLevel.ERRORS, `Error in update function: ${err.message}`);
         next(err)
     }
 }
@@ -132,10 +151,12 @@ const remove = async (req: express.Request, res: express.Response, next: express
                 res.status(200).end();
             })
             .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error deleting user with id ${id}: ${err.message}`);
                 next(err)
             })
     }
     catch (err) {
+        logger.log(LogLevel.ERRORS, `Error in remove function: ${err.message}`);
         next(err)
     }
 }
@@ -151,12 +172,15 @@ const filter = async (req: express.Request, res: express.Response, next: express
                     count : result.length 
                 });
                 res.status(200).end();
+                logger.log(LogLevel.AUDIT, `Filtered users`);
             })
             .catch((err) => {
+                logger.log(LogLevel.ERRORS, `Error filtering users: ${err.message}`);
                 next(err)
             })
     }
     catch (err) {
+        logger.log(LogLevel.ERRORS, `Error in filter function: ${err.message}`);
         next(err)
     }
 }
