@@ -7,7 +7,6 @@ import { TableWrapper } from "../../style/TableStyle";
 import { LIMIT, PaginationHandler } from "./PaginationHandler";
 import { SearchBar } from "./SearchBar";
 import { SearchOption } from "./SearchOptionsBar";
-import { ENDPOINTS } from "../../api/endpoints";
 
 export const ViewHandler = (props : {
     setData: Function, 
@@ -25,7 +24,7 @@ export const ViewHandler = (props : {
     const [currentPage, setCurrentPage] = useState(1);
 
 
-    const appendQuery = (val : string | number) => {
+    const appendQuery = (val : string) => {
         if (query === "")
             setQuery(query + " " + val);
         else {
@@ -35,17 +34,16 @@ export const ViewHandler = (props : {
 
     const runQuery = useCallback(() => {
         if (query === ""){
-            createAPIEndpoint(ENDPOINTS.handshake).fetch()
-                .then((response) => {
-                    if (response.status != 403) {
-                        createAPIEndpoint(props.all).fetch({skip : skip, limit : LIMIT})
-                        .then((response) => {
-                            props.setData(response.data.data);
+            createAPIEndpoint(props.all).fetch({skip : skip, limit : LIMIT})
+            .then((response) => {
+                props.setData(response.data.data);
 
-                            const c = response.data.count;
-                            setCount(c);
-                    })}
-                })
+                const c = response.data.count;
+                setCount(c);
+            })
+            .catch((err) => {
+
+            })
         }
         else {
             createAPIEndpoint(props.path).fetch({...props.queryParser(query.trim()), skip: skip, limit : LIMIT})
@@ -55,6 +53,9 @@ export const ViewHandler = (props : {
                 const c = response.data.count;
                 console.log(c);
                 setCount(c);
+            })
+            .catch((err) => {
+                
             })
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
