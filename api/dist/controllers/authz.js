@@ -41,8 +41,8 @@ const register = (req, res, next) => {
             if (result === undefined) {
                 throw new Error(`Failed to register user ${user.Username}`);
             }
-            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `User registered: ${user.Username}`);
             res.status(200).end();
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `User registered: ${user.Username}`);
         })
             .catch((err) => {
             logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error registering user: ${err.message}`);

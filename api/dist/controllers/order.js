@@ -8,10 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const inputValidation_1 = require("../middleware/inputValidation");
 const order_1 = require("../repository/order");
 const order_2 = require("../projections/order");
+const logger_1 = __importDefault(require("../utils/logger"));
+const logConfig_1 = require("../config/logConfig");
 const all = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     order_1.OrderRespository.retrieveAll()
         .then((result) => __awaiter(void 0, void 0, void 0, function* () {
@@ -23,6 +28,7 @@ const all = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(200).end();
     }))
         .catch((err) => {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error retrieving all orders: ${err.message}`);
         next(err);
     });
 });
@@ -39,10 +45,12 @@ const id = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(200).end();
         }))
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error retrieving order by id ${id}: ${err.message}`);
             next(err);
         });
     }
     catch (error) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Validation error in id function: ${error.message}`);
         next(error);
     }
 });
@@ -62,21 +70,26 @@ const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
             IsVerified: req.body.isVerified === 'true'
         };
         if (order.TimeIn > order.TimeOut) {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, "Invalid time in and time out entered");
             throw new Error("Invalid Time In and Time Out");
         }
         order_1.OrderRespository.insert(order)
             .then((result) => __awaiter(void 0, void 0, void 0, function* () {
             if (result == undefined) {
+                logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Failed to create order with params ${order}`);
                 throw new Error(`Failed to create order with params ${order}`);
             }
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Order created: ${JSON.stringify(Object.assign(Object.assign({}, order), { Id: result }))}`);
             res.json(yield (0, order_2.makeOrderView)(Object.assign(Object.assign({}, order), { Id: result })));
             res.status(200).end();
         }))
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error creating order: ${err.message}`);
             next(err);
         });
     }
     catch (err) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error in create function: ${err.message}`);
         next(err);
     }
 });
@@ -94,22 +107,26 @@ const update = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
             IsVerified: req.body.isVerified === 'true'
         };
         if (order.TimeIn > order.TimeOut) {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, "Invalid time in and time out entered");
             throw new Error("Invalid Time In and Time Out");
         }
         let id = (0, inputValidation_1.validateRequired)(req.query.id.toString(), inputValidation_1.validateInteger);
         order_1.OrderRespository.update(id, order)
             .then((result) => {
             if (result == undefined) {
+                logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Failed to update order with id ${id}`);
                 throw new Error(`Failed to update order with id ${id}`);
             }
             res.json((0, order_2.makeOrderView)(Object.assign(Object.assign({}, order), { Id: result })));
             res.status(200).end();
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error updating order with id ${id}: ${err.message}`);
             next(err);
         });
     }
     catch (err) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error in update function: ${err.message}`);
         next(err);
     }
 });
@@ -119,15 +136,18 @@ const remove = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         order_1.OrderRespository.delete(id)
             .then((result) => {
             if (result == undefined) {
+                logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Failed to delete order with id ${id}`);
                 throw new Error(`Failed to delete order with id ${id}`);
             }
             res.status(200).end();
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error deleting order with id ${id}: ${err.message}`);
             next(err);
         });
     }
     catch (err) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error in remove function: ${err.message}`);
         next(err);
     }
 });
@@ -137,15 +157,18 @@ const verify = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         order_1.OrderRespository.verify(id)
             .then((result) => {
             if (result == undefined) {
+                logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Failed to update order with id ${id}`);
                 throw new Error(`Failed to update order with id ${id}`);
             }
             res.status(200).end();
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error updating order with id ${id}: ${err.message}`);
             next(err);
         });
     }
     catch (err) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error in verify function: ${err.message}`);
         next(err);
     }
 });
@@ -161,10 +184,12 @@ const filter = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
             res.status(200).end();
         }))
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error filtering orders: ${err.message}`);
             next(err);
         });
     }
     catch (err) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error in filter function: ${err.message}`);
         next(err);
     }
 });

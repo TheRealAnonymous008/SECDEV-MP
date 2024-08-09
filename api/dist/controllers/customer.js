@@ -24,6 +24,7 @@ const all = (req, res, next) => {
             data: (0, customer_1.makeCustomerArrayView)(result),
             count: result.length
         });
+        logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Retrieved all customers`);
         res.status(200).end();
     })
         .catch((err) => {
@@ -37,10 +38,12 @@ const id = (req, res, next) => {
         customer_2.CustomerRepository.retrieveById(id)
             .then((result) => {
             if (result.length == 0) {
+                logger_1.default.log(logConfig_1.LogLevel.DEBUG, `Customer not found: ${id}`);
                 res.status(404).end();
                 return;
             }
             res.json((0, customer_1.makeCustomerView)(result));
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Customer retrieved: ${id}`);
             res.status(200).end();
         })
             .catch((err) => {
@@ -67,6 +70,7 @@ const create = (req, res, next) => {
         customer_2.CustomerRepository.insert(customer)
             .then((result) => {
             if (result == undefined) {
+                logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Failed to create customer with params ${customer}`);
                 throw new Error(`Failed to create customer with params ${customer}`);
             }
             logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Customer created: ${JSON.stringify(Object.assign(Object.assign({}, customer), { id: result }))}`);
@@ -144,6 +148,7 @@ const filter = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
                 data: (0, customer_1.makeCustomerArrayView)(result),
                 count: result.length
             });
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Filtered customers`);
             res.status(200).end();
         })
             .catch((err) => {

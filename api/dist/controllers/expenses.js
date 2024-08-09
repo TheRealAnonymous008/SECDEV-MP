@@ -26,6 +26,7 @@ const all = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
                 data: data,
                 count: result.length
             });
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Retrieved all expenses`);
             res.status(200).end();
         }))
             .catch((err) => {
@@ -44,10 +45,12 @@ const id = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         expenses_1.ExpensesRepository.retrieveById(id)
             .then((result) => __awaiter(void 0, void 0, void 0, function* () {
             if (result.length == 0) {
+                logger_1.default.log(logConfig_1.LogLevel.DEBUG, `Expense not found: ${id}`);
                 res.status(404).end();
                 return;
             }
             res.json(yield (0, expenses_2.makeExpenseView)(result));
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Expense retrieved: ${id}`);
             res.status(200).end();
         }))
             .catch((err) => {
@@ -76,6 +79,7 @@ const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
                 throw new Error(`Failed to create order with params ${expense}`);
             }
             res.json(yield (0, expenses_2.makeExpenseView)(Object.assign(Object.assign({}, expense), { Id: result })));
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Expense created: ${result}`);
             res.status(200).end();
         }))
             .catch((err) => {
@@ -105,9 +109,11 @@ const update = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
                 throw new Error(`Failed to update expense with id ${id}`);
             }
             res.json(yield (0, expenses_2.makeExpenseView)(Object.assign(Object.assign({}, expense), { Id: result })));
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Expense updated: ${result}`);
             res.status(200).end();
         }))
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error updating expense: ${err.message}`);
             next(err);
         });
     }
@@ -146,6 +152,7 @@ const filter = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
                 data: yield (0, expenses_2.makeExpenseArrayView)(result),
                 count: result.length
             });
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Filtered expenses`);
             res.status(200).end();
         }))
             .catch((err) => {

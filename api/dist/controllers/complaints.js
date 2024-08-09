@@ -26,6 +26,7 @@ const all = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
                 data: data,
                 count: result.length
             });
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Retrieved all complaints`);
             res.status(200).end();
         }))
             .catch((err) => {
@@ -44,10 +45,12 @@ const id = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         complaints_1.ComplaintsRepository.retrieveById(id)
             .then((result) => __awaiter(void 0, void 0, void 0, function* () {
             if (result === undefined) {
+                logger_1.default.log(logConfig_1.LogLevel.DEBUG, `Complaint not found: ${id}`);
                 res.status(404).end();
                 return;
             }
             res.json(yield (0, complaints_2.makeComplaintView)(result));
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Complaint retrieved: ${id}`);
             res.status(200).end();
         }))
             .catch((err) => {
@@ -69,9 +72,11 @@ const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         complaints_1.ComplaintsRepository.insert(complaint)
             .then((result) => __awaiter(void 0, void 0, void 0, function* () {
             if (result === undefined) {
+                logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Failed to create complaint with params ${complaint}`);
                 throw new Error(`Failed to create complaint with params ${complaint}`);
             }
             res.json(yield (0, complaints_2.makeComplaintView)(Object.assign(Object.assign({}, complaint), { Id: result })));
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Complaint created: ${result}`);
             res.status(200).end();
         }))
             .catch((err) => {
@@ -114,6 +119,7 @@ const filter = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
                 data: yield (0, complaints_2.makeComplaintArrayView)(result),
                 count: result.length
             });
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Filtered complaints`);
             res.status(200).end();
         }))
             .catch((err) => {

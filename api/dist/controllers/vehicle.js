@@ -1,8 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const vehicle_1 = require("../projections/vehicle");
 const vehicle_2 = require("../repository/vehicle");
 const inputValidation_1 = require("../middleware/inputValidation");
+const logger_1 = __importDefault(require("../utils/logger"));
+const logConfig_1 = require("../config/logConfig");
 const all = (req, res, next) => {
     vehicle_2.VehicleRepository.retrieveAll()
         .then((result) => {
@@ -11,8 +16,10 @@ const all = (req, res, next) => {
             count: result.length
         });
         res.status(200).end();
+        logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Retrieved all vehicles`);
     })
         .catch((err) => {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error retrieving all vehicles: ${err.message}`);
         next(err);
     });
 };
@@ -23,16 +30,20 @@ const id = (req, res, next) => {
             .then((result) => {
             if (result.length == 0) {
                 res.status(404).end();
+                logger_1.default.log(logConfig_1.LogLevel.DEBUG, `Vehicle not found: ${id}`);
                 return;
             }
             res.json((0, vehicle_1.makeVehicleView)(result));
             res.status(200).end();
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Vehicle retrieved: ${id}`);
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error retrieving vehicle by id: ${err.message}`);
             next(err);
         });
     }
     catch (error) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error retrieving vehicle by id: ${error.message}`);
         next(error);
     }
 };
@@ -50,16 +61,20 @@ const create = (req, res, next) => {
         vehicle_2.VehicleRepository.insert(vehicle)
             .then((result) => {
             if (result == undefined) {
+                logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Failed to create vehicles with params ${vehicle}`);
                 throw new Error(`Failed to create vehicles with params ${vehicle}`);
             }
             res.json((0, vehicle_1.makeVehicleView)(Object.assign(Object.assign({}, vehicle), { id: result })));
             res.status(200).end();
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Vehicle created: ${result}`);
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error creating vehicle: ${err.message}`);
             next(err);
         });
     }
     catch (error) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error creating vehicle: ${error.message}`);
         next(error);
     }
 };
@@ -78,16 +93,20 @@ const update = (req, res, next) => {
         vehicle_2.VehicleRepository.update(id, vehicle)
             .then((result) => {
             if (result == undefined) {
+                logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Failed to update vehicle with id ${id}`);
                 throw new Error(`Failed to update vehicle with id ${id}`);
             }
             res.json((0, vehicle_1.makeVehicleView)(Object.assign(Object.assign({}, vehicle), { id: result })));
             res.status(200).end();
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Vehicle updated: ${result}`);
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error updating vehicle with id ${id}: ${err.message}`);
             next(err);
         });
     }
     catch (error) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error in update function with ${id}: ${error.message}`);
         next(error);
     }
 };
@@ -97,15 +116,19 @@ const remove = (req, res, next) => {
         vehicle_2.VehicleRepository.delete(id)
             .then((result) => {
             if (result == undefined) {
+                logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Failed to delete vehicle with id ${id}`);
                 throw new Error(`Failed to delete vehicle with id ${id}`);
             }
             res.status(200).end();
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Vehicle deleted: ${id}`);
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error deleting vehicle with id ${id}: ${err.message}`);
             next(err);
         });
     }
     catch (error) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error in remove function with ${id}: ${error.message}`);
         next(error);
     }
 };
@@ -119,12 +142,15 @@ const filter = (req, res, next) => {
                 count: result.length
             });
             res.status(200).end();
+            logger_1.default.log(logConfig_1.LogLevel.AUDIT, `Filtered vehicles`);
         })
             .catch((err) => {
+            logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error filtering vehicles: ${err.message}`);
             next(err);
         });
     }
     catch (err) {
+        logger_1.default.log(logConfig_1.LogLevel.ERRORS, `Error in filter function: ${err.message}`);
         next(err);
     }
 };
